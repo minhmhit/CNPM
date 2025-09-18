@@ -12,6 +12,20 @@ const createUserService = async (username, password, email) => {
         throw error;
     }
 };
+
+const loginUserService = async (username, password) => {
+    try {
+        let result = await user.loginUser(
+            username,
+            password
+        );
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createUserService,
+    loginUserService
 }; 
