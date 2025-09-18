@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('./config/connection_mysql');
+const connection =  require('./config/connection_mysql');
 
 const express = require('express');
 const app = express();
@@ -10,13 +10,13 @@ app.use(cors());
 
 
 
-
+//config request body
 app.use(express.json());
-app.use((req, res, next) => {
-    const error = new Error('Not Found');
-    error.status = 404;
-    next(error);
-});
+app.use(express.urlencoded({ extended: true }));
+
+const UserRoute = require('./Routes/User.route');
+
+app.use('/api/v1/user', UserRoute);
 
 app.get('/', (req, res, next) => {
     res.send('Hello World!');
@@ -24,6 +24,7 @@ app.get('/', (req, res, next) => {
 
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT,  async () => {
+    await connection.testConnection();
     console.log(`Server is running on port ${PORT}`);
 });

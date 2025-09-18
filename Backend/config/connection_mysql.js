@@ -24,7 +24,6 @@ const testConnection = async () => {
     return false;
   }
 };
-testConnection();
 module.exports = {
   pool,
   testConnection,
