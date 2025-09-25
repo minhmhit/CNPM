@@ -1,5 +1,7 @@
 const {pool} = require('../config/connection_mysql');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 
 const registerUser = async (username, password, email) => {
@@ -26,10 +28,27 @@ const loginUser = async (username, password) => {
      );
      if (rows.length > 0) {
        const user = rows[0];
-       console.log(user);
+       let result = {
+        id: user.id,
+        username: user.username,
+        email: user.email
+       }
        const isMatch = await bcrypt.compare(password, user.password);
        if (isMatch) {
-         return user;
+        // tạo access token
+        const payload = {
+          email : user.email,
+          username: user.username,
+          id: user.id
+        }
+        const accessToken = jwt.sign(
+          payload,
+          process.env.JWT_SECRET,
+          {
+            expiresIn: process.env.JWT_EXPIRES,
+          }
+        )
+         return { result, accessToken };
        } else {
          throw new Error("Mat khau khong dung");
        }

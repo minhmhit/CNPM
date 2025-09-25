@@ -14,7 +14,6 @@ const createUser = async (req,res) => {
 
 const loginUser = async (req,res) => {
     const {username, password} = req.body;
-    console.log(req.body);
     const data = await userService.loginUserService(
         username,
         password
