@@ -2,8 +2,10 @@ const { pool } = require("../config/connection_mysql");
 
 const addBus = async (busData) => {
     try {
-        const [rows] = await pool.query("INSERT INTO buses SET ?", busData);
-        return rows;
+        const [rows] = await pool.query("INSERT INTO vehicles SET ?", busData);
+        //return the inserted bus with its new ID
+        const newBus = { id: rows.insertId, ...busData };
+        return newBus;
     } catch (error) {
         throw error;
     }
@@ -17,8 +19,10 @@ const updateBus = async (bus_id, busData) => {
             fields.push(`${key} = ?`);
             values.push(value);
         }
-        const [rows] = await pool.query(`UPDATE buses SET ${fields.join(", ")} WHERE bus_id = ?`, [...values, bus_id]);
-        return rows;
+        const [rows] = await pool.query(`UPDATE vehicles SET ${fields.join(", ")} WHERE bus_id = ?`, [...values, bus_id]);
+        //return the updated bus
+        const updatedBus = { id: bus_id, ...busData };
+        return updatedBus;
     } catch (error) {
         throw error;
     }
@@ -26,8 +30,10 @@ const updateBus = async (bus_id, busData) => {
 
 const deleteBus = async (bus_id) => {
     try {
-        const [rows] = await pool.query("DELETE FROM buses WHERE bus_id = ?", [bus_id]);
-        return rows;
+        // change status to inactive instead of deleting
+        const [rows] = await pool.query("UPDATE vehicles SET status = 'inactive' WHERE bus_id = ?", [bus_id]);
+        //return the deleted bus data
+        return { id: bus_id, status: 'inactive' };
     } catch (error) {
         throw error;
     }
@@ -35,7 +41,7 @@ const deleteBus = async (bus_id) => {
 
 const getAllBuses = async () => {
     try {
-        const [rows] = await pool.query("SELECT * FROM buses");
+        const [rows] = await pool.query("SELECT * FROM vehicles");
         return rows;
     } catch (error) {
         throw error;

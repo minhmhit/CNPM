@@ -2,24 +2,26 @@ const routeService = require("../Services/route.service");
 
 //thêm chuyến đường và điểm dừng
 const addRoute = async (req, res) => {
-    const { route_name, start_point, end_point, stop_points } = req.body;
+    const { route_name, start_point, end_point, stop_points, description } = req.body;
     const data = await routeService.addRouteService({
         route_name,
         start_point,
         end_point,
-        stop_points
+        stop_points,
+        description
     });
     res.status(201).json(data);
 };
 //sửa chuyến đường và điểm dừng
 const updateRoute = async (req, res) => {
     const { route_id } = req.params;
-    const { route_name, start_point, end_point, stop_points } = req.body;
+    const { route_name, start_point, end_point, stop_points, description } = req.body;
     const data = await routeService.updateRouteService(route_id, {
         route_name,
         start_point,
         end_point,
-        stop_points
+        stop_points,
+        description
     });
     res.status(200).json(data);
 };
