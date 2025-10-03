@@ -1,0 +1,79 @@
+.account-info{
+    width: 10%;
+    height: 50%;
+    background-color: white;
+    border-radius: 20px;
+    margin-right: 20px;
+    display: flex;
+}
+.account-info span{
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+.account-info img{
+    width: 20%;
+    padding-right: 0%;
+}
+.display-info{
+    width: 85%;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+.side-panel{
+    width: 15%;
+    height: 100%;
+    background-color: rgb(119, 19, 249);
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.side-panel button{
+    width: 100%;
+    height: 10%;
+    background-color: rgb(119, 19, 249);
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    border: 0.5px solid white;
+    border-radius: none;
+}
+.side-panel button:hover{
+    background-color: rgb(126, 70, 246);
+    color: rgb(119, 19, 249);
+    cursor: pointer;
+    color : white;
+}
+.logout-button{
+    width: 80%;
+    height:48%;
+    background-color: rgb(119, 19, 249);
+    position: absolute;
+    margin-left: 20%;
+}
+.logout-button button{
+    width: 80%;
+    height: 10%;
+    background-color: rgb(119, 19, 249);
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    border: 0.5px solid white;
+    border-radius: none;
+    position: absolute;
+    bottom: 0;
+}
+.logout-button button:hover{
+    background-color: rgb(233, 26, 26);
+    color: rgb(119, 19, 249);
+    cursor: pointer;
+    color : white;
+}

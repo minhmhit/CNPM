@@ -13,6 +13,9 @@ export default function Home() {
         <Link to="/login">
           <button className="login-btn">Đăng nhập</button>
         </Link>
+        <Link to="/driver">
+          <button className="login-btn">Tai xe</button>
+        </Link>
       </div>
 
       <div className="center-box">
