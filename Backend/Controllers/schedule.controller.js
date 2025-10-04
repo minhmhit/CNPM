@@ -46,6 +46,7 @@ const updateSchedule = async (req, res) => {
             end_time,
           }
         );
+        
         res.status(200).json(updatedSchedule);
     } catch (error) {
         console.error("lỗi khi cập nhật lịch trình:", error);

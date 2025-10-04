@@ -25,13 +25,13 @@ const registerUser = async (username, password, email, role) => {
     ]);
     //chèn người dùng vừa tạo vào bảng tuong ứng với role
     if (role === "driver") {
-      const driverSql = `INSERT INTO drivers (userid, name) VALUES (?, ?)`;
-      await pool.query(driverSql, [rows.insertId, username]);
+      const driverSql = `INSERT INTO drivers (userid, name, email) VALUES (?, ?)`;
+      await pool.query(driverSql, [rows.insertId, username, email]);
     } else if (role === "student") {
       const studentSql = `INSERT INTO students (userid, name) VALUES (?, ?)`;
       await pool.query(studentSql, [rows.insertId, username]);
     } else if (role === "admin") {
-      const adminSql = `INSERT INTO admins (userid, name) VALUES (?, ?)`;
+      const adminSql = `INSERT INTO admins (userid, full_name) VALUES (?, ?)`;
       await pool.query(adminSql, [rows.insertId, username]);
     }
 
