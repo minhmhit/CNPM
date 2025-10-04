@@ -4,10 +4,11 @@ body, html, #root {
   height: 100%;
   width: 100%;
   font-family: Arial, sans-serif;
+  overflow-x: hidden;
 }
 
 .app {
-  height: 100vh; /* full màn hình */
+  height: 100vh; 
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -44,25 +45,22 @@ body, html, #root {
 }
 
 .login-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background-color: #d6c3ff;
-  color: #333;
-  cursor: pointer;
-}
-.login-btn {
-  background: #c8a6ff;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 6px 16px;
+  border: 1px solid #07060f;
+  border-radius: 20px;
+  background-color: transparent;
+  color: #5a3ef4;
   font-size: 14px;
-  transition: background 0.2s;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
+
 .login-btn:hover {
-  background: #b08eff;
+  background-color: #5a3ef4;
+  color: white;
 }
+
 
 .bus-icon {
   width: 30px;
@@ -78,6 +76,8 @@ body, html, #root {
   justify-content: center;
   align-items: center;
   background-color: #f0f0f0;
+  background: url("./pics/backgroud.png") no-repeat center center;
+  background-size: cover;   /* ảnh scale full */
 }
 
 .logo {
