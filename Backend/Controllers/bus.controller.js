@@ -6,7 +6,7 @@ const addBus = async (req, res) => {
         const result = await busService.addBus(busData);
         res.status(201).json(result);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({message: "lỗi khi thêm xe buýt"}, { error: error.message });
     }
 };
 
