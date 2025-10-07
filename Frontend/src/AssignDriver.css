@@ -1,0 +1,45 @@
+.assign-driver {
+    width: 100%;
+    height: 100%;
+    background-color: #fffaf6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.assign-driver h2 {
+    color: rgb(119, 19, 249);
+    margin-bottom: 20px;
+}
+
+.assign-driver form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.assign-driver input,
+.assign-driver select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.assign-driver button {
+    padding: 8px;
+    background-color: rgb(119, 19, 249);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.assign-driver button:hover {
+    background-color: rgb(99, 9, 230);
+}
