@@ -1,0 +1,80 @@
+.manage-schedule {
+  width: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  color: #333;
+  border-radius: 10px;
+}
+
+.manage-schedule h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: rgb(119, 19, 249);
+}
+
+.manage-schedule table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.manage-schedule th,
+.manage-schedule td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.manage-schedule th {
+  background-color: rgb(119, 19, 249);
+  color: white;
+}
+
+.manage-schedule tr:hover {
+  background-color: #f0f0ff;
+}
+
+.status.đang-chạy {
+  color: green;
+  font-weight: bold;
+}
+
+.status.chờ-khởi-hành {
+  color: orange;
+  font-weight: bold;
+}
+
+.status.hoàn-thành {
+  color: blue;
+  font-weight: bold;
+}
+
+/* 🛠 Nút hành động */
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 6px 10px;
+  margin: 2px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.edit-btn {
+  background-color: #2196f3;
+}
+
+.edit-btn:hover {
+  background-color: #0b7dda;
+}
+
+.delete-btn {
+  background-color: #f44336;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
