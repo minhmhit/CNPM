@@ -6,6 +6,8 @@ import accountIcon from "./pics/account-icon.png";
 import "./App.css";
 import SendMessage from "./SendMessage";
 import ManageList from "./ManageList";
+import ManageSchedule from "./ManageSchedule.jsx";
+import AssignDriver from "./AssignDriver.jsx";
 
 export default function Admin() {
   const [activePanel, setActivePanel] = useState("none");
@@ -22,10 +24,10 @@ export default function Admin() {
     switch (activePanel) {
       case "sendMessage":
         return <SendMessage onBack={() => setActivePanel("none")} />;
-      // case "schedule":
-      //   return <ScheduleManager />;
-      // case "assignDriver":
-      //   return <AssignDriver />;
+      case "schedule":
+        return <ManageSchedule />;
+      case "assignDriver":
+        return <AssignDriver />;
       // case "tracking":
       //   return <Tracking />;
       case "manageList":

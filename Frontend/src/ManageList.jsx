@@ -47,7 +47,10 @@ export default function ManageList({ onBack }) {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    const newId = Date.now();
+    const newId =
+      data[category].length > 0
+        ? Math.max(...data[category].map((item) => item.id)) + 1
+        : 1;
     setData((prev) => ({
       ...prev,
       [category]: [...prev[category], { id: newId, ...newItem }],
