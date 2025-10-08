@@ -25,7 +25,7 @@ const registerUser = async (username, password, email, role) => {
     ]);
     //chèn người dùng vừa tạo vào bảng tuong ứng với role
     if (role === "driver") {
-      const driverSql = `INSERT INTO drivers (userid, name, email) VALUES (?, ?)`;
+      const driverSql = `INSERT INTO drivers (userid, name, email) VALUES (?, ?, ?)`;
       await pool.query(driverSql, [rows.insertId, username, email]);
     } else if (role === "student") {
       const studentSql = `INSERT INTO students (userid, name) VALUES (?, ?)`;

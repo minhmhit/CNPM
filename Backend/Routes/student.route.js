@@ -9,7 +9,7 @@ const {
     getMyRoute, 
     getMyNotifications
 } = require("../Services/student.service");
-const authMiddleware = require("../middleware/auth.middleware");
+// const authMiddleware = require("../middleware/auth.middleware");
 
 // Routes cho học sinh (cần xác thực)
 router.get("/profile", getMyProfile);

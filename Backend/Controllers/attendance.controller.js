@@ -2,9 +2,9 @@ const attendanceService = require("../Services/attendance.service");
 
 const checkin = async (req, res) => {
     try {
-        const { student_id, route_id, timestamp } = req.body;
-        await attendanceService.checkin(student_id, route_id, timestamp);
-        res.status(200).json({ message: "Điểm danh thành công" });
+        const { student_id, schedule_id, timestamp } = req.body;
+        const result = await attendanceService.checkin(student_id, schedule_id, timestamp);
+        res.status(201).json(result);
     } catch (error) {
         console.error("lỗi khi điểm danh:", error);
         res.status(500).json({ message: "Điểm danh thất bại", error: error.message });

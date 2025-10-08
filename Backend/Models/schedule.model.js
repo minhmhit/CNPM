@@ -1,28 +1,35 @@
 const {pool} = require('../config/connection_mysql');
 
 const createSchedule = async (scheduleData) => {
+  //if date is null set to current day
+  if (!scheduleData.date) {
+    scheduleData.date = new Date();
+  }
     try {
         const {
           driver_id,
           bus_id,
           route_id,
+          date,
           student_id,
           start_time,
           end_time,
         } = scheduleData;
         const sql = `
-            INSERT INTO schedules (driver_id, bus_id, route_id, student_id, start_time, end_time)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO schedules (driver_id, bus_id, route_id, date, student_id, start_time, end_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
         const [result] = await pool.query(sql, [
           driver_id,
           bus_id,
           route_id,
+          date,
           student_id,
           start_time,
           end_time,
         ]);
-        return result;
+        const data = { schedule_id: result.insertId, ...scheduleData };
+        return data;
     } catch (error) {
         throw error;
     }
@@ -33,6 +40,7 @@ const updateSchedule = async (schedule_id, scheduleData) => {
           driver_id,
           bus_id,
           route_id,
+          date,
           student_id,
           start_time,
           end_time,
@@ -59,6 +67,10 @@ const updateSchedule = async (schedule_id, scheduleData) => {
           fields.push("start_time = ?");
           values.push(start_time);
         }
+        if (date) {
+          fields.push("date = ?");
+          values.push(date);
+        }
         if (end_time) {
           fields.push("end_time = ?");
           values.push(end_time);
@@ -69,15 +81,17 @@ const updateSchedule = async (schedule_id, scheduleData) => {
         const sql = `UPDATE schedules SET ${fields.join(
           ", "
         )} WHERE schedule_id = ?`;
-        await pool.query(sql, values);
-        return result;
+        const result = await pool.query(sql, values);
+        const data = { schedule_id, ...scheduleData };
+        return { message: "Cập nhật lịch trình thành công", data: data };
     } catch (error) {
         throw error;
     }
 };
 const deleteSchedule = async (schedule_id) => {
     try {
-        const sql = `DELETE FROM schedules WHERE schedule_id = ?`;
+      // set status to inactive instead of deleting
+        const sql = `UPDATE schedules SET status = 'canceled' WHERE schedule_id = ?`;
         await pool.query(sql, [schedule_id]);
         return { message: "Xóa lịch trình thành công" };
     } catch (error) {
@@ -88,7 +102,7 @@ const getDriverSchedule = async (driver_id) => {
     try {
        const sql = `SELECT * FROM schedules WHERE driver_id = ? ORDER BY start_time DESC`;
        const [rows] = await pool.query(sql, [driver_id]);
-        return JSON.parse(rows);
+        return rows;
     } catch (error) {
         throw error;
     }
@@ -97,7 +111,7 @@ const getBusSchedule = async (bus_id) => {
     try {
         const sql = `SELECT * FROM schedules WHERE bus_id = ? ORDER BY start_time DESC`;
         const [rows] = await pool.query(sql, [bus_id]);
-        return JSON.parse(rows);
+        return rows;
     } catch (error) {
         throw error;
     }
@@ -106,7 +120,7 @@ const getStudentSchedule = async (student_id) => {
     try {
         const sql = `SELECT * FROM schedules WHERE student_id = ? ORDER BY start_time DESC`;
         const [rows] = await pool.query(sql, [student_id]);
-        return JSON.parse(rows);
+        return rows;
     } catch (error) {
         throw error;
     }

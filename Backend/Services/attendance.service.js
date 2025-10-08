@@ -1,12 +1,13 @@
 const attendance = require ("../Models/attendance.model");
 
-const checkin = async (student_id, route_id, timestamp) => {
-    try {
-        await attendance.checkin(student_id, route_id, timestamp);
-    } catch (error) {
-        console.error("Error during check-in:", error);
-        throw error;
-    }
+const checkin = async (student_id, schedule_id, timestamp) => {
+  
+  try {
+    await attendance.checkin(student_id, schedule_id, timestamp);
+  } catch (error) {
+    console.error("Error during check-in:", error);
+    throw error;
+  }
 };
 const checkout = async (student_id, route_id, timestamp) => {
     try {

@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const {
-        getBusHistory,
-        getBusLocation,
-        updateBusLocation
-    } = require("../Controllers/tracking.controller");
+  getBusHistory,
+  getBusLocation,
+  updateBusLocation,
+  getDriverHistory,
+} = require("../Controllers/tracking.controller");
 // Lấy vị trí xe buýt theo thời gian thực
 router.get("/bus/:bus_id", getBusLocation);
 // Lấy lịch sử di chuyển của xe

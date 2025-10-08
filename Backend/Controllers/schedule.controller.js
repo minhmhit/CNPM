@@ -1,10 +1,12 @@
 const scheduleService = require('../Services/schedule.service');
 const createSchedule = async (req, res) => {
+   
     try {
         const {
           driver_id,
           bus_id,
           route_id,
+          date,
           student_id,
           start_time,
           end_time
@@ -13,6 +15,7 @@ const createSchedule = async (req, res) => {
           driver_id,
           bus_id,
           route_id,
+          date,
           student_id,
           start_time,
           end_time
@@ -30,6 +33,7 @@ const updateSchedule = async (req, res) => {
           driver_id,
           bus_id,
           route_id,
+          date,
           student_id,
           start_time,
           end_time,
@@ -41,6 +45,7 @@ const updateSchedule = async (req, res) => {
             driver_id,
             bus_id,
             route_id,
+            date,
             student_id,
             start_time,
             end_time,

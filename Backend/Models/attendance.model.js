@@ -1,26 +1,42 @@
 const {pool} = require("../config/connection_mysql");
 
-const checkin = async (student_id, route_id, timestamps) => {
+const checkin = async (student_id, schedule_id, timestamp) => {
+  console.log(" checkin called with:", {
+    student_id,
+    schedule_id,
+    timestamp,
+  });
   try {
+    console.log("Inserting check-in record into database...");
     const sql = `
-            INSERT INTO attendance_logs (student_id, route_id, action, timestamp)
+            INSERT INTO attendance_logs (student_id, schedule_id, status, timestamp)
             VALUES (?, ?, 'checkin', ?)
         `;
-    await pool.query(sql, [student_id, route_id, timestamps || new Date()]);
-    return { message: "Check-in thành công" , student_id, route_id, timestamps};
+    await pool.query(sql, [student_id, schedule_id, timestamp || new Date()]);
+    console.log("Check-in successful:", {
+      student_id,
+      schedule_id,
+      timestamp,
+    });
+    return {
+      message: "Check-in thành công",
+      student_id,
+      schedule_id,
+      timestamp,
+    };
   } catch (error) {
     return { message: "Lỗi check-in", error: error.message };
   }
 };
 
-const checkout = async (student_id, route_id, timestamps) => {
+const checkout = async (student_id, route_id, timestamp) => {
   try {
     const sql = `
             INSERT INTO attendance_logs (student_id, route_id, action, timestamp)
             VALUES (?, ?, 'checkout', ?)
         `;
-    await pool.query(sql, [student_id, route_id, timestamps || new Date()]);
-    return { message: "Check-out thành công" , student_id, route_id, timestamps};
+    await pool.query(sql, [student_id, route_id, timestamp || new Date()]);
+    return { message: "Check-out thành công" , student_id, route_id, timestamp};
   } catch (error) {
     return { message: "Lỗi check-out", error: error.message };
   }
