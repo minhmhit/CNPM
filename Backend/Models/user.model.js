@@ -17,13 +17,30 @@ const registerUser = async (username, password, email, role) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const sql = `INSERT INTO users (username, password, email, role) 
                  VALUES (?, ?, ?, ?)`;
-    const [rows] = await pool.query(sql, [username, hashedPassword, email, role]);
-     
-     return rows.insertId;
-   } catch (error) {
+    const [rows] = await pool.query(sql, [
+      username,
+      hashedPassword,
+      email,
+      role,
+    ]);
+    //chèn người dùng vừa tạo vào bảng tuong ứng với role
+    if (role === "driver") {
+      const driverSql = `INSERT INTO drivers (userid, name, email) VALUES (?, ?, ?)`;
+      await pool.query(driverSql, [rows.insertId, username, email]);
+    } else if (role === "student") {
+      const studentSql = `INSERT INTO students (userid, name) VALUES (?, ?)`;
+      await pool.query(studentSql, [rows.insertId, username]);
+    } else if (role === "admin") {
+      const adminSql = `INSERT INTO admins (userid, full_name) VALUES (?, ?)`;
+      await pool.query(adminSql, [rows.insertId, username]);
+    }
+
+    return { userId: rows.insertId, username, email, role };
+  } catch (error) {
      console.error("Error registering user:", error);
      throw error;
    }
+   
 }
 
 const loginUser = async (email, password) => {
