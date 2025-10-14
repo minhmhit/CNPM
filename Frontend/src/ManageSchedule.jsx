@@ -1,22 +1,64 @@
 import React, { useState } from "react";
 import "./ManageSchedule.css";
 import AddSchedule from "./AddSchedule";
+import EditSchedule from "./EditSchedule";
 
 export default function ManageSchedule() {
   const [showAddPage, setShowAddPage] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState(null);
 
-  const mockSchedules = [
+  const [schedules, setSchedules] = useState([
     { id: "51A-12345", driver: "Nguyễn Văn A", time: "07:00 - 08:00", route: "Bến xe Miền Đông → ĐH Sài Gòn", date: "2025-10-04", status: "Đang chạy" },
     { id: "51B-67890", driver: "Trần Văn B", time: "08:30 - 09:30", route: "ĐH Sài Gòn → Bến xe Miền Tây", date: "2025-10-04", status: "Chờ khởi hành" },
-  ];
+  ]);
 
-  const handleEdit = (id) => alert(`Chỉnh sửa lịch trình xe: ${id}`);
-  const handleDelete = (id) => window.confirm(`Xóa xe ${id}?`) && alert(`Đã xóa ${id}`);
+  const handleDelete = (id) => {
+    if (window.confirm(`Xóa xe ${id}?`)) {
+      setSchedules(schedules.filter((item) => item.id !== id));
+    }
+  };
+
   const handleAdd = () => setShowAddPage(true);
-  const handleBack = () => setShowAddPage(false);
+  const handleBack = () => {
+    setShowAddPage(false);
+    setEditingSchedule(null);
+  };
 
+  const handleAddSchedule = (newSchedule) => {
+    setSchedules([...schedules, newSchedule]);
+    setShowAddPage(false);
+  };
+
+  // 👉 Khi bấm “Sửa”
+  const handleEdit = (id) => {
+    const scheduleToEdit = schedules.find((item) => item.id === id);
+    setEditingSchedule(scheduleToEdit);
+  };
+
+  // 👉 Khi lưu chỉnh sửa
+  const handleUpdateSchedule = (updatedSchedule) => {
+    setSchedules(
+      schedules.map((item) =>
+        item.id === updatedSchedule.id ? updatedSchedule : item
+      )
+    );
+    setEditingSchedule(null);
+  };
+
+  // 👉 Nếu đang thêm mới
   if (showAddPage) {
-    return <AddSchedule onBack={handleBack} />;
+    return <AddSchedule onBack={handleBack} onAdd={handleAddSchedule} />;
+  }
+
+  // 👉 Nếu đang chỉnh sửa
+  if (editingSchedule) {
+    return (
+      <EditSchedule
+        schedule={editingSchedule}
+        onBack={handleBack}
+        onUpdate={handleUpdateSchedule}
+      />
+    );
   }
 
   return (
@@ -36,7 +78,7 @@ export default function ManageSchedule() {
           </tr>
         </thead>
         <tbody>
-          {mockSchedules.map((item, index) => (
+          {schedules.map((item, index) => (
             <tr key={index}>
               <td>{item.id}</td>
               <td>{item.driver}</td>

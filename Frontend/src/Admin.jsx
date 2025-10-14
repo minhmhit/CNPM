@@ -13,6 +13,36 @@ export default function Admin() {
   const [activePanel, setActivePanel] = useState("none");
   const navigate = useNavigate();
 
+  // ✅ Dữ liệu mẫu (bạn có thể thay bằng dữ liệu thực từ API)
+  const [schedules, setSchedules] = useState([
+    { id: "LX01", route: "Bến xe A - Bến xe B", date: "2025-10-13", driver: null },
+    { id: "LX02", route: "Bến xe C - Bến xe D", date: "2025-10-14", driver: null },
+  ]);
+
+  const [drivers, setDrivers] = useState([
+    { id: "TX01", name: "Nguyễn Văn A", phone: "0901234567", status: "Rảnh" },
+    { id: "TX02", name: "Trần Văn B", phone: "0902345678", status: "Bận" },
+    { id: "TX03", name: "Lê Văn C", phone: "0903456789", status: "Rảnh" },
+  ]);
+
+  // ✅ Hàm xử lý khi phân công tài xế
+  const handleAssign = (schedule, driver) => {
+    // Cập nhật lịch trình được gán tài xế
+    const updatedSchedules = schedules.map((s) =>
+      s.id === schedule.id ? { ...s, driver: driver.name } : s
+    );
+    setSchedules(updatedSchedules);
+
+    // Cập nhật trạng thái tài xế
+    const updatedDrivers = drivers.map((d) =>
+      d.id === driver.id ? { ...d, status: "Bận" } : d
+    );
+    setDrivers(updatedDrivers);
+
+    // Sau khi phân công, có thể quay lại màn hình chính nếu muốn:
+    // setActivePanel("none");
+  };
+
   const handleLogout = () => {
     if (window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
       localStorage.removeItem("admin");
@@ -27,9 +57,15 @@ export default function Admin() {
       case "schedule":
         return <ManageSchedule />;
       case "assignDriver":
-        return <AssignDriver />;
-      // case "tracking":
-      //   return <Tracking />;
+        // ✅ Truyền đầy đủ props
+        return (
+          <AssignDriver
+            schedules={schedules}
+            drivers={drivers}
+            onAssign={handleAssign}
+            onBack={() => setActivePanel("none")}
+          />
+        );
       case "manageList":
         return <ManageList onBack={() => setActivePanel("none")} />;
       default:
