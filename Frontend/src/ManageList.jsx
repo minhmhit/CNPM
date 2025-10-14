@@ -1,126 +1,171 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "./Admin.css";
 
-export default function ManageList({ onBack }) {
-  const [category, setCategory] = useState("students");
+const API_BASE = "http://localhost:5000/api/v1";
 
+export default function ManageList({ onBack }) {
+  const [category, setCategory] = useState("routes");
   const [data, setData] = useState({
-    students: [
-      { id: 1, name: "Hoai Nam", class: "5A" },
-      { id: 2, name: "Neo Bam", class: "4B" },
-      { id: 3, name: "Hoai Nam", class: "5A" },
-      { id: 4, name: "Neo Bam", class: "4B" },
-      { id: 5, name: "Hoai Nam", class: "5A" },
-      { id: 6, name: "Neo Bam", class: "4B" },
-      { id: 7, name: "Hoai Nam", class: "5A" },
-      { id: 8, name: "Neo Bam", class: "4B" },
-      { id: 9, name: "Hoai Nam", class: "5A" },
-      { id: 10, name: "Neo Bam", class: "4B" },
-      { id: 11, name: "Hoai Nam", class: "5A" },
-      { id: 12, name: "Neo Bam", class: "4B" },
-      { id: 13, name: "Hoai Nam", class: "5A" },
-      { id: 14, name: "Neo Bam", class: "4B" },
-    ],
-    drivers: [
-      { id: 1, name: "Nguyen Duc Minh", license: "B2" },
-      { id: 2, name: "Mai Hoang Minh", license: "C" },
-    ],
-    buses: [
-      { id: 1, plate: "36A-36363", capacity: 40 },
-      { id: 2, plate: "18B-18181", capacity: 30 },
-    ],
-    routes: [
-      { id: 1, name: "Tuyến 1", start: "Q1", end: "SGU" },
-      { id: 2, name: "Tuyến 2", start: "Q2", end: "SGU" },
-    ],
+    students: [],
+    drivers: [],
+    buses: [],
+    routes: [],
   });
 
   const [newItem, setNewItem] = useState({});
+  const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const handleChangeCategory = (e) => {
-    setCategory(e.target.value);
-    setNewItem({});
-    setCurrentPage(1); // reset trang khi đổi danh mục
-  };
+  // 🧭 Fetch dữ liệu theo danh mục
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let url = "";
+        switch (category) {
+          case "routes":
+            url = `${API_BASE}/route/`;
+            break;
+          case "buses":
+            url = `${API_BASE}/bus/`;
+            break;
+          case "drivers":
+            url = `${API_BASE}/driver/`;
+            break;
+          case "students":
+            url = `${API_BASE}/student/`;
+            break;
+          default:
+            return;
+        }
+        const res = await axios.get(url);
+        setData((prev) => ({ ...prev, [category]: res.data }));
+      } catch (err) {
+        console.error("❌ Lỗi tải dữ liệu:", err);
+      }
+    };
+    fetchData();
+  }, [category]);
 
-  const handleAdd = (e) => {
+  // ➕ Thêm mới
+  const handleAdd = async (e) => {
     e.preventDefault();
-    const newId =
-      data[category].length > 0
-        ? Math.max(...data[category].map((item) => item.id)) + 1
-        : 1;
-    setData((prev) => ({
-      ...prev,
-      [category]: [...prev[category], { id: newId, ...newItem }],
-    }));
-    setNewItem({});
-  };
+    try {
+      let url = "";
+      switch (category) {
+        case "routes":
+          url = `${API_BASE}/route/add`;
+          break;
+        case "buses":
+          url = `${API_BASE}/bus/add`;
+          break;
+        case "drivers":
+          url = `${API_BASE}/driver/add`;
+          break;
+        case "students":
+          url = `${API_BASE}/student/add`;
+          break;
+        default:
+          return;
+      }
 
-  const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa không?")) {
+      const res = await axios.post(url, newItem);
       setData((prev) => ({
         ...prev,
-        [category]: prev[category].filter((item) => item.id !== id),
+        [category]: [...prev[category], res.data],
       }));
+      setShowForm(false);
+      setNewItem({});
+    } catch (err) {
+      console.error("❌ Lỗi khi thêm:", err);
+      alert("Không thể thêm dữ liệu!");
     }
   };
 
-  // Input fields
+  // ❌ Xóa
+  const handleDelete = async (id) => {
+    if (!window.confirm("Bạn có chắc muốn xóa không?")) return;
+    try {
+      let url = "";
+      switch (category) {
+        case "routes":
+          url = `${API_BASE}/route/delete/${id}`;
+          break;
+        case "buses":
+          url = `${API_BASE}/bus/delete/${id}`;
+          break;
+        case "drivers":
+          url = `${API_BASE}/driver/delete/${id}`;
+          break;
+        case "students":
+          url = `${API_BASE}/student/delete/${id}`;
+          break;
+        default:
+          return;
+      }
+      await axios.delete(url);
+      setData((prev) => ({
+        ...prev,
+        [category]: prev[category].filter(
+          (item) =>
+            item.id !== id &&
+            item.route_id !== id &&
+            item.bus_id !== id &&
+            item.driver_id !== id &&
+            item.student_id !== id
+        ),
+      }));
+    } catch (err) {
+      console.error("❌ Lỗi khi xóa:", err);
+    }
+  };
+
+  // 🎨 Render form input
   const renderInputFields = () => {
     switch (category) {
-      case "students":
+      case "routes":
         return (
           <>
+            <label>Tên tuyến:</label>
             <input
-              placeholder="Họ tên học sinh"
-              value={newItem.name || ""}
+              value={newItem.route_name || ""}
               onChange={(e) =>
-                setNewItem({ ...newItem, name: e.target.value })
+                setNewItem({ ...newItem, route_name: e.target.value })
               }
+              placeholder="VD: Tuyến 01 - SGU"
             />
+            <label>Mô tả:</label>
             <input
-              placeholder="Lớp"
-              value={newItem.class || ""}
+              value={newItem.description || ""}
               onChange={(e) =>
-                setNewItem({ ...newItem, class: e.target.value })
+                setNewItem({ ...newItem, description: e.target.value })
               }
-            />
-          </>
-        );
-      case "drivers":
-        return (
-          <>
-            <input
-              placeholder="Tên tài xế"
-              value={newItem.name || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, name: e.target.value })
-              }
-            />
-            <input
-              placeholder="Bằng lái"
-              value={newItem.license || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, license: e.target.value })
-              }
+              placeholder="VD: Từ Q1 đến SGU"
             />
           </>
         );
       case "buses":
         return (
           <>
+            <label>Biển số:</label>
             <input
-              placeholder="Biển số xe"
-              value={newItem.plate || ""}
+              value={newItem.license_plate || ""}
               onChange={(e) =>
-                setNewItem({ ...newItem, plate: e.target.value })
+                setNewItem({ ...newItem, license_plate: e.target.value })
+              }
+              placeholder="VD: 36A-36363"
+            />
+            <label>Model:</label>
+            <input
+              value={newItem.model || ""}
+              onChange={(e) =>
+                setNewItem({ ...newItem, model: e.target.value })
               }
             />
+            <label>Sức chứa:</label>
             <input
               type="number"
-              placeholder="Sức chứa"
               value={newItem.capacity || ""}
               onChange={(e) =>
                 setNewItem({ ...newItem, capacity: e.target.value })
@@ -128,121 +173,25 @@ export default function ManageList({ onBack }) {
             />
           </>
         );
-      case "routes":
-        return (
-          <>
-            <input
-              placeholder="Tên tuyến"
-              value={newItem.name || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, name: e.target.value })
-              }
-            />
-            <input
-              placeholder="Điểm đầu"
-              value={newItem.start || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, start: e.target.value })
-              }
-            />
-            <input
-              placeholder="Điểm cuối"
-              value={newItem.end || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, end: e.target.value })
-              }
-            />
-          </>
-        );
       default:
         return null;
     }
   };
 
-  // Pagination
-  const list = data[category];
+  // 📋 Render bảng
+  const list = data[category] || [];
   const totalPages = Math.ceil(list.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const currentItems = list.slice(startIdx, startIdx + itemsPerPage);
 
-  // Table rendering
-  const renderTableRows = () => {
-    switch (category) {
-      case "students":
-        return currentItems.map((s) => (
-          <tr key={s.id}>
-            <td>{s.id}</td>
-            <td>{s.name}</td>
-            <td>{s.class}</td>
-            <td>
-              <button className="delete-btn" onClick={() => handleDelete(s.id)}>
-                Xóa
-              </button>
-            </td>
-          </tr>
-        ));
-      case "drivers":
-        return currentItems.map((d) => (
-          <tr key={d.id}>
-            <td>{d.id}</td>
-            <td>{d.name}</td>
-            <td>{d.license}</td>
-            <td>
-              <button className="delete-btn" onClick={() => handleDelete(d.id)}>
-                Xóa
-              </button>
-            </td>
-          </tr>
-        ));
-      case "buses":
-        return currentItems.map((b) => (
-          <tr key={b.id}>
-            <td>{b.id}</td>
-            <td>{b.plate}</td>
-            <td>{b.capacity}</td>
-            <td>
-              <button className="delete-btn" onClick={() => handleDelete(b.id)}>
-                Xóa
-              </button>
-            </td>
-          </tr>
-        ));
-      case "routes":
-        return currentItems.map((r) => (
-          <tr key={r.id}>
-            <td>{r.id}</td>
-            <td>{r.name}</td>
-            <td>{r.start}</td>
-            <td>{r.end}</td>
-            <td>
-              <button className="delete-btn" onClick={() => handleDelete(r.id)}>
-                Xóa
-              </button>
-            </td>
-          </tr>
-        ));
-      default:
-        return null;
-    }
-  };
-
   const renderTableHeader = () => {
     switch (category) {
-      case "students":
+      case "routes":
         return (
           <tr>
             <th>ID</th>
-            <th>Họ tên</th>
-            <th>Lớp</th>
-            <th>Hành động</th>
-          </tr>
-        );
-      case "drivers":
-        return (
-          <tr>
-            <th>ID</th>
-            <th>Tên tài xế</th>
-            <th>Bằng lái</th>
+            <th>Tên tuyến</th>
+            <th>Mô tả</th>
             <th>Hành động</th>
           </tr>
         );
@@ -251,20 +200,51 @@ export default function ManageList({ onBack }) {
           <tr>
             <th>ID</th>
             <th>Biển số</th>
+            <th>Model</th>
             <th>Sức chứa</th>
             <th>Hành động</th>
           </tr>
         );
+      default:
+        return null;
+    }
+  };
+
+  const renderTableRows = () => {
+    switch (category) {
       case "routes":
-        return (
-          <tr>
-            <th>ID</th>
-            <th>Tên tuyến</th>
-            <th>Điểm đầu</th>
-            <th>Điểm cuối</th>
-            <th>Hành động</th>
+        return currentItems.map((r) => (
+          <tr key={r.route_id || r.id}>
+            <td>{r.route_id || r.id}</td>
+            <td>{r.route_name || r.name || "Không có tên"}</td>
+            <td>{r.description || r.detail || "—"}</td>
+            <td>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(r.route_id || r.id)}
+              >
+                Xóa
+              </button>
+            </td>
           </tr>
-        );
+        ));
+      case "buses":
+        return currentItems.map((b) => (
+          <tr key={b.bus_id || b.id}>
+            <td>{b.bus_id || b.id}</td>
+            <td>{b.license_plate}</td>
+            <td>{b.model}</td>
+            <td>{b.capacity}</td>
+            <td>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(b.bus_id || b.id)}
+              >
+                Xóa
+              </button>
+            </td>
+          </tr>
+        ));
       default:
         return null;
     }
@@ -275,45 +255,67 @@ export default function ManageList({ onBack }) {
       <h3>Quản lý danh sách</h3>
       <div className="category-select">
         <label>Chọn danh mục: </label>
-        <select value={category} onChange={handleChangeCategory}>
-          <option value="students">Học sinh</option>
-          <option value="drivers">Tài xế</option>
-          <option value="buses">Xe buýt</option>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
           <option value="routes">Tuyến đường</option>
+          <option value="buses">Xe buýt</option>
+          <option value="drivers">Tài xế</option>
+          <option value="students">Học sinh</option>
         </select>
       </div>
 
-      <form className="add-form" onSubmit={handleAdd}>
-        {renderInputFields()}
-        <button type="submit" className="add-btn">
-          Thêm
-        </button>
-      </form>
 
       <table className="list-table">
         <thead>{renderTableHeader()}</thead>
         <tbody>{renderTableRows()}</tbody>
       </table>
 
-      {/* Pagination */}
+      {/* Phân trang */}
       <div className="pagination">
         <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((p) => p - 1)}
         >
-        -
+          -
         </button>
         <span>
-          Trang {currentPage}/{totalPages}
+          Trang {currentPage}/{totalPages || 1}
         </span>
         <button
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((p) => p + 1)}
         >
-        +
+          +
         </button>
       </div>
+<button className="add-btn" onClick={() => setShowForm(true)}>
+        + Thêm mới
+      </button>
 
+      {showForm && (
+        <div className="overlay">
+          <div className="popup-form">
+            <h3>🚌 Thêm {category === "drivers" ? "tài xế" : category === "students" ? "học sinh" : category}</h3>
+            <form onSubmit={handleAdd}>
+              {renderInputFields()}
+              <div className="form-buttons">
+                <button type="submit" className="add-btn">
+                  Lưu
+                </button>
+                <button
+                  type="button"
+                  className="cancel-form-btn"
+                  onClick={() => setShowForm(false)}
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       <button onClick={onBack} className="cancel-btn" style={{ marginTop: 15 }}>
         Quay lại
       </button>
