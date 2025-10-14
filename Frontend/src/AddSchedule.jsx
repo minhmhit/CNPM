@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./AddSchedule.css";
 
-export default function AddSchedule({ onBack }) {
+export default function AddSchedule({ onBack, onAdd }) {
   const [schedule, setSchedule] = useState({
     id: "",
     driver: "",
@@ -18,8 +18,7 @@ export default function AddSchedule({ onBack }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Đã thêm lịch trình mới:\n${JSON.stringify(schedule, null, 2)}`);
-    onBack(); // Quay lại trang quản lý sau khi thêm
+    onAdd(schedule); // 👉 Gọi hàm thêm lịch trình thật
   };
 
   return (
