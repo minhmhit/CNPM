@@ -24,6 +24,7 @@ router.put("/session/:session_id/end", endSession);
 router.put("/update/location", updateLocation);
 router.post("/attendance", markAttendance);
 // Routes cho admin quản lý tài xế
+
 router.get("/:driver_id", getDriverProfile);
 router.put("/edit/:driver_id", updateDriverInfo);
 
