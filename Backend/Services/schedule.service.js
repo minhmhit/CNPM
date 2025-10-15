@@ -39,19 +39,63 @@ const getBusSchedule = async (bus_id) => {
         throw error;
     }
 };
-const getStudentSchedule = async (student_id) => {
+const addStudentToSchedule = async (schedule_id, student_id) => {
     try {
-        let result = await schedule.getStudentSchedule(student_id);
+        let result = await schedule.addStudentToSchedule(schedule_id, student_id);
         return result;
     } catch (error) {
         throw error;
     }
 };
+const removeStudentFromSchedule = async (schedule_id, student_id) => {
+    try {
+        let result = await schedule.removeStudentFromSchedule(schedule_id, student_id);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+const addMultipleStudentsToSchedule = async (schedule_id, student_ids) => {
+    try {
+        let result = await schedule.addMultipleStudentsToSchedule(schedule_id, student_ids);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+const getStudentsBySchedule = async (schedule_id) => {
+    try {
+        let result = await schedule.getStudentsBySchedule(schedule_id);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+const updateStudentPickupStatus = async (schedule_id, student_id, status) => {
+    try {
+        let result = await schedule.updateStudentPickupStatus(schedule_id, student_id, status);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+const updateStudentDropoffStatus = async (schedule_id, student_id, status) => {
+    try {
+        let result = await schedule.updateStudentDropoffStatus(schedule_id, student_id, status);
+        return result;
+    } catch (error) {
+        throw error;
+    }   
+};
+
 module.exports = {
     createSchedule,
     updateSchedule,
     deleteSchedule,
-    getDriverSchedule,
-    getBusSchedule,
-    getStudentSchedule
+    addStudentToSchedule,
+    removeStudentFromSchedule,
+    addMultipleStudentsToSchedule,
+    getStudentsBySchedule,
+    updateStudentPickupStatus,
+    updateStudentDropoffStatus,
 };

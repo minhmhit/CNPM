@@ -11,20 +11,20 @@ const createSchedule = async (scheduleData) => {
           bus_id,
           route_id,
           date,
-          student_id,
+          
           start_time,
           end_time,
         } = scheduleData;
         const sql = `
-            INSERT INTO schedules (driver_id, bus_id, route_id, date, student_id, start_time, end_time)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO schedules (driver_id, bus_id, route_id, date,  start_time, end_time)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
         const [result] = await pool.query(sql, [
           driver_id,
           bus_id,
           route_id,
           date,
-          student_id,
+          
           start_time,
           end_time,
         ]);
@@ -41,7 +41,6 @@ const updateSchedule = async (schedule_id, scheduleData) => {
           bus_id,
           route_id,
           date,
-          student_id,
           start_time,
           end_time,
         } = scheduleData;
@@ -59,10 +58,7 @@ const updateSchedule = async (schedule_id, scheduleData) => {
           fields.push("route_id = ?");
           values.push(route_id);
         }
-        if (student_id) {
-          fields.push("student_id = ?");
-          values.push(student_id);
-        }
+        
         if (start_time) {
           fields.push("start_time = ?");
           values.push(start_time);
@@ -116,20 +112,119 @@ const getBusSchedule = async (bus_id) => {
         throw error;
     }
 };
-const getStudentSchedule = async (student_id) => {
+// thêm 1 hs
+const addStudentToSchedule = async (schedule_id, student_id) => {
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO schedule_students (schedule_id, student_id) VALUES (?, ?)",
+      [schedule_id, student_id]
+    );
+    return result;
+  } catch (error) {
+    console.error("Lỗi khi thêm học sinh vào lịch trình:", error);
+    throw error;
+  }
+};
+// thêm nhiều hs
+const addMultipleStudentsToSchedule = async (schedule_id, student_ids) => {
+  try {
+    const values = student_ids.map((student_id) => [schedule_id, student_id]);
+    const [result] = await pool.query(
+      "INSERT INTO schedule_students (schedule_id, student_id) VALUES ?",
+      [values]
+    );
+    return result;
+  } catch (error) {
+    console.error("Lỗi khi thêm nhiều học sinh vào lịch trình:", error);
+    throw error;
+  }
+};
+const removeStudentFromSchedule = async (schedule_id, student_id) => {
+  try {
+    const [result] = await pool.query(
+      "DELETE FROM schedule_students WHERE schedule_id = ? AND student_id = ?",
+      [schedule_id, student_id]
+    );
+    return result;
+  } catch (error) {
+    console.error("Lỗi khi xóa học sinh khỏi lịch trình:", error);
+    throw error;
+  }
+};
+
+const getStudentsBySchedule = async (schedule_id) => {
+  try {
+    const [rows] = await pool.query(
+      `
+            SELECT 
+                ss.id,
+                ss.schedule_id,
+                ss.student_id,
+                ss.pickup_status,
+                ss.dropoff_status,
+                
+                s.name as student_name,
+                s.className,
+                u.username,
+                u.email,
+                sra.pickup_stop_id,
+                sra.dropoff_stop_id,
+                pickup_stop.stop_name as pickup_stop_name,
+                dropoff_stop.stop_name as dropoff_stop_name
+            FROM schedule_students ss
+            JOIN students s ON ss.student_id = s.student_id
+            JOIN users u ON s.userid = u.userid
+            LEFT JOIN student_route_assignments sra ON s.student_id = sra.student_id
+            LEFT JOIN stop_points pickup_stop ON sra.pickup_stop_id = pickup_stop.stop_id
+            LEFT JOIN stop_points dropoff_stop ON sra.dropoff_stop_id = dropoff_stop.stop_id
+            WHERE ss.schedule_id = ?
+            ORDER BY pickup_stop.stop_order ASC, s.name ASC
+        `,
+      [schedule_id]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách học sinh theo lịch trình:", error);
+    throw error;
+  }
+};
+
+const updateStudentPickupStatus = async (schedule_id, student_id, status, pickup_time = null) => {
     try {
-        const sql = `SELECT * FROM schedules WHERE student_id = ? ORDER BY start_time DESC`;
-        const [rows] = await pool.query(sql, [student_id]);
-        return rows;
+        const [result] = await pool.query(
+            "UPDATE schedule_students SET pickup_status = ?, pickup_time = ? WHERE schedule_id = ? AND student_id = ?",
+            [status, pickup_time || new Date(), schedule_id, student_id]
+        );
+        return result;
     } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái đón học sinh:", error);
         throw error;
     }
 };
+
+const updateStudentDropoffStatus = async (schedule_id, student_id, status, dropoff_time = null) => {
+    try {
+        const [result] = await pool.query(
+            "UPDATE schedule_students SET dropoff_status = ?, dropoff_time = ? WHERE schedule_id = ? AND student_id = ?",
+            [status, dropoff_time || new Date(), schedule_id, student_id]
+        );
+        return result;
+    } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái trả học sinh:", error);
+        throw error;
+    }
+};
+
 module.exports = {
     createSchedule,
     updateSchedule,
     deleteSchedule,
     getDriverSchedule,
     getBusSchedule,
-    getStudentSchedule
+    addStudentToSchedule,
+    removeStudentFromSchedule,
+    addMultipleStudentsToSchedule,
+    getStudentsBySchedule,
+    updateStudentPickupStatus,
+    updateStudentDropoffStatus,
 };
