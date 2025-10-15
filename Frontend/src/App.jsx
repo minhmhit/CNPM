@@ -8,6 +8,7 @@ import Schedule from "./Schedule.jsx";
 import Student from "./Student.jsx";
 import Report from "./Report.jsx";
 import Alert from "./Alert.jsx";
+import ParentLayout from "./parent/Layout.jsx"; 
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/driver/student" element={<Student />}/>
       <Route path="/driver/report" element={<Report />}/>
       <Route path="/driver/alert" element={<Alert />}/>
+      <Route path="/parent/*" element={<ParentLayout />} />
     </Routes>
   );
 }
