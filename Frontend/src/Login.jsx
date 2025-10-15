@@ -6,52 +6,75 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import "./Login.css";
 import "./App.css";
 
+import axios from "axios";
+
+
+
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // Mock dữ liệu tài khoản
-  const users = {
-    "admin@gmail.com": "admin",
-    "driver@gmail.com": "driver",
-    "parent@gmail.com": "parent",
-  };
-
-  const handleLogin = (e) => {
+  //get data frome backend
+  // Lấy data từ backend
+  const handleLogin = async (e) => {
     e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/user/login",
+        {
+          email,
+          password,
+        }
+      );
 
-    if (!users[email]) {
-      alert("Tài khoản không hợp lệ");
-      return;
-    }
+      // Lấy role từ cấu trúc data đúng
+      const { userid , role, username, accessToken } = response.data.data.result;
 
-    if (password !== "123456") {
-      alert("Sai mật khẩu");
-      return;
-    }
+      console.log("User role:", role);
+      console.log("Username:", username);
 
-    // Đăng nhập thành công
-    alert("Đăng nhập thành công");
-    const role = users[email];
+      // Lưu token và thông tin user vào localStorage
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("userRole", role);
+      localStorage.setItem("username", username);
+      localStorage.setItem("email", email);
+      localStorage.setItem("userId", userid);
 
-    // Điều hướng theo vai trò
-    switch (role) {
-      case "admin":
-        navigate("/admin");
-        break;
-      case "driver":
-        navigate("/driver");
-        break;
-      case "parent":
-        navigate("/parents"); // ✅ Đã sửa lại đúng thư mục
-        break;
-      default:
-        navigate("/");
+      alert("Đăng nhập thành công");
+
+      // Redirect dựa trên role
+      switch (role) {
+        case "admin":
+          navigate("/admin");
+          break;
+        case "driver":
+          navigate("/driver");
+          break;
+        case "student":
+          navigate("/parents");
+          break;
+        default:
+          navigate("/");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+
+      // Hiển thị lỗi cụ thể nếu có
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        alert(error.response.data.message);
+      } else {
+        alert("Đăng nhập thất bại");
+      }
     }
   };
 
+ 
   return (
     <div className="app">
       <div className="navbar">
