@@ -1,4 +1,5 @@
 const driverModel = require("../Models/driver.model");
+const scheduleService = require("./schedule.service");
 const NotificationService = require("../Services/notification.service");
 
 
@@ -84,7 +85,7 @@ const getMyProfile = async (req, res) => {
 
 const getMySchedules = async (req, res) => {
   try {
-    const { userid } = req.user;
+    const { userid } = req.params;
 
     const driver = await driverModel.getDriverByUserId(userid);
     if (!driver) {
@@ -111,7 +112,7 @@ const getMySchedules = async (req, res) => {
 
 const getMySessions = async (req, res) => {
   try {
-    const { userid } = req.user;
+    const { userid } = req.params;
     const { date } = req.query;
 
     const driver = await driverModel.getDriverByUserId(userid);
@@ -142,33 +143,23 @@ const getMySessions = async (req, res) => {
 
 const startSession = async (req, res) => {
   try {
-    const { userid } = req.user;
-    const { schedule_id } = req.body;
-
-    const driver = await driverModel.getDriverByUserId(userid);
-    if (!driver) {
-      return res.status(404).json({
-        success: false,
-        message: "Không tìm thấy thông tin tài xế",
-      });
-    }
-
+    
+    const { session_id } = req.body;
     const result = await driverModel.startDriverSession(
-      driver.driver_id,
-      schedule_id
+      session_id
     );
     // Gửi thông báo khi bắt đầu tuyến
-    const schedule = await driverModel.getScheduleById(schedule_id);
-    await NotificationService.notifyRouteStart(
-      schedule.route_name,
-      driver.name,
-      schedule.estimated_time
-    );
+    // const schedule = await driverModel.getScheduleById(schedule_id);
+    // await NotificationService.notifyRouteStart(
+    //   schedule.route_name,
+    //   driver.name,
+    //   schedule.estimated_time
+    // );
 
     res.status(200).json({
       success: true,
       message: "Bắt đầu phiên làm việc thành công",
-      data: { session_id: result.insertId },
+      data: { Session_id: result }
     });
   } catch (error) {
     res.status(500).json({
@@ -181,20 +172,10 @@ const startSession = async (req, res) => {
 
 const endSession = async (req, res) => {
   try {
-    const { userid } = req.user;
     const { session_id } = req.params;
 
-    const driver = await driverModel.getDriverByUserId(userid);
-    if (!driver) {
-      return res.status(404).json({
-        success: false,
-        message: "Không tìm thấy thông tin tài xế",
-      });
-    }
-
     const result = await driverModel.endDriverSession(
-      session_id,
-      driver.driver_id
+      session_id
     );
 
     if (result.affectedRows === 0) {
@@ -207,6 +188,7 @@ const endSession = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Kết thúc phiên làm việc thành công",
+      data: { endSession_id: result }
     });
   } catch (error) {
     res.status(500).json({

@@ -48,10 +48,11 @@ const getDriverSchedules = async (driver_id) => {
                 sch.schedule_id, sch.date, sch.start_time, sch.end_time, sch.status,
                 r.name as route_name, r.description as route_description,
                 v.license_plate, v.model as bus_model, v.capacity,
-                COUNT(DISTINCT sch.student_id) as student_count
+                COUNT(DISTINCT ss.student_id) as student_count
             FROM schedules sch
             LEFT JOIN routes r ON sch.route_id = r.route_id
             LEFT JOIN vehicles v ON sch.bus_id = v.bus_id
+            LEFT JOIN schedule_students ss ON sch.schedule_id = ss.schedule_id
             WHERE sch.driver_id = ?
             GROUP BY sch.schedule_id
             ORDER BY sch.date DESC, sch.start_time DESC
@@ -96,26 +97,30 @@ const getDriverSessions = async (driver_id, date = null) => {
   }
 };
 
-const startDriverSession = async (driver_id, schedule_id) => {
+const startDriverSession = async (session_id) => {
   try {
     const [result] = await pool.query(
-      "INSERT INTO driver_sessions (driver_id, schedule_id, start_time, status) VALUES (?, ?, NOW(), 'active')",
-      [driver_id, schedule_id]
+      "UPDATE driver_sessions SET start_time = NOW(), status = 'started' WHERE session_id = ?",
+      [session_id]
     );
-    return result;
+    if (result.affectedRows) { newSession_id = session_id; }
+    return newSession_id;
   } catch (error) {
     console.error("lỗi khi bắt đầu phiên làm việc:", error);
     throw error;
   }
 };
 
-const endDriverSession = async (session_id, driver_id) => {
+const endDriverSession = async (session_id) => {
   try {
     const [result] = await pool.query(
-      "UPDATE driver_sessions SET end_time = NOW(), status = 'completed' WHERE session_id = ? AND driver_id = ?",
-      [session_id, driver_id]
+      "UPDATE driver_sessions SET end_time = NOW(), status = 'completed' WHERE session_id = ?",
+      [session_id]
     );
-    return result;
+    if (result.affectedRows) {
+      endSession_id = session_id;
+    }
+    return endSession_id;
   } catch (error) {
     console.error("lỗi khi kết thúc phiên làm việc:", error);
     throw error;
@@ -155,10 +160,14 @@ const getAssignedStudents = async (driver_id, schedule_id = null) => {
                 s.student_id, s.name, s.className,
                 u.username, u.email,
                 sch.schedule_id, sch.date, sch.start_time,
+                ss.pickup_status, ss.dropoff_status,
+                ss.pickup_time, ss.dropoff_time,
                 pickup.stop_name as pickup_stop,
+                pickup.stop_order,
                 dropoff.stop_name as dropoff_stop
             FROM schedules sch
-            JOIN students s ON sch.student_id = s.student_id
+            JOIN schedule_students ss ON sch.schedule_id = ss.schedule_id
+            JOIN students s ON ss.student_id = s.student_id
             JOIN users u ON s.userid = u.userid
             LEFT JOIN student_route_assignments sra ON s.student_id = sra.student_id
             LEFT JOIN stop_points pickup ON sra.pickup_stop_id = pickup.stop_id

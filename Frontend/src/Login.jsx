@@ -45,7 +45,7 @@ export default function Login() {
         navigate("/driver");
         break;
       case "parent":
-        navigate("/parent"); // ✅ Đã sửa lại đúng thư mục
+        navigate("/parents"); // ✅ Đã sửa lại đúng thư mục
         break;
       default:
         navigate("/");
