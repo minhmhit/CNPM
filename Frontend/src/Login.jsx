@@ -11,11 +11,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  // mock data
+
+  // Mock dữ liệu tài khoản
   const users = {
     "admin@gmail.com": "admin",
     "driver@gmail.com": "driver",
-    "parents@gmail.com": "parents",
+    "parent@gmail.com": "parent",
   };
 
   const handleLogin = (e) => {
@@ -30,10 +31,25 @@ export default function Login() {
       alert("Sai mật khẩu");
       return;
     }
+
     // Đăng nhập thành công
     alert("Đăng nhập thành công");
     const role = users[email];
-    navigate(`/${role}`);
+
+    // Điều hướng theo vai trò
+    switch (role) {
+      case "admin":
+        navigate("/admin");
+        break;
+      case "driver":
+        navigate("/driver");
+        break;
+      case "parent":
+        navigate("/parents"); // ✅ Đã sửa lại đúng thư mục
+        break;
+      default:
+        navigate("/");
+    }
   };
 
   return (
@@ -44,6 +60,7 @@ export default function Login() {
           <span className="navbar-title">Bus map</span>
         </div>
       </div>
+
       <div className="center-box">
         <div className="login-page">
           <div className="login-box">
@@ -57,6 +74,7 @@ export default function Login() {
                 onClick={() => navigate("/")} // bấm X về Home
               />
             </div>
+
             <form className="login-form" onSubmit={handleLogin}>
               <label>Email</label>
               <div className="input-box">
@@ -67,6 +85,7 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
+
               <label>Password</label>
               <div className="input-box">
                 <input
@@ -87,6 +106,7 @@ export default function Login() {
                 Đăng nhập
               </button>
             </form>
+
             <div className="login-links">
               <a href="#">Quên mật khẩu</a>
             </div>

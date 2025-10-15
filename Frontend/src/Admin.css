@@ -17,17 +17,21 @@
     width: 20%;
     padding-right: 0%;
 }
-.display-info{
-    width: 85%;
-    height: 100%;
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
+.display-info {
+  width: 85%;
+  min-height: calc(100vh - 60px);
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-sizing: border-box;
 }
+
 .side-panel{
     width: 15%;
     height: 100%;
@@ -35,6 +39,7 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    
 }
 .side-panel button{
     width: 100%;
@@ -76,4 +81,277 @@
     color: rgb(119, 19, 249);
     cursor: pointer;
     color : white;
+}
+/* Send Messgae*/
+.send-message-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  height: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.send-message-container h3 {
+  color: #4f46e5;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.send-message-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.send-message-form select,
+.send-message-form textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  resize: none;
+}
+
+.send-message-form textarea {
+  min-height: 100px;
+}
+
+.send-btn {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.send-btn:hover {
+  background-color: #4338ca;
+}
+.send-message-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+  margin-left: 85%;
+}
+
+.cancel-btn:hover {
+  background-color: #bbb;
+}
+/* QL Dnah sách*/
+.manage-list-container {
+  width: 100%;
+  background: white;
+  padding: 10px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.manage-list-container h3 {
+  color: #4f46e5;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.category-select select {
+  padding: 8px 14px;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.add-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.add-form input {
+  padding: 10px;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.add-btn {
+  background-color: #2acc2d;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-btn:hover {
+  background-color: #2e982a;
+}
+
+/* Bảng*/
+.list-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  text-align: center;
+  font-size: 15px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.list-table thead {
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 600;
+}
+
+.list-table th,
+.list-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.list-table tbody tr:hover {
+  background-color: #f4f4ff;
+  transition: 0.2s;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+.cancel-btn {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cancel-btn:hover {
+  background-color: #4b5563;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.popup-form {
+  background: #fff;
+  border-radius: 15px;
+  padding: 25px 35px;
+  width: 400px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  text-align: left;
+  animation: popIn 0.3s ease;
+}
+
+.popup-form h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.popup-form input, 
+.popup-form select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+.cancel-form-btn {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+.cancel-form-btn:hover {
+  background-color: #bbb;
+}
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
