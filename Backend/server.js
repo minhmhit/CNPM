@@ -3,9 +3,17 @@ const connection =  require('./config/connection_mysql');
 
 const express = require('express');
 const app = express();
-const createError = require('http-errors');
+const http = require('http');
+const server = http.createServer(app);
+const setupWebSocket = require('./socket/websocket');
+// Thiết lập WebSocket với server
+const io = setupWebSocket(server);
 
 const PORT = process.env.PORT || 5000;
+
+app.set('io', io);
+
+
 
 //import routes
 const AttendanceRoute = require('./Routes/attendance.route');

@@ -17,6 +17,22 @@ const getBusLocation = async (bus_id) => {
     }   
 };
 
+const saveLocation = async (locationData) => {
+    try {
+      const { bus_id, driver_id, latitude, longitude } = locationData;
+      
+      const [result] = await pool.execute(
+        'INSERT INTO live_tracking (bus_id, driver_id, latitude, longitude) VALUES (?, ?, ?, ?)',
+        [bus_id, driver_id, latitude, longitude]
+      );
+      
+      return result.insertId;
+    } catch (error) {
+      console.error('Error saving location:', error);
+      throw error;
+    }
+};
+
 const getBusHistory = async (bus_id) => {
     try {
         const sql = `
@@ -63,4 +79,5 @@ module.exports = {
     getBusHistory,
     getDriverHistory,
     updateBusLocation,
+    saveLocation
 };

@@ -233,7 +233,7 @@ const updateLocation = async (req, res) => {
 
 const getMyLocation = async (req, res) => {
   try {
-    const { userid } = req.user;
+    const { userid } = req.params;
 
     const driver = await driverModel.getDriverByUserId(userid);
     if (!driver) {
