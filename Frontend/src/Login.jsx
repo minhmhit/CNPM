@@ -30,19 +30,18 @@ export default function Login() {
       );
 
       // Lấy role từ cấu trúc data đúng
-      const { userid , role, username, accessToken } = response.data.data.result;
-
-      console.log("User role:", role);
-      console.log("Username:", username);
-
+      const { id , role, username,} = response.data.data.result;
+      const { accessToken } = response.data.data;
+      console.log("Access Token:", accessToken);
       // Lưu token và thông tin user vào localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("userRole", role);
       localStorage.setItem("username", username);
       localStorage.setItem("email", email);
-      localStorage.setItem("userId", userid);
+      localStorage.setItem("userId", id);
+      //show toast success
 
-      alert("Đăng nhập thành công");
+      // alert("Đăng nhập thành công");
 
       // Redirect dựa trên role
       switch (role) {
