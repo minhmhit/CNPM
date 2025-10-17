@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// import "./AddSchedule.css";
+import "./AddSchedule.css";
 
 export default function AddSchedule({ onBack, onAdd }) {
   const [schedule, setSchedule] = useState({

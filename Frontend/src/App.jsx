@@ -20,25 +20,25 @@ export default function App() {
       <Route
         path="/driver"
         element={
-          <ProtectedRoute roles={["driver"]}>
             <Driver />
-          </ProtectedRoute>
+          // <ProtectedRoute roles={["driver"]}>
+          // </ProtectedRoute>
         }
       />
       <Route
         path="/admin"
         element={
-          <ProtectedRoute roles={["admin"]}>
             <Admin />
-          </ProtectedRoute>
+          // <ProtectedRoute roles={["admin"]}>
+          // </ProtectedRoute>
         }
       />
       <Route
         path="/parents"
         element={
-          <ProtectedRoute roles={["student"]}>
             <Parents />
-          </ProtectedRoute>
+          // <ProtectedRoute roles={["student"]}>
+          // </ProtectedRoute>
         }
       />
       <Route path="/unauthorized" element={<Unauthorized />} />
