@@ -13,8 +13,6 @@ const PORT = process.env.PORT || 5000;
 
 app.set('io', io);
 
-
-
 //import routes
 const AttendanceRoute = require('./Routes/attendance.route');
 const BusRoute = require('./Routes/bus.route');
