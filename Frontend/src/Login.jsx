@@ -16,6 +16,34 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  /***
+   * tạo data account mẫu để test
+   */
+  const register = async (e) => {
+    e.preventDefault();
+    try {
+      const username = "student10";
+      const role = "student";
+      const email = "student100@gmail.com";
+      const password = "123456789";
+      const res = await axios.post(
+        "http://localhost:5000/api/v1/user/register",
+        {
+          username,
+          email,
+          password,
+          role,
+        }
+      );
+      if(res){
+        console.log("create account success", res.data);
+      }
+    } catch (error) {
+      console.log ("create account error", error);
+      
+    }
+  }
+  
   //get data frome backend
   // Lấy data từ backend
   const handleLogin = async (e) => {
@@ -132,6 +160,7 @@ export default function Login() {
             <div className="login-links">
               <a href="#">Quên mật khẩu</a>
             </div>
+            <button onClick={register}>tạo tài khoản test</button>
           </div>
         </div>
       </div>
