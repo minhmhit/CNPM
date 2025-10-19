@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import "../Parents.css";
 
@@ -9,12 +9,14 @@ export default function Notifications({ onNavigate }) {
         <button className="back-btn" onClick={() => onNavigate && onNavigate("map")}>
           <FiArrowLeft />
         </button>
-        <h2>THÔNG BÁO</h2>
+        <h2>{"TH\u00d4NG B\u00c1O"}</h2>
       </div>
 
       <div className="notification-box">
-        <p>Không có thông báo !</p>
+        <p>{"Kh\u00f4ng c\u00f3 th\u00f4ng b\u00e1o !"}</p>
       </div>
     </div>
   );
 }
+
+

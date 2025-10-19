@@ -1,12 +1,12 @@
 import React from "react";
 import "../Parents.css";
 import logo from "../pics/logo.png";
-import studentImg from "../pics/account-icon.png"; // tạm thời dùng ảnh có sẵn
+import studentImg from "../pics/account-icon.png";
 
 export default function Profile() {
   return (
     <div className="student-card">
-      {/* Header thẻ */}
+      {/* Header */}
       <div className="student-header">
         <img src={logo} alt="SGU logo" className="student-logo" />
         <div>
@@ -15,18 +15,19 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Nội dung */}
+      {/* Body */}
       <div className="student-body">
         <img src={studentImg} alt="student" className="student-photo" />
 
         <div className="student-info">
           <p><b>Họ và tên:</b> Nguyễn Gia Khánh</p>
           <p><b>Sinh ngày:</b> 11 / 12 / 2005</p>
+          <p><b>Lớp:</b> DCT1233</p>
           <p><b>Địa chỉ:</b> 26/19/5d Lâm Hoành, Bình Tân, TP.HCM</p>
         </div>
       </div>
 
-      {/* Mã sinh viên + mã vạch */}
+      {/* Footer */}
       <div className="student-footer">
         <p className="student-id">3123410163</p>
         <div className="barcode"></div>
@@ -34,3 +35,4 @@ export default function Profile() {
     </div>
   );
 }
+
