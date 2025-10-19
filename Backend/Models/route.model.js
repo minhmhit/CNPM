@@ -96,9 +96,60 @@ const getAllRoutes = async () => {
   }
 };
 
+// Thêm điểm dừng vào chuyến đường
+const addStopPoints = async (route_id, stop_points) => {
+  try {
+    if (Array.isArray(stop_points) && stop_points.length > 0) {
+      for (let i = 0; i < stop_points.length; i++) {
+        const stop = stop_points[i];
+        // Nếu phần tử là object chứa lat/lng, chèn 5 cột, ngược lại chèn 3 cột
+        if (stop && typeof stop === "object") {
+          const stopName = stop.stop_name || stop.name || "";
+          const lat = stop.latitude ?? stop.lat ?? null;
+          const lng = stop.longitude ?? stop.lng ?? null;
+          const order = stop.stop_order ?? stop.order ?? i + 1;
+          const stopSql =
+            "INSERT INTO stop_points (route_id, stop_name, latitude, longitude, stop_order) VALUES (?, ?, ?, ?, ?)";
+          await pool.query(stopSql, [route_id, stopName, lat, lng, order]);
+        } else {
+          // stop là chuỗi tên điểm dừng
+          const stopSql =
+            "INSERT INTO stop_points (route_id, stop_name, stop_order) VALUES (?, ?, ?)";
+          await pool.query(stopSql, [route_id, stop, i + 1]);
+        }
+      }
+    }
+    return { route_id, stop_points };
+  } catch (error) {
+    console.error("Error adding stop points:", error);
+    throw error;
+  }
+};
+
+//lấy các điểm dừng theo schedule_id
+const getStopPointsByScheduleId = async (schedule_id) => {
+  try {
+    const sql = `
+      SELECT sp.stop_id, sp.stop_name, sp.stop_order, r.name AS route_name
+      FROM stop_points sp
+      JOIN schedules s ON sp.route_id = s.route_id
+      JOIN routes r ON sp.route_id = r.route_id
+      WHERE s.schedule_id = ?
+      ORDER BY sp.stop_order
+    `;
+    const [stop_points] = await pool.query(sql, [schedule_id]);
+    return stop_points;
+  } catch (error) {
+    console.error("Error getting stop points by schedule ID:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   addRoute,
   updateRoute,
   deleteRoute,
+  getStopPointsByScheduleId,
+  addStopPoints,
   getAllRoutes,
 };

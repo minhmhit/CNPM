@@ -3,11 +3,29 @@ const { pool } = require("../config/connection_mysql");
 const addStudentInfo = async (student_id, studentData) => {
   try {
     const { className, pickup_location, dropoff_location } = studentData;
+    // Kiểm tra xem pickup/dropoff (nếu không null/undefined) có tồn tại trong stop_points không
+    const checkSql = "SELECT stop_id FROM stop_points WHERE stop_id = ?";
+
+    if (pickup_location != null) {
+      const [pickupRows] = await pool.query(checkSql, [pickup_location]);
+      if (pickupRows.length === 0) {
+        throw new Error("pickup_location không tồn tại trong stop_points");
+      }
+    }
+
+    if (dropoff_location != null) {
+      const [dropoffRows] = await pool.query(checkSql, [dropoff_location]);
+      if (dropoffRows.length === 0) {
+        throw new Error("dropoff_location không tồn tại trong stop_points");
+      }
+    }
+
     const [result] = await pool.query(
       "UPDATE students SET className = ?, pickup_location = ?, dropoff_location = ? WHERE student_id = ?",
       [className, pickup_location, dropoff_location, student_id]
     );
-    return result;
+    const data = { student_id, ...studentData };
+    return { data, affectedRows: result.affectedRows };
   } catch (error) {
     console.error("lỗi khi thêm thông tin học sinh:", error);
     throw error;
@@ -16,10 +34,17 @@ const addStudentInfo = async (student_id, studentData) => {
 
 const getStudentById = async (student_id) => {
   try {
-    const [rows] = await pool.query(
-      "SELECT s.*, u.username, u.email FROM students s JOIN users u ON s.userid = u.userid WHERE s.student_id = ?",
-      [student_id]
-    );
+    const sql =`SELECT 
+         s.*,  u.email,
+         pickup.stop_name AS pickup_name, pickup.latitude AS pickup_latitude, pickup.longitude AS pickup_longitude,
+         dropoff.stop_name AS dropoff_name, dropoff.latitude AS dropoff_latitude, dropoff.longitude AS dropoff_longitude
+       FROM students s
+       JOIN users u ON s.userid = u.userid
+       LEFT JOIN stop_points pickup ON s.pickup_location = pickup.stop_id
+       LEFT JOIN stop_points dropoff ON s.dropoff_location = dropoff.stop_id
+       WHERE s.student_id = ?`
+
+    const [rows] = await pool.query(sql, [student_id]);
     return rows[0];
   } catch (error) {
     console.error("lỗi khi lấy thông tin học sinh:", error);
@@ -30,7 +55,15 @@ const getStudentById = async (student_id) => {
 const getStudentByUserId = async (userid) => {
   try {
     const [rows] = await pool.query(
-      "SELECT s.*, u.username, u.email FROM students s JOIN users u ON s.userid = u.userid WHERE s.userid = ?",
+      `SELECT 
+         s.*, u.username, u.email,
+         pickup.stop_name AS pickup_name, pickup.latitude AS pickup_latitude, pickup.longitude AS pickup_longitude,
+         dropoff.stop_name AS dropoff_name, dropoff.latitude AS dropoff_latitude, dropoff.longitude AS dropoff_longitude
+       FROM students s
+       JOIN users u ON s.userid = u.userid
+       LEFT JOIN stop_points pickup ON s.pickup_location = pickup.stop_id
+       LEFT JOIN stop_points dropoff ON s.dropoff_location = dropoff.stop_id
+       WHERE s.userid = ?`,
       [userid]
     );
     return rows[0];
@@ -42,22 +75,24 @@ const getStudentByUserId = async (userid) => {
 
 const getStudentSchedules = async (student_id) => {
   try {
-    const [rows] = await pool.query(
-      `
-            SELECT 
-                sch.schedule_id, sch.date, sch.start_time, sch.end_time, sch.status,
-                r.name as route_name, r.description as route_description,
-                v.license_plate, v.model as bus_model,
-                d.name as driver_name, d.phone_number as driver_phone
-            FROM schedules sch
-            LEFT JOIN routes r ON sch.route_id = r.route_id
-            LEFT JOIN vehicles v ON sch.bus_id = v.bus_id
-            LEFT JOIN drivers d ON sch.driver_id = d.driver_id
-            WHERE sch.student_id = ?
-            ORDER BY sch.date DESC, sch.start_time DESC
-        `,
-      [student_id]
-    );
+    const sql = `
+            SELECT
+  s.schedule_id,  s.date,  s.start_time,  s.end_time,  s.status AS schedule_status,
+  r.route_id,  r.name AS route_name,
+  v.bus_id,  v.license_plate,  d.driver_id,  d.name AS driver_name,
+  ss.pickup_status,  ss.dropoff_status
+FROM schedule_students ss
+JOIN schedules s ON ss.schedule_id = s.schedule_id
+LEFT JOIN routes r ON s.route_id = r.route_id
+LEFT JOIN vehicles v ON s.bus_id = v.bus_id
+LEFT JOIN drivers d ON s.driver_id = d.driver_id
+LEFT JOIN student_route_assignments pra
+  ON pra.student_id = ss.student_id AND pra.route_id = s.route_id
+LEFT JOIN stop_points pstop ON pra.pickup_stop_id = pstop.stop_id
+LEFT JOIN stop_points dstop ON pra.dropoff_stop_id = dstop.stop_id
+WHERE ss.student_id = ?
+ORDER BY s.date DESC, s.start_time DESC;`;
+    const [rows] = await pool.query(sql, student_id);
     return rows;
   } catch (error) {
     console.error("lỗi khi lấy lịch trình học sinh:", error);
@@ -136,6 +171,128 @@ const getStudentNotifications = async (student_id) => {
   }
 };
 
+const checkInStudent = async (schedule_id, student_id) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    const [rows] = await conn.query(
+      `SELECT pickup_status, dropoff_status 
+      FROM schedule_students 
+      WHERE schedule_id = ? AND student_id = ? FOR UPDATE`,
+      [schedule_id, student_id]
+    );
+
+    if (rows.length === 0) {
+      // Nếu chưa có bản ghi, tạo mới với trạng thái mặc định
+      await conn.query(
+        `INSERT INTO schedule_students (schedule_id, student_id, pickup_status, dropoff_status) 
+        VALUES (?, ?, 'waiting', 'waiting')`,
+        [schedule_id, student_id]
+      );
+      // tiếp tục với trạng thái waiting
+    }
+
+    // Lấy lại trạng thái sau khi đảm bảo bản ghi tồn tại
+    const [[current]] = await conn.query(
+      `SELECT pickup_status, dropoff_status 
+      FROM schedule_students 
+      WHERE schedule_id = ? AND student_id = ? FOR UPDATE`,
+      [schedule_id, student_id]
+    );
+
+    if (current.pickup_status === "waiting") {
+      // tiến: waiting -> picked_up
+      await conn.query(
+        `UPDATE schedule_students 
+        SET pickup_status = 'picked_up' 
+        WHERE schedule_id = ? AND student_id = ?`,
+        [schedule_id, student_id]
+      );
+      await conn.query(
+        `INSERT INTO attendance_logs
+         (student_id, schedule_id, status) 
+         VALUES (?, ?, 'picked_up')`,
+        [student_id, schedule_id]
+      );
+      await conn.commit();
+      return { success: true, message: "picked_up", data: { student_id, schedule_id } };
+    } else {
+      // không cho lùi hoặc lặp
+      await conn.rollback();
+      return {
+        success: false,
+        message: `Không thể checkin: pickup_status hiện tại = ${current.pickup_status}`,
+      };
+    }
+  } catch (error) {
+    if (conn) await conn.rollback();
+    console.error("Lỗi khi checkin học sinh:", error);
+    throw error;
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+const checkOutStudent = async (schedule_id, student_id) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    const [rows] = await conn.query(
+      `SELECT pickup_status, dropoff_status 
+      FROM schedule_students 
+      WHERE schedule_id = ? AND student_id = ? FOR UPDATE`,
+      [schedule_id, student_id]
+    );
+
+    if (rows.length === 0) {
+      // Nếu chưa có bản ghi thì không thể trả (phải checkin trước)
+      await conn.rollback();
+      return {
+        success: false,
+        message: "Không có bản ghi schedule_student — không thể checkout",
+      };
+    }
+
+    const current = rows[0];
+
+    // Chỉ cho tiến: pickup must be picked_up và dropoff must be waiting
+    if (
+      current.pickup_status === "picked_up" &&
+      current.dropoff_status === "waiting"
+    ) {
+      await conn.query(
+        `UPDATE schedule_students 
+        SET dropoff_status = 'dropped_off' 
+        WHERE schedule_id = ? AND student_id = ?`,
+        [schedule_id, student_id]
+      );
+      await conn.query(
+        `INSERT INTO attendance_logs (student_id, schedule_id, status) 
+        VALUES (?, ?, 'dropped_off')`,
+        [student_id, schedule_id]
+      );
+      await conn.commit();
+      return { success: true, message: "dropped_off", data: { student_id, schedule_id } };
+    } else {
+      await conn.rollback();
+      return {
+        success: false,
+        message: `Không thể checkout: pickup_status=${current.pickup_status}, dropoff_status=${current.dropoff_status}`,
+      };
+    }
+  } catch (error) {
+    if (conn) await conn.rollback();
+    console.error("Lỗi khi checkout học sinh:", error);
+    throw error;
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
 module.exports = {
   addStudentInfo,
   getStudentById,
@@ -144,4 +301,6 @@ module.exports = {
   getStudentAttendance,
   getStudentRouteAssignment,
   getStudentNotifications,
+  checkInStudent,
+  checkOutStudent,
 };

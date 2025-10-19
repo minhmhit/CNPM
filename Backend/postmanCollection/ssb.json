@@ -215,74 +215,50 @@
 			"name": "admin",
 			"item": [
 				{
-					"name": "create",
+					"name": "get all user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "login",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "update",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "delete",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "bus",
-			"item": [
-				{
-					"name": "create",
-					"request": {
-						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "license_plate",
-									"value": "46a36336",
+									"key": "driver_id",
+									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "model",
-									"value": "toyota",
+									"key": "bus_id",
+									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "capacity",
-									"value": "40",
+									"key": "route_id",
+									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "status",
-									"value": "active",
+									"key": "student_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "start_time",
+									"value": "17:00:00",
+									"type": "text"
+								},
+								{
+									"key": "end_time",
+									"value": "19:00:00",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/bus/add",
+							"raw": "http://localhost:5000/api/v1/admin/getAllUsers",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -291,81 +267,58 @@
 							"path": [
 								"api",
 								"v1",
-								"bus",
-								"add"
+								"admin",
+								"getAllUsers"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "update",
+					"name": "get all student",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "PUT",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "model",
-									"value": "bmw",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/v1/bus/update/3",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"bus",
-								"update",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "route",
-			"item": [
-				{
-					"name": "create",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "route_name",
-									"value": "Q10 - trường",
+									"key": "driver_id",
+									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "description",
-									"value": "đường gồ ghề",
+									"key": "bus_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "route_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "start_time",
+									"value": "17:00:00",
+									"type": "text"
+								},
+								{
+									"key": "end_time",
+									"value": "19:00:00",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/route/add",
+							"raw": "http://localhost:5000/api/v1/admin/getAllStudents",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -374,30 +327,58 @@
 							"path": [
 								"api",
 								"v1",
-								"route",
-								"add"
+								"admin",
+								"getAllStudents"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "update",
+					"name": "get all driver",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "PUT",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "description",
-									"value": "đường có đại gia",
+									"key": "driver_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "bus_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "route_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "start_time",
+									"value": "17:00:00",
+									"type": "text"
+								},
+								{
+									"key": "end_time",
+									"value": "19:00:00",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/route/update/2",
+							"raw": "http://localhost:5000/api/v1/admin/getAllDrivers",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -406,56 +387,13 @@
 							"path": [
 								"api",
 								"v1",
-								"route",
-								"update",
-								"2"
-							],
-							"query": [
-								{
-									"key": "description",
-									"value": "đường có đại gia",
-									"disabled": true
-								}
+								"admin",
+								"getAllDrivers"
 							]
 						}
 					},
 					"response": []
 				},
-				{
-					"name": "delete",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "getall",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/v1/route/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"route",
-								""
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "schedule",
-			"item": [
 				{
 					"name": "createSchedule",
 					"request": {
@@ -613,6 +551,67 @@
 					"response": []
 				},
 				{
+					"name": "getbusschedule",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "driver_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "bus_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "route_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "start_time",
+									"value": "17:00:00",
+									"type": "text"
+								},
+								{
+									"key": "end_time",
+									"value": "19:00:00",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/schedule/bus/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"schedule",
+								"bus",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "getdriverschedule",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -674,50 +673,27 @@
 					"response": []
 				},
 				{
-					"name": "getbusschedule",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "them hoc sinh vao chuyen",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "driver_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "bus_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "route_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "student_id",
+									"key": "schedule_id",
 									"value": "2",
 									"type": "text"
 								},
 								{
-									"key": "start_time",
-									"value": "17:00:00",
-									"type": "text"
-								},
-								{
-									"key": "end_time",
-									"value": "19:00:00",
+									"key": "student_id",
+									"value": "9",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/schedule/bus/1",
+							"raw": "http://localhost:5000/api/v1/schedule/addStudent",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -727,7 +703,302 @@
 								"api",
 								"v1",
 								"schedule",
+								"addStudent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "xoa hoc sinh khoi chuyen",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "schedule_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "9",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/schedule/removeStudent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"schedule",
+								"removeStudent"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "bus",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "license_plate",
+									"value": "46a36336",
+									"type": "text"
+								},
+								{
+									"key": "model",
+									"value": "toyota",
+									"type": "text"
+								},
+								{
+									"key": "capacity",
+									"value": "40",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "active",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bus/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
 								"bus",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "model",
+									"value": "bmw",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/bus/update/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"bus",
+								"update",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "route",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "route_name",
+									"value": "Q10 - trường",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "đường gồ ghề",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/route/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"route",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add stop_points",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"route_id\": 2,\r\n  \"stop_points\": [\r\n    {      \r\n      \"stop_name\": \"Trạm A\",\r\n      \"latitude\": 10.762622,\r\n      \"longitude\": 106.660172,\r\n      \"stop_order\": 1\r\n    },\r\n    {      \r\n      \"stop_name\": \"Trạm B\",\r\n      \"latitude\": 10.765000,\r\n      \"longitude\": 106.662000,\r\n      \"stop_order\": 2\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/route/addStopPoint",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"route",
+								"addStopPoint"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "description",
+									"value": "đường có đại gia",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/route/update/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"route",
+								"update",
+								"2"
+							],
+							"query": [
+								{
+									"key": "description",
+									"value": "đường có đại gia",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getall",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/route/getAllRoutes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"route",
+								"getAllRoutes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getStopPointsByScheduleId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/route/getStopPointsByScheduleId/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"route",
+								"getStopPointsByScheduleId",
 								"1"
 							]
 						}
@@ -735,6 +1006,10 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "schedule",
+			"item": []
 		},
 		{
 			"name": "driver",
@@ -937,6 +1212,51 @@
 				},
 				{
 					"name": "laydshocsinhtheoscheduleid",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "schedule_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/schedule/students",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"schedule",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get location",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tracking",
+			"item": [
+				{
+					"name": "healthcheck",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -947,39 +1267,31 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "driver_id",
-									"value": "1",
+									"key": "username",
+									"value": "minh05",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "123456789",
 									"type": "text"
 								},
 								{
-									"key": "bus_id",
-									"value": "1",
+									"key": "email",
+									"value": "abcde@gmail.com",
 									"type": "text"
 								},
 								{
-									"key": "route_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "student_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "start_time",
-									"value": "17:00:00",
-									"type": "text"
-								},
-								{
-									"key": "end_time",
-									"value": "19:00:00",
-									"type": "text"
+									"key": "role",
+									"value": "student",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/schedule/1/students",
+							"raw": "http://localhost:5000/api/v1/tracking/health",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -988,9 +1300,255 @@
 							"path": [
 								"api",
 								"v1",
-								"schedule",
-								"1",
-								"students"
+								"tracking",
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "gửi vị trí mới",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/tracking/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"tracking",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "student",
+			"item": [
+				{
+					"name": "chinh thong tin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "student_id",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "dropoff_location",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "pickup_location",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "className",
+									"value": "3A",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/updateInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"updateInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lay thong tin ca nhan",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userid",
+									"value": "25",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lay lich trinh ca nhan",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userid",
+									"value": "25",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/schedules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"schedules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lay hoc sinh theo id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userid",
+									"value": "25",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "schedule_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "9",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/checkinStudent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"checkinStudent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "checkin Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "schedule_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/checkoutstudent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"checkoutstudent"
 							]
 						}
 					},
