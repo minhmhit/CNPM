@@ -15,6 +15,7 @@ app.set('io', io);
 
 //import routes
 const AttendanceRoute = require('./Routes/attendance.route');
+const AdminRoute = require('./Routes/admin.route');
 const BusRoute = require('./Routes/bus.route');
 const DriverRoute = require('./Routes/driver.route');
 // const NotificationRoute = require('./Routes/notification.route');
@@ -34,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //use routes
 app.use('/api/v1/attendance', AttendanceRoute);
+app.use('/api/v1/admin', AdminRoute);
 app.use('/api/v1/bus', BusRoute);
 app.use('/api/v1/driver', DriverRoute);
 // app.use('/api/v1/notification', NotificationRoute);

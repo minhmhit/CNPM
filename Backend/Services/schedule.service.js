@@ -87,6 +87,14 @@ const updateStudentDropoffStatus = async (schedule_id, student_id, status) => {
         throw error;
     }   
 };
+const checkStudentInSchedule = async (schedule_id, student_id) => {
+    try {
+        let result = await schedule.checkStudentInSchedule(schedule_id, student_id);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
 
 module.exports = {
     createSchedule,
@@ -98,4 +106,7 @@ module.exports = {
     getStudentsBySchedule,
     updateStudentPickupStatus,
     updateStudentDropoffStatus,
+    getBusSchedule,
+    getDriverSchedule,
+    checkStudentInSchedule,
 };

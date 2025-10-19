@@ -7,19 +7,26 @@ const {
     getMySchedules, 
     getMyAttendance, 
     getMyRoute, 
-    getMyNotifications
+    getMyNotifications,
+    getStudentById,
+    checkInStudent,
+    checkOutStudent
 } = require("../Services/student.service");
 // const authMiddleware = require("../middleware/auth.middleware");
 
 // Routes cho học sinh (cần xác thực)
-router.get("/profile", getMyProfile);
-router.get("/schedules", getMySchedules);
-router.get("/attendance", getMyAttendance);
-router.get("/route", getMyRoute);
+router.post("/profile", getMyProfile);
+router.post("/schedules", getMySchedules);
+// router.post("/attendance", getMyAttendance);
+// router.get("/route", getMyRoute);
+router.post("/updateInfo", updateStudentInfo);
 router.get("/notifications", getMyNotifications);
+router.get("/:student_id", getStudentById);
+router.post("/checkinStudent", checkInStudent);
+router.post("/checkoutStudent", checkOutStudent);
 
 // Routes cho admin quản lý học sinh
-router.get("/:student_id", getStudentProfile);
-router.put("/:student_id", updateStudentInfo);
+// router.get("/:student_id", getStudentProfile);
+// router.put("/:student_id", updateStudentInfo);
 
 module.exports = router;
