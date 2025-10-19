@@ -162,8 +162,7 @@ const getStudentsBySchedule = async (schedule_id) => {
                 ss.schedule_id,
                 ss.student_id,
                 ss.pickup_status,
-                ss.dropoff_status,
-                
+                ss.dropoff_status,                
                 s.name as student_name,
                 s.className,
                 u.username,

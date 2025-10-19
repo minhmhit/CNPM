@@ -40,8 +40,39 @@ const getAllStudents = async () => {
   }
 };
 
+const getAllClasses = async () => {
+  try {
+    const sql = "SELECT DISTINCT className FROM students WHERE 1";
+    const [rows] = await pool.query(sql);
+    return rows;
+  } catch (error) {
+    console.error("Error getting all classes:", error);
+    throw error;
+  }
+};
+
+const getAllStudentsByClass = async (className) => {
+  try {
+    const sql = `SELECT s.*, u.email,
+         pickup.stop_name AS pickup_name,
+         dropoff.stop_name AS dropoff_name
+       FROM students s
+       JOIN users u ON s.userid = u.userid
+       LEFT JOIN stop_points pickup ON s.pickup_location = pickup.stop_id
+       LEFT JOIN stop_points dropoff ON s.dropoff_location = dropoff.stop_id
+       WHERE s.className = ?`;
+    const [rows] = await pool.query(sql, [className]);
+    return rows;
+  } catch (error) {
+    console.error("Error getting students by class:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   getAllUsers,
   getAllDrivers,
   getAllStudents,
+  getAllClasses,
+  getAllStudentsByClass
 };

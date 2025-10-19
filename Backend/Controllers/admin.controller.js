@@ -27,9 +27,31 @@ const getAllStudents = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const getAllClasses = async (req, res) => {
+  try {
+    const classes = await adminService.getAllClassesService();
+    res.json(classes);
+  } catch (error) {
+    console.error("Error getting all classes:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getAllStudentsByClass = async (req, res) => {
+  try {
+    const className = req.params.className;
+    const students = await adminService.getAllStudentsByClassService(className);
+    res.json(students);
+  } catch (error) {
+    console.error("Error getting students by class:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   getAllUsers,
   getAllDrivers,
   getAllStudents,
+  getAllClasses,
+  getAllStudentsByClass
 };

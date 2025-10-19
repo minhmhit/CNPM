@@ -25,8 +25,28 @@ const getAllStudentsService = async () => {
   }
 };
 
+const getAllClassesService = async () => {
+  try {
+    const classes = await admin.getAllClasses()
+    return classes;
+    
+  } catch (error) {
+    throw error;
+  }
+}
+const getAllStudentsByClassService = async (className) => {
+  try {
+    const students = await admin.getAllStudentsByClass(className);
+    return students;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getAllUsersService,
   getAllDriversService,
   getAllStudentsService,
+  getAllClassesService,
+  getAllStudentsByClassService
 };
