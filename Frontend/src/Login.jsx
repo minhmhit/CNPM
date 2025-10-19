@@ -22,9 +22,9 @@ export default function Login() {
   const register = async (e) => {
     e.preventDefault();
     try {
-      const username = "student10";
-      const role = "student";
-      const email = "student100@gmail.com";
+      const username = "driver100";
+      const role = "driver";
+      const email = "driver2000@gmail.com";
       const password = "123456789";
       const res = await axios.post(
         "http://localhost:5000/api/v1/user/register",
@@ -58,7 +58,7 @@ export default function Login() {
       );
 
       // Lấy role từ cấu trúc data đúng
-      const { id , role, username,} = response.data.data.result;
+      const { userid , role, username,} = response.data.data.result;
       const { accessToken } = response.data.data;
       console.log("Access Token:", accessToken);
       // Lưu token và thông tin user vào localStorage
@@ -66,7 +66,7 @@ export default function Login() {
       localStorage.setItem("userRole", role);
       localStorage.setItem("username", username);
       localStorage.setItem("email", email);
-      localStorage.setItem("userId", id);
+      localStorage.setItem("userId", userid);
       //show toast success
 
       // alert("Đăng nhập thành công");

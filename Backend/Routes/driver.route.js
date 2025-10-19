@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { authMiddleware } = require("../middlewares/auth.middleware.js");
 const {
     getMyProfile,
     getMySchedules,
@@ -14,10 +15,10 @@ const {
     updateDriverInfo
   } = require("../Services/driver.service");
 
-router.get("/profile", getMyProfile);
+router.get("/profile", authMiddleware, getMyProfile);
 router.get("/schedules/:userid", getMySchedules);
 router.get("/sessions/:userid", getMySessions);
-router.get("/students/:userid", getMyStudents);
+router.get("/students/:userid", authMiddleware, getMyStudents);
 router.get("/location/:userid", getMyLocation);
 router.put("/session/start", startSession);
 router.put("/session/:session_id/end", endSession);
