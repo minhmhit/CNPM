@@ -37,10 +37,29 @@ const getAllRoutesService = async () => {
         throw error;
     }
 };
+const addStopPointsService = async (route_id, stop_points) => {
+    try {
+        let result = await route.addStopPoints(route_id, stop_points);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const getStopPointsByScheduleIdService = async (schedule_id) => {
+    try {
+        let result = await route.getStopPointsByScheduleId(schedule_id);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
 
 module.exports = {
     addRouteService,
     updateRouteService,
     deleteRouteService,
-    getAllRoutesService
+    getAllRoutesService,
+    getStopPointsByScheduleIdService,
+    addStopPointsService
 };

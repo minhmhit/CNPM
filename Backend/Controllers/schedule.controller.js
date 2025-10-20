@@ -87,8 +87,7 @@ const getBusSchedule = async (req, res) => {
 
 const addStudentToSchedule = async (req, res) => {
   try {
-    const { schedule_id } = req.params;
-    const { student_id } = req.body;
+    const { student_id, schedule_id } = req.body;
 
     // Kiểm tra học sinh đã có trong lịch trình chưa
     const exists = await scheduleService.checkStudentInSchedule(
@@ -110,7 +109,7 @@ const addStudentToSchedule = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Thêm học sinh vào lịch trình thành công",
-      data: { id: result.insertId },
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
@@ -122,8 +121,8 @@ const addStudentToSchedule = async (req, res) => {
 };
 const addMultipleStudentsToSchedule = async (req, res) => {
   try {
-    const { schedule_id } = req.params;
-    const { student_ids } = req.body;
+    
+    const { student_ids, schedule_id } = req.body;
 
     if (!Array.isArray(student_ids) || student_ids.length === 0) {
       return res.status(400).json({
@@ -153,7 +152,7 @@ const addMultipleStudentsToSchedule = async (req, res) => {
 
 const removeStudentFromSchedule = async (req, res) => {
   try {
-    const { schedule_id, student_id } = req.params;
+    const { schedule_id, student_id } = req.body;
 
     const result = await scheduleService.removeStudentFromSchedule(
       schedule_id,
@@ -170,6 +169,11 @@ const removeStudentFromSchedule = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Xóa học sinh khỏi lịch trình thành công",
+      data: { 
+        affected_rows: result.affectedRows,
+        schedule_id,
+        student_id
+       },
     });
   } catch (error) {
     res.status(500).json({
@@ -181,7 +185,7 @@ const removeStudentFromSchedule = async (req, res) => {
 };
 const getStudentsBySchedule = async (req, res) => {
   try {
-    const { schedule_id } = req.params;
+    const { schedule_id } = req.body;
 
     const students = await scheduleService.getStudentsBySchedule(
       schedule_id
@@ -202,8 +206,7 @@ const getStudentsBySchedule = async (req, res) => {
 
 const updatePickupStatus = async (req, res) => {
   try {
-    const { schedule_id, student_id } = req.params;
-    const { status } = req.body;
+    const { schedule_id, student_id, status } = req.body;
 
     if (!["waiting", "picked_up", "absent"].includes(status)) {
       return res.status(400).json({
