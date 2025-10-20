@@ -11,6 +11,7 @@ import Alert from "./Alert.jsx";
 import ParentLayout from "./parent/Layout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
+import LiveTracking from "./LiveTracking";
 
 export default function App() {
   return (
@@ -20,14 +21,16 @@ export default function App() {
       <Route
         path="/driver"
         element={
+
+          <ProtectedRoute roles={["driver"]}>
             <Driver />
-          // <ProtectedRoute roles={["driver"]}>
-          // </ProtectedRoute>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/admin"
         element={
+
             <Admin />
           // <ProtectedRoute roles={["admin"]}>
           // </ProtectedRoute>
@@ -36,9 +39,9 @@ export default function App() {
       <Route
         path="/parents"
         element={
+          <ProtectedRoute roles={["student"]}>
             <Parents />
-          // <ProtectedRoute roles={["student"]}>
-          // </ProtectedRoute>
+          </ProtectedRoute>
         }
       />
       <Route path="/unauthorized" element={<Unauthorized />} />
@@ -47,6 +50,7 @@ export default function App() {
       <Route path="/driver/report" element={<Report />} />
       <Route path="/driver/alert" element={<Alert />} />
       <Route path="/parent/*" element={<ParentLayout />} />
+      <Route path="/tracking/:scheduleId" element={<LiveTracking />} />
     </Routes>
   );
 }
