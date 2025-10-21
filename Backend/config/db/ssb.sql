@@ -315,8 +315,8 @@ INSERT INTO `stop_points` (`stop_id`, `route_id`, `stop_name`, `stop_order`, `lo
 CREATE TABLE `students` (
   `student_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `pickup_location` varchar(255) DEFAULT NULL,
-  `dropoff_location` varchar(255) DEFAULT NULL,
+  `pickup_location` int(100) DEFAULT NULL,
+  `dropoff_location` int(100) DEFAULT NULL,
   `className` varchar(50) DEFAULT NULL,
   `userid` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -338,25 +338,7 @@ INSERT INTO `students` (`student_id`, `name`, `pickup_location`, `dropoff_locati
 
 -- --------------------------------------------------------
 
---
--- Cấu trúc bảng cho bảng `student_route_assignments`
---
 
-CREATE TABLE `student_route_assignments` (
-  `assignment_id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `route_id` int(11) NOT NULL,
-  `pickup_stop_id` int(11) NOT NULL,
-  `dropoff_stop_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `student_route_assignments`
---
-
-INSERT INTO `student_route_assignments` (`assignment_id`, `student_id`, `route_id`, `pickup_stop_id`, `dropoff_stop_id`) VALUES
-(1, 2, 5, 1, 2),
-(2, 3, 6, 3, 4);
 
 -- --------------------------------------------------------
 
@@ -524,15 +506,7 @@ ALTER TABLE `students`
   ADD KEY `fk_pickup_stop` (`pickup_location`),
   ADD KEY `fk_dropoff_stop` (`dropoff_location`);
 
---
--- Chỉ mục cho bảng `student_route_assignments`
---
-ALTER TABLE `student_route_assignments`
-  ADD PRIMARY KEY (`assignment_id`),
-  ADD KEY `student_id` (`student_id`),
-  ADD KEY `route_id` (`route_id`),
-  ADD KEY `pickup_stop_id` (`pickup_stop_id`),
-  ADD KEY `dropoff_stop_id` (`dropoff_stop_id`);
+
 
 --
 -- Chỉ mục cho bảng `users`
@@ -624,11 +598,6 @@ ALTER TABLE `stop_points`
 ALTER TABLE `students`
   MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
---
--- AUTO_INCREMENT cho bảng `student_route_assignments`
---
-ALTER TABLE `student_route_assignments`
-  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -715,18 +684,13 @@ ALTER TABLE `stop_points`
 -- Các ràng buộc cho bảng `students`
 --
 ALTER TABLE `students`
-  ADD CONSTRAINT `fk_dropoff_stop` FOREIGN KEY (`dropoff_location`) REFERENCES `stops` (`stop_id`),
-  ADD CONSTRAINT `fk_pickup_stop` FOREIGN KEY (`pickup_location`) REFERENCES `stops` (`stop_id`),
+  ADD CONSTRAINT `fk_dropoff_stop` FOREIGN KEY (`dropoff_location`) REFERENCES `stop_points` (`stop_id`),
+  ADD CONSTRAINT `fk_pickup_stop` FOREIGN KEY (`pickup_location`) REFERENCES `stop_points` (`stop_id`),
   ADD CONSTRAINT `fk_students_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `student_route_assignments`
 --
-ALTER TABLE `student_route_assignments`
-  ADD CONSTRAINT `student_route_assignments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
-  ADD CONSTRAINT `student_route_assignments_ibfk_2` FOREIGN KEY (`route_id`) REFERENCES `routes` (`route_id`),
-  ADD CONSTRAINT `student_route_assignments_ibfk_3` FOREIGN KEY (`pickup_stop_id`) REFERENCES `stop_points` (`stop_id`),
-  ADD CONSTRAINT `student_route_assignments_ibfk_4` FOREIGN KEY (`dropoff_stop_id`) REFERENCES `stop_points` (`stop_id`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

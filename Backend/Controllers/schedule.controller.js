@@ -185,7 +185,7 @@ const removeStudentFromSchedule = async (req, res) => {
 };
 const getStudentsBySchedule = async (req, res) => {
   try {
-    const { schedule_id } = req.body;
+    const { schedule_id } = req.params;
 
     const students = await scheduleService.getStudentsBySchedule(
       schedule_id

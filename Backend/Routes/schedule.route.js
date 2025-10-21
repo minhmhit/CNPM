@@ -23,7 +23,7 @@ router.post('/addStudent', addStudentToSchedule);
 router.post('/addMultipleStudents', addMultipleStudentsToSchedule);
 router.delete('/removeStudent', removeStudentFromSchedule);
 //lấy danh sách học sinh theo lịch trình
-router.post('/students', getStudentsBySchedule);
+router.get('/students/:schedule_id', getStudentsBySchedule);
 router.put('/pickup', updatePickupStatus);
 router.put('/dropoff', updateDropoffStatus);
 module.exports = router;

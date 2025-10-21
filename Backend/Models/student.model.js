@@ -76,22 +76,24 @@ const getStudentByUserId = async (userid) => {
 const getStudentSchedules = async (student_id) => {
   try {
     const sql = `
-            SELECT
-  s.schedule_id,  s.date,  s.start_time,  s.end_time,  s.status AS schedule_status,
-  r.route_id,  r.name AS route_name,
-  v.bus_id,  v.license_plate,  d.driver_id,  d.name AS driver_name,
-  ss.pickup_status,  ss.dropoff_status
-FROM schedule_students ss
-JOIN schedules s ON ss.schedule_id = s.schedule_id
-LEFT JOIN routes r ON s.route_id = r.route_id
-LEFT JOIN vehicles v ON s.bus_id = v.bus_id
-LEFT JOIN drivers d ON s.driver_id = d.driver_id
-LEFT JOIN student_route_assignments pra
-  ON pra.student_id = ss.student_id AND pra.route_id = s.route_id
-LEFT JOIN stop_points pstop ON pra.pickup_stop_id = pstop.stop_id
-LEFT JOIN stop_points dstop ON pra.dropoff_stop_id = dstop.stop_id
-WHERE ss.student_id = ?
-ORDER BY s.date DESC, s.start_time DESC;`;
+      SELECT
+        s.schedule_id, s.date, s.start_time, s.end_time, s.status AS schedule_status,
+        r.route_id, r.name AS route_name,
+        v.bus_id, v.license_plate, d.driver_id, d.name AS driver_name,
+        ss.pickup_status, ss.dropoff_status,
+        pickup.stop_name AS pickup_stop_name, pickup.stop_order AS pickup_stop_order,
+        dropoff.stop_name AS dropoff_stop_name, dropoff.stop_order AS dropoff_stop_order
+      FROM schedule_students ss
+      JOIN schedules s ON ss.schedule_id = s.schedule_id
+      LEFT JOIN routes r ON s.route_id = r.route_id
+      LEFT JOIN vehicles v ON s.bus_id = v.bus_id
+      LEFT JOIN drivers d ON s.driver_id = d.driver_id
+      JOIN students st ON ss.student_id = st.student_id
+      LEFT JOIN stop_points pickup ON st.pickup_location = pickup.stop_id
+      LEFT JOIN stop_points dropoff ON st.dropoff_location = dropoff.stop_id
+      WHERE ss.student_id = ?
+      ORDER BY s.date DESC, s.start_time DESC;
+    `;
     const [rows] = await pool.query(sql, student_id);
     return rows;
   } catch (error) {

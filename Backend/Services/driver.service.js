@@ -260,8 +260,8 @@ const getMyLocation = async (req, res) => {
 
 const getMyStudents = async (req, res) => {
   try {
-    const { userid } = req.user;
-    const { schedule_id } = req.query;
+    const { userid } = req.params;
+    const { schedule_id } = req.body;
 
     const driver = await driverModel.getDriverByUserId(userid);
     if (!driver) {

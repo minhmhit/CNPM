@@ -157,29 +157,28 @@ const getStudentsBySchedule = async (schedule_id) => {
   try {
     const [rows] = await pool.query(
       `
-            SELECT 
-                ss.id,
-                ss.schedule_id,
-                ss.student_id,
-                ss.pickup_status,
-                ss.dropoff_status,                
-                s.name as student_name,
-                s.className,
-                u.username,
-                u.email,
-                sra.pickup_stop_id,
-                sra.dropoff_stop_id,
-                pickup_stop.stop_name as pickup_stop_name,
-                dropoff_stop.stop_name as dropoff_stop_name
-            FROM schedule_students ss
-            JOIN students s ON ss.student_id = s.student_id
-            JOIN users u ON s.userid = u.userid
-            LEFT JOIN student_route_assignments sra ON s.student_id = sra.student_id
-            LEFT JOIN stop_points pickup_stop ON sra.pickup_stop_id = pickup_stop.stop_id
-            LEFT JOIN stop_points dropoff_stop ON sra.dropoff_stop_id = dropoff_stop.stop_id
-            WHERE ss.schedule_id = ?
-            ORDER BY pickup_stop.stop_order ASC, s.name ASC
-        `,
+        SELECT 
+          ss.id,
+          ss.schedule_id,
+          ss.student_id,
+          ss.pickup_status,
+          ss.dropoff_status,                
+          s.name as student_name,
+          s.className,
+          u.username,
+          u.email,
+          s.pickup_location,
+          s.dropoff_location,
+          pickup_stop.stop_name as pickup_stop_name,
+          dropoff_stop.stop_name as dropoff_stop_name
+        FROM schedule_students ss
+        JOIN students s ON ss.student_id = s.student_id
+        JOIN users u ON s.userid = u.userid
+        LEFT JOIN stop_points pickup_stop ON s.pickup_location = pickup_stop.stop_id
+        LEFT JOIN stop_points dropoff_stop ON s.dropoff_location = dropoff_stop.stop_id
+        WHERE ss.schedule_id = ?
+        ORDER BY pickup_stop.stop_order ASC, s.name ASC
+      `,
       [schedule_id]
     );
     return rows;
