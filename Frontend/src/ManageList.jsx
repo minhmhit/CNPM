@@ -18,29 +18,33 @@ export default function ManageList({ onBack }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // 🧭 Fetch dữ liệu theo danh mục
+  // Fetch dữ liệu theo danh mục
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let url = "";
-        switch (category) {
-          case "routes":
-            url = `${API_BASE}/route/`;
-            break;
-          case "buses":
-            url = `${API_BASE}/bus/`;
-            break;
-          case "drivers":
-            url = `${API_BASE}/driver/`;
-            break;
-          case "students":
-            url = `${API_BASE}/student/`;
-            break;
-          default:
-            return;
-        }
+        let url = `${API_BASE}/admin/getAllUsers`;
         const res = await axios.get(url);
-        setData((prev) => ({ ...prev, [category]: res.data }));
+        const users = res.data.data || res.data;
+
+        // Lọc theo danh mục
+        let filteredData = [];
+        if (category === "drivers") {
+          filteredData = users.filter(
+            (u) => u.role === "driver" && u.isActive === 1
+          );
+        } else if (category === "students") {
+          filteredData = users.filter(
+            (u) => u.role === "student" && u.isActive === 1
+          );
+        } else if (category === "routes") {
+          const routeRes = await axios.get(`${API_BASE}/route/getAllRoutes`);
+          filteredData = routeRes.data.data || routeRes.data;
+        } else if (category === "buses") {
+          const busRes = await axios.get(`${API_BASE}/bus/`);
+          filteredData = busRes.data.data || busRes.data;
+        }
+
+        setData((prev) => ({ ...prev, [category]: filteredData }));
       } catch (err) {
         console.error("❌ Lỗi tải dữ liệu:", err);
       }
@@ -48,7 +52,8 @@ export default function ManageList({ onBack }) {
     fetchData();
   }, [category]);
 
-  // ➕ Thêm mới
+
+  // Thêm mới
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
@@ -83,9 +88,10 @@ export default function ManageList({ onBack }) {
     }
   };
 
-  // ❌ Xóa
+  // Xóa
   const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc muốn xóa không?")) return;
+
     try {
       let url = "";
       switch (category) {
@@ -96,32 +102,35 @@ export default function ManageList({ onBack }) {
           url = `${API_BASE}/bus/delete/${id}`;
           break;
         case "drivers":
-          url = `${API_BASE}/driver/delete/${id}`;
+          url = `${API_BASE}/user/delete/${id}`;
           break;
         case "students":
-          url = `${API_BASE}/student/delete/${id}`;
+          url = `${API_BASE}/user/delete/${id}`;
           break;
         default:
           return;
       }
-      await axios.delete(url);
-      setData((prev) => ({
-        ...prev,
-        [category]: prev[category].filter(
-          (item) =>
-            item.id !== id &&
-            item.route_id !== id &&
-            item.bus_id !== id &&
-            item.driver_id !== id &&
-            item.student_id !== id
-        ),
-      }));
+
+      const res = await axios.delete(url);
+
+      if (res.status === 200) {
+        setData((prev) => ({
+          ...prev,
+          [category]: prev[category].filter(
+            (item) => item.userid !== id
+          ),
+        }));
+        alert("Đã cập nhật trạng thái thành inActive!");
+      }
     } catch (err) {
-      console.error("❌ Lỗi khi xóa:", err);
+      console.error("Lỗi khi xóa:", err);
+      alert("Không thể xóa!");
     }
   };
 
-  // 🎨 Render form input
+
+
+  // Render form input
   const renderInputFields = () => {
     switch (category) {
       case "routes":
@@ -133,7 +142,7 @@ export default function ManageList({ onBack }) {
               onChange={(e) =>
                 setNewItem({ ...newItem, route_name: e.target.value })
               }
-              placeholder="VD: Tuyến 01 - SGU"
+              placeholder="Nhập tên tuyến"
             />
             <label>Mô tả:</label>
             <input
@@ -141,7 +150,7 @@ export default function ManageList({ onBack }) {
               onChange={(e) =>
                 setNewItem({ ...newItem, description: e.target.value })
               }
-              placeholder="VD: Từ Q1 đến SGU"
+              placeholder="Nhập mô tả"
             />
           </>
         );
@@ -154,7 +163,7 @@ export default function ManageList({ onBack }) {
               onChange={(e) =>
                 setNewItem({ ...newItem, license_plate: e.target.value })
               }
-              placeholder="VD: 36A-36363"
+              placeholder="Nhâp biển số"
             />
             <label>Model:</label>
             <input
@@ -178,7 +187,7 @@ export default function ManageList({ onBack }) {
     }
   };
 
-  // 📋 Render bảng
+  // Render bảng
   const list = data[category] || [];
   const totalPages = Math.ceil(list.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
@@ -205,6 +214,28 @@ export default function ManageList({ onBack }) {
             <th>Hành động</th>
           </tr>
         );
+      case "drivers":
+        return (
+          <tr>
+            <th>ID</th>
+            <th>Tên đăng nhập</th>
+            <th>Email</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+          </tr>
+        );
+      case "students":
+        return (
+          <tr>
+            <th>ID</th>
+            <th>Tên đăng nhập</th>
+            <th>Email</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+          </tr>
+        );
+
+
       default:
         return null;
     }
@@ -245,6 +276,49 @@ export default function ManageList({ onBack }) {
             </td>
           </tr>
         ));
+      case "drivers":
+        return currentItems.map((d) => (
+          <tr key={d.userid}>
+            <td>{d.userid}</td>
+            <td>{d.username}</td>
+            <td>{d.email}</td>
+            <td style={{ color: d.isActive ? "green" : "red", fontWeight: "bold" }}>
+              {d.isActive ? "Hoạt động" : "Ngưng"}
+            </td>
+            <td>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(d.userid)}
+              >
+                Xóa
+              </button>
+            </td>
+          </tr>
+        ));
+
+
+      case "students":
+        return currentItems.map((s) => (
+          <tr key={s.userid}>
+            <td>{s.userid}</td>
+            <td>{s.username}</td>
+            <td>{s.email}</td>
+            <td style={{ color: s.isActive ? "green" : "red", fontWeight: "bold" }}>
+              {s.isActive ? "Hoạt động" : "Ngưng"}
+            </td>
+            <td>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(s.userid)}
+              >
+                Xóa
+              </button>
+            </td>
+          </tr>
+        ));
+
+
+
       default:
         return null;
     }
@@ -253,19 +327,16 @@ export default function ManageList({ onBack }) {
   return (
     <div className="manage-list-container">
       <h3>Quản lý danh sách</h3>
+
       <div className="category-select">
         <label>Chọn danh mục: </label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="routes">Tuyến đường</option>
           <option value="buses">Xe buýt</option>
           <option value="drivers">Tài xế</option>
           <option value="students">Học sinh</option>
         </select>
       </div>
-
 
       <table className="list-table">
         <thead>{renderTableHeader()}</thead>
@@ -290,14 +361,22 @@ export default function ManageList({ onBack }) {
           +
         </button>
       </div>
-<button className="add-btn" onClick={() => setShowForm(true)}>
+
+      <button className="add-btn" onClick={() => setShowForm(true)}>
         + Thêm mới
       </button>
 
       {showForm && (
         <div className="overlay">
           <div className="popup-form">
-            <h3>🚌 Thêm {category === "drivers" ? "tài xế" : category === "students" ? "học sinh" : category}</h3>
+            <h3>
+              Thêm{" "}
+              {category === "drivers"
+                ? "tài xế"
+                : category === "students"
+                  ? "học sinh"
+                  : category}
+            </h3>
             <form onSubmit={handleAdd}>
               {renderInputFields()}
               <div className="form-buttons">
@@ -316,6 +395,7 @@ export default function ManageList({ onBack }) {
           </div>
         </div>
       )}
+
       <button onClick={onBack} className="cancel-btn" style={{ marginTop: 15 }}>
         Quay lại
       </button>

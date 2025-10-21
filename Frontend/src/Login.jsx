@@ -16,6 +16,34 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  /***
+   * tạo data account mẫu để test
+   */
+  const register = async (e) => {
+    e.preventDefault();
+    try {
+      const username = "driver100";
+      const role = "driver";
+      const email = "driver2000@gmail.com";
+      const password = "123456789";
+      const res = await axios.post(
+        "http://localhost:5000/api/v1/user/register",
+        {
+          username,
+          email,
+          password,
+          role,
+        }
+      );
+      if(res){
+        console.log("create account success", res.data);
+      }
+    } catch (error) {
+      console.log ("create account error", error);
+      
+    }
+  }
+  
   //get data frome backend
   // Lấy data từ backend
   const handleLogin = async (e) => {
@@ -30,19 +58,18 @@ export default function Login() {
       );
 
       // Lấy role từ cấu trúc data đúng
-      const { userid , role, username, accessToken } = response.data.data.result;
-
-      console.log("User role:", role);
-      console.log("Username:", username);
-
+      const { userid , role, username,} = response.data.data.result;
+      const { accessToken } = response.data.data;
+      console.log("Access Token:", accessToken);
       // Lưu token và thông tin user vào localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("userRole", role);
       localStorage.setItem("username", username);
       localStorage.setItem("email", email);
       localStorage.setItem("userId", userid);
+      //show toast success
 
-      alert("Đăng nhập thành công");
+      // alert("Đăng nhập thành công");
 
       // Redirect dựa trên role
       switch (role) {
@@ -133,6 +160,7 @@ export default function Login() {
             <div className="login-links">
               <a href="#">Quên mật khẩu</a>
             </div>
+            <button onClick={register}>tạo tài khoản test</button>
           </div>
         </div>
       </div>

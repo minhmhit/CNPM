@@ -50,7 +50,7 @@ const loginUser = async (email, password) => {
      if (rows.length > 0) {
        const user = rows[0];
        let result = {
-        id: user.userid,
+        userid: user.userid,
         username: user.username,
         email: user.email,
         role: user.role
@@ -61,7 +61,7 @@ const loginUser = async (email, password) => {
         const payload = {
           email : user.email,
           username: user.username,
-          id: user.id
+          userid: user.userid
         }
         const accessToken = jwt.sign(
           payload,

@@ -119,7 +119,8 @@ const addStudentToSchedule = async (schedule_id, student_id) => {
       "INSERT INTO schedule_students (schedule_id, student_id) VALUES (?, ?)",
       [schedule_id, student_id]
     );
-    return result;
+    const data = { schedule_id, student_id, id: result.insertId };
+    return data;
   } catch (error) {
     console.error("Lỗi khi thêm học sinh vào lịch trình:", error);
     throw error;
@@ -161,8 +162,7 @@ const getStudentsBySchedule = async (schedule_id) => {
                 ss.schedule_id,
                 ss.student_id,
                 ss.pickup_status,
-                ss.dropoff_status,
-                
+                ss.dropoff_status,                
                 s.name as student_name,
                 s.className,
                 u.username,
@@ -214,11 +214,24 @@ const updateStudentDropoffStatus = async (schedule_id, student_id, status, dropo
         throw error;
     }
 };
+const checkStudentInSchedule = async (schedule_id, student_id) => {
+    try {
+        const [rows] = await pool.query(
+            "SELECT * FROM schedule_students WHERE schedule_id = ? AND student_id = ?",
+            [schedule_id, student_id]
+        );
+        return rows.length > 0;
+    } catch (error) {
+        console.error("Lỗi khi kiểm tra học sinh trong lịch trình:", error);
+        throw error;
+    }
+};
 
 module.exports = {
     createSchedule,
     updateSchedule,
     deleteSchedule,
+    checkStudentInSchedule,
     getDriverSchedule,
     getBusSchedule,
     addStudentToSchedule,

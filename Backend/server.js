@@ -3,12 +3,19 @@ const connection =  require('./config/connection_mysql');
 
 const express = require('express');
 const app = express();
-const createError = require('http-errors');
+const http = require('http');
+const server = http.createServer(app);
+const setupWebSocket = require('./socket/websocket');
+// Thiết lập WebSocket với server
+const io = setupWebSocket(server);
 
 const PORT = process.env.PORT || 5000;
 
+app.set('io', io);
+
 //import routes
 const AttendanceRoute = require('./Routes/attendance.route');
+const AdminRoute = require('./Routes/admin.route');
 const BusRoute = require('./Routes/bus.route');
 const DriverRoute = require('./Routes/driver.route');
 // const NotificationRoute = require('./Routes/notification.route');
@@ -28,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //use routes
 app.use('/api/v1/attendance', AttendanceRoute);
+app.use('/api/v1/admin', AdminRoute);
 app.use('/api/v1/bus', BusRoute);
 app.use('/api/v1/driver', DriverRoute);
 // app.use('/api/v1/notification', NotificationRoute);
@@ -43,7 +51,7 @@ app.get('/', (req, res, next) => {
 
 
 
-app.listen(PORT,  async () => {
+server.listen(PORT,  async () => {
     await connection.testConnection();
     console.log(`Server is running on port ${PORT}`);
 });

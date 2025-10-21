@@ -45,8 +45,8 @@ export default function Admin() {
 
   const handleLogout = () => {
     if (window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
-      localStorage.removeItem("admin");
       navigate("/");
+      localStorage.clear();
     }
   };
 

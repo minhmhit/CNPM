@@ -37,9 +37,24 @@ const getAllRoutes = async (req, res) => {
     res.status(200).json(data);
 };
 
+//thêm điểm dừng vào chuyến đường
+const addStopPoints = async (req, res) => {
+    const { route_id, stop_points } = req.body;
+    const data = await routeService.addStopPointsService(route_id, stop_points);
+    res.status(200).json(data);
+};
+
+const getStopPointsByScheduleId = async (req, res) => {
+    const { schedule_id } = req.params;
+    const data = await routeService.getStopPointsByScheduleIdService(schedule_id);
+    res.status(200).json(data);
+};
+
 module.exports = {
     addRoute,
     updateRoute,
     deleteRoute,
-    getAllRoutes
+    getAllRoutes,
+    getStopPointsByScheduleId,
+    addStopPoints
 };
