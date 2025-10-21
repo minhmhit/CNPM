@@ -45,8 +45,8 @@ export default function Admin() {
 
   const handleLogout = () => {
     if (window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+      localStorage.removeItem("admin");
       navigate("/");
-      localStorage.clear();
     }
   };
 
@@ -74,42 +74,47 @@ export default function Admin() {
   };
 
   return (
-    <div className="app">
-      <div className="navbar">
-        <div className="navbar-left">
-          <img src={logo} className="bus-icon" alt="Logo" />
-          <span className="navbar-title">Bus map</span>
+    <div className="dashboard-container admin-dashboard">
+      <header className="dashboard-header">
+        <div className="header-left">
+          <img src={logo} alt="logo" className="header-logo" />
+          <span className="header-title">Bus Map - Admin</span>
         </div>
-        <div className="account-info">
-          <img src={accountIcon} alt="Account" />
+        <div className="header-right">
+          <img src={accountIcon} alt="account" className="header-user-icon-img" />
           <span>Xin chào, Quản lý</span>
         </div>
-      </div>
+      </header>
 
-      <div className="center-box">
-        <div className="display-info">{renderContent()}</div>
+      <div className="dashboard-content">
+        <main className="view-area">
+          <div className="admin-content-wrapper">{renderContent()}</div>
+        </main>
 
-        <div className="side-panel">
-          <button className="side-button" onClick={() => setActivePanel("schedule")}>
+        <aside className="dashboard-sidebar">
+          <button className={`sidebar-btn ${activePanel === "schedule" ? "active" : ""}`} onClick={() => setActivePanel("schedule")}>
             Quản lý lịch trình xe
           </button>
-          <button className="side-button" onClick={() => setActivePanel("assignDriver")}>
+          <button className={`sidebar-btn ${activePanel === "assignDriver" ? "active" : ""}`} onClick={() => setActivePanel("assignDriver")}>
             Phân công tài xế xe
           </button>
-          <button className="side-button" onClick={() => setActivePanel("tracking")}>
+          {/* Nút này chưa có chức năng nên tôi tạm ẩn đi */}
+          {/* <button className={`sidebar-btn ${activePanel === "tracking" ? "active" : ""}`} onClick={() => setActivePanel("tracking")}>
             Theo dõi vị trí xe
-          </button>
-          <button className="side-button" onClick={() => setActivePanel("sendMessage")}>
+          </button> */}
+          <button className={`sidebar-btn ${activePanel === "sendMessage" ? "active" : ""}`} onClick={() => setActivePanel("sendMessage")}>
             Gửi tin nhắn
           </button>
-          <button className="side-button" onClick={() => setActivePanel("manageList")}>
+          <button className={`sidebar-btn ${activePanel === "manageList" ? "active" : ""}`} onClick={() => setActivePanel("manageList")}>
             Quản lý danh sách
           </button>
 
-          <div className="logout-button">
-            <button onClick={handleLogout}>Đăng xuất</button>
+          <div className="sidebar-footer">
+            <button className="sidebar-logout" onClick={handleLogout}>
+              Đăng xuất
+            </button>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   );

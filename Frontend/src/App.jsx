@@ -21,9 +21,9 @@ export default function App() {
       <Route
         path="/driver"
         element={
-          <ProtectedRoute roles={["driver"]}>
+          // <ProtectedRoute roles={["driver"]}>
+          // </ProtectedRoute>
             <Driver />
-          </ProtectedRoute>
         }
       />
       <Route
