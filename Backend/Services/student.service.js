@@ -81,7 +81,7 @@ const getStudentById = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
   try {
-    const { userid } = req.body;
+    const { userid } = req.params;
 
     const student = await studentModel.getStudentByUserId(userid);
 
@@ -107,7 +107,7 @@ const getMyProfile = async (req, res) => {
 
 const getMySchedules = async (req, res) => {
   try {
-    const { userid } = req.body;
+    const { userid } = req.params;
 
     const student = await studentModel.getStudentByUserId(userid);
     if (!student) {

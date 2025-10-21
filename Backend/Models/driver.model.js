@@ -153,27 +153,26 @@ const getDriverLocation = async (driver_id) => {
   }
 };
 
-const getAssignedStudents = async (driver_id, schedule_id = null) => {
+const getAssignedStudents = async (driver_id, schedule_id ) => {
   try {
     let query = `
-            SELECT 
-                s.student_id, s.name, s.className,
-                u.username, u.email,
-                sch.schedule_id, sch.date, sch.start_time,
-                ss.pickup_status, ss.dropoff_status,
-                ss.pickup_time, ss.dropoff_time,
-                pickup.stop_name as pickup_stop,
-                pickup.stop_order,
-                dropoff.stop_name as dropoff_stop
-            FROM schedules sch
-            JOIN schedule_students ss ON sch.schedule_id = ss.schedule_id
-            JOIN students s ON ss.student_id = s.student_id
-            JOIN users u ON s.userid = u.userid
-            LEFT JOIN student_route_assignments sra ON s.student_id = sra.student_id
-            LEFT JOIN stop_points pickup ON sra.pickup_stop_id = pickup.stop_id
-            LEFT JOIN stop_points dropoff ON sra.dropoff_stop_id = dropoff.stop_id
-            WHERE sch.driver_id = ?
-        `;
+      SELECT 
+        s.student_id, s.name, s.className,
+        u.username, u.email,
+        sch.schedule_id, sch.date, sch.start_time,
+        ss.pickup_status, ss.dropoff_status,
+      
+        pickup.stop_name as pickup_stop,
+        pickup.stop_order,
+        dropoff.stop_name as dropoff_stop
+      FROM schedules sch
+      JOIN schedule_students ss ON sch.schedule_id = ss.schedule_id
+      JOIN students s ON ss.student_id = s.student_id
+      JOIN users u ON s.userid = u.userid
+      LEFT JOIN stop_points pickup ON s.pickup_location = pickup.stop_id
+      LEFT JOIN stop_points dropoff ON s.dropoff_location = dropoff.stop_id
+      WHERE sch.driver_id = ?
+    `;
     const params = [driver_id];
 
     if (schedule_id) {

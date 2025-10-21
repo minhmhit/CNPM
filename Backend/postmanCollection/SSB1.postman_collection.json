@@ -1008,10 +1008,6 @@
 			]
 		},
 		{
-			"name": "schedule",
-			"item": []
-		},
-		{
 			"name": "driver",
 			"item": [
 				{
@@ -1212,8 +1208,41 @@
 				},
 				{
 					"name": "laydshocsinhtheoscheduleid",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/schedule/students/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"schedule",
+								"students",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getmystudent",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
@@ -1226,7 +1255,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/schedule/students",
+							"raw": "http://localhost:5000/api/v1/driver/students/10",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1235,8 +1264,9 @@
 							"path": [
 								"api",
 								"v1",
-								"schedule",
-								"students"
+								"driver",
+								"students",
+								"10"
 							]
 						}
 					},
@@ -1382,22 +1412,78 @@
 					"response": []
 				},
 				{
-					"name": "lay thong tin ca nhan",
+					"name": "get all class",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "userid",
-									"value": "25",
-									"type": "text"
-								}
-							]
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/student/profile",
+							"raw": "http://localhost:5000/api/v1/admin/getAllClasses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"getAllClasses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all student by className",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/admin/getAllStudentsByClass/1A",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"getAllStudentsByClass",
+								"1A"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lay thong tin ca nhan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/profile/25",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1407,7 +1493,8 @@
 								"api",
 								"v1",
 								"student",
-								"profile"
+								"profile",
+								"25"
 							]
 						}
 					},
@@ -1415,21 +1502,18 @@
 				},
 				{
 					"name": "lay lich trinh ca nhan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "userid",
-									"value": "25",
-									"type": "text"
-								}
-							]
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/student/schedules",
+							"raw": "http://localhost:5000/api/v1/student/schedules/16",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1439,7 +1523,8 @@
 								"api",
 								"v1",
 								"student",
-								"schedules"
+								"schedules",
+								"16"
 							]
 						}
 					},
@@ -1518,7 +1603,7 @@
 					"response": []
 				},
 				{
-					"name": "checkin Copy",
+					"name": "checkouot",
 					"request": {
 						"method": "POST",
 						"header": [],

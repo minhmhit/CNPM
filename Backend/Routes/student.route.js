@@ -15,8 +15,8 @@ const {
 // const authMiddleware = require("../middleware/auth.middleware");
 
 // Routes cho học sinh (cần xác thực)
-router.post("/profile", getMyProfile);
-router.post("/schedules", getMySchedules);
+router.get("/profile/:userid", getMyProfile);
+router.get("/schedules/:userid", getMySchedules);
 // router.post("/attendance", getMyAttendance);
 // router.get("/route", getMyRoute);
 router.post("/updateInfo", updateStudentInfo);
