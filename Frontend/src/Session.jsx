@@ -25,7 +25,6 @@ export default function Session(){
         }
     };
 
-    // Load mặc định khi mount
     useEffect(() => {
         fetchSessions();
     }, []);
@@ -70,7 +69,7 @@ export default function Session(){
             <div className="driver-center-box">
                 <div className="driver-display-info">
                     {/* Bộ chọn ngày */}
-                    <div style={{ marginBottom: "15px" }}>
+                    <div style={{ marginBottom: "5px" }}>
                         <label>Chọn ngày: </label>
                         <input
                             type="date"
@@ -148,8 +147,6 @@ export default function Session(){
                                                 <button
                                                     disabled
                                                     style={{
-                                                        background: "#4caf50",
-                                                        color: "#fff",
                                                         border: "none",
                                                         padding: "6px 12px",
                                                         borderRadius: "4px",
@@ -159,8 +156,6 @@ export default function Session(){
                                                 <button 
                                                     disabled
                                                     style={{
-                                                        background: "#e53935",
-                                                        color: "#fff",
                                                         border: "none",
                                                         padding: "6px 12px",
                                                         borderRadius: "4px",
