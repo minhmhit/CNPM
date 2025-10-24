@@ -8,15 +8,29 @@ const addRoute = async (routeData) => {
     const [result] = await pool.query(sql, [route_name, description]);
     const route_id = result.insertId;
     // Thêm các điểm dừng nếu có
-    if (Array.isArray(stop_points) && stop_points.length > 0) {
+     if (Array.isArray(stop_points) && stop_points.length > 0) {
       for (let i = 0; i < stop_points.length; i++) {
-        const stopSql =
-          "INSERT INTO stop_points (route_id, stop_name, stop_order) VALUES (?, ?, ?)";
-        await pool.query(stopSql, [route_id, stop_points[i], i + 1]);
+        const stop = stop_points[i];
+        // Check if stop is an object with coordinates
+        if (stop && typeof stop === "object") {
+          const sql = `
+            INSERT INTO stop_points 
+            (route_id, stop_name, latitude, longitude, stop_order) 
+            VALUES (?, ?, ?, ?, ?)
+          `;
+          const params = [
+            route_id,
+            stop.stop_name ||  "",
+            stop.latitude ||  null,
+            stop.longitude ||  null,
+            stop.stop_order ||  i + 1
+          ];
+          await pool.query(sql, params);
+        };
       }
     }
-	//return the new route data
-    return { id: route_id, route_name, description, stop_points };
+    //return the new route data
+    return { route_id: route_id, route_name, description, stop_points };
   } catch (error) {
     console.error("Error adding route:", error);
     throw error;
