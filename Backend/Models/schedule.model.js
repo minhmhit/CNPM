@@ -1,5 +1,19 @@
 const {pool} = require('../config/connection_mysql');
 
+const getAllSchedules = async () => {
+    try {
+        const sql = `
+            SELECT *
+            FROM schedules
+            ORDER BY date DESC, start_time DESC
+        `;
+        const [rows] = await pool.query(sql);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const createSchedule = async (scheduleData) => {
   //if date is null set to current day
   if (!scheduleData.date) {
@@ -239,4 +253,5 @@ module.exports = {
     getStudentsBySchedule,
     updateStudentPickupStatus,
     updateStudentDropoffStatus,
+    getAllSchedules
 };

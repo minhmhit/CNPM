@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3306
--- Thời gian đã tạo: Th10 19, 2025 lúc 01:22 PM
+-- Thời gian đã tạo: Th10 22, 2025 lúc 11:23 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `ssb2`
+-- Cơ sở dữ liệu: `ssb4`
 --
 
 -- --------------------------------------------------------
@@ -63,7 +63,8 @@ INSERT INTO `attendance_logs` (`log_id`, `student_id`, `schedule_id`, `status`, 
 (2, 3, 2, 'absent', '2025-10-12 23:40:00'),
 (3, 2, 2, 'picked_up', '2025-10-19 11:12:35'),
 (4, 9, 2, 'picked_up', '2025-10-19 11:18:35'),
-(5, 9, 2, 'dropped_off', '2025-10-19 11:19:27');
+(5, 9, 2, 'dropped_off', '2025-10-19 11:19:27'),
+(6, 3, 2, 'dropped_off', '2025-10-21 12:23:08');
 
 -- --------------------------------------------------------
 
@@ -153,22 +154,26 @@ INSERT INTO `live_tracking` (`tracking_id`, `bus_id`, `driver_id`, `latitude`, `
 
 CREATE TABLE `notifications` (
   `notification_id` int(11) NOT NULL,
-  `recipient_type` enum('parent','driver') NOT NULL,
-  `recipient_id` int(11) DEFAULT NULL,
+  `recipient_type` enum('student','driver') NOT NULL,
+  `recipient_user_id` int(11) DEFAULT NULL,
   `message` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  `type` varchar(50) DEFAULT NULL,
   `sender_id` int(11) DEFAULT NULL,
-  `is_read` int(11) DEFAULT NULL
+  `is_read` int(11) DEFAULT 0,
+  `schedule_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `notifications`
 --
 
-INSERT INTO `notifications` (`notification_id`, `recipient_type`, `recipient_id`, `message`, `timestamp`, `type`, `sender_id`, `is_read`) VALUES
-(1, 'parent', 11, 'Xe đã đón học sinh Nguyễn Minh thành công', '2025-10-12 23:48:10', 'pickup', 13, 0),
-(2, 'driver', 9, 'Bạn có chuyến mới vào ngày 14/10/2025', '2025-10-12 23:48:10', 'schedule', 13, 1);
+INSERT INTO `notifications` (`notification_id`, `recipient_type`, `recipient_user_id`, `message`, `timestamp`, `sender_id`, `is_read`, `schedule_id`) VALUES
+(1, 'student', 11, 'Xe đã đón học sinh Nguyễn Minh thành công', '2025-10-12 23:48:10', 13, 0, 1),
+(2, 'driver', NULL, 'Bạn có chuyến mới vào ngày 14/10/2025', '2025-10-12 23:48:10', 13, 1, 2),
+(3, 'student', 12, 'Đón học sinh 01', '2025-10-22 09:09:50', 9, 0, 1),
+(4, 'student', 14, 'Đón học sinh 02', '2025-10-22 09:11:11', 9, 0, 1),
+(5, 'student', 12, 'Đón học sinh 03', '2025-10-22 09:12:44', 9, 0, 1),
+(6, 'student', 12, 'Đón học sinh 04', '2025-10-22 09:13:17', 9, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -261,7 +266,7 @@ CREATE TABLE `schedule_students` (
 
 INSERT INTO `schedule_students` (`id`, `schedule_id`, `student_id`, `pickup_status`, `dropoff_status`) VALUES
 (1, 1, 2, 'waiting', 'dropped_off'),
-(2, 2, 3, 'picked_up', 'waiting'),
+(2, 2, 3, 'picked_up', 'dropped_off'),
 (3, 1, 4, 'picked_up', 'waiting'),
 (4, 1, 5, 'picked_up', 'waiting'),
 (5, 1, 6, 'picked_up', 'waiting'),
@@ -326,19 +331,15 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`student_id`, `name`, `pickup_location`, `dropoff_location`, `className`, `userid`) VALUES
-(1, 'minh22', '1', '2', '1A', 8),
-(2, 'Nguyễn Minh', '1', '2', '5A', 11),
-(3, 'Trần Thu Hà', '1', '2', '4B', 12),
-(4, 'Nguyễn Văn A', '1', '2', '2A', 14),
-(5, 'Nguyễn Văn B', '3', '2', '1B', 15),
-(6, 'Nguyễn Văn c', '3', '4', '1C', 16),
-(7, 'pổ', '2', '1', '1A', 21),
-(8, 'pổ', '2', '1', '1A', 22),
-(9, 'student10', '2', '1', '3A', 25);
-
--- --------------------------------------------------------
-
-
+(1, 'minh22', 1, 2, '1A', 8),
+(2, 'Nguyễn Minh', 1, 2, '5A', 11),
+(3, 'Trần Thu Hà', 1, 2, '4B', 12),
+(4, 'Nguyễn Văn A', 1, 2, '2A', 14),
+(5, 'Nguyễn Văn B', 3, 2, '1B', 15),
+(6, 'Nguyễn Văn c', 3, 4, '1C', 16),
+(7, 'pổ', 2, 1, '1A', 21),
+(8, 'pổ', 2, 1, '1A', 22),
+(9, 'student10', 2, 1, '3A', 25);
 
 -- --------------------------------------------------------
 
@@ -457,7 +458,10 @@ ALTER TABLE `live_tracking`
 -- Chỉ mục cho bảng `notifications`
 --
 ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`notification_id`);
+  ADD PRIMARY KEY (`notification_id`),
+  ADD KEY `fk_notifications_schedules` (`schedule_id`),
+  ADD KEY `fk_notifications_sender` (`sender_id`),
+  ADD KEY `fk_notifications_recipient_user` (`recipient_user_id`);
 
 --
 -- Chỉ mục cho bảng `reports`
@@ -506,8 +510,6 @@ ALTER TABLE `students`
   ADD KEY `fk_pickup_stop` (`pickup_location`),
   ADD KEY `fk_dropoff_stop` (`dropoff_location`);
 
-
-
 --
 -- Chỉ mục cho bảng `users`
 --
@@ -536,7 +538,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT cho bảng `attendance_logs`
 --
 ALTER TABLE `attendance_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `drivers`
@@ -560,7 +562,7 @@ ALTER TABLE `live_tracking`
 -- AUTO_INCREMENT cho bảng `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `reports`
@@ -597,7 +599,6 @@ ALTER TABLE `stop_points`
 --
 ALTER TABLE `students`
   MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -650,6 +651,14 @@ ALTER TABLE `live_tracking`
   ADD CONSTRAINT `live_tracking_ibfk_1` FOREIGN KEY (`bus_id`) REFERENCES `vehicles` (`bus_id`);
 
 --
+-- Các ràng buộc cho bảng `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notifications_recipient_user` FOREIGN KEY (`recipient_user_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_notifications_schedules` FOREIGN KEY (`schedule_id`) REFERENCES `schedules` (`schedule_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_notifications_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`userid`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
 -- Các ràng buộc cho bảng `reports`
 --
 ALTER TABLE `reports`
@@ -687,10 +696,6 @@ ALTER TABLE `students`
   ADD CONSTRAINT `fk_dropoff_stop` FOREIGN KEY (`dropoff_location`) REFERENCES `stop_points` (`stop_id`),
   ADD CONSTRAINT `fk_pickup_stop` FOREIGN KEY (`pickup_location`) REFERENCES `stop_points` (`stop_id`),
   ADD CONSTRAINT `fk_students_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE;
-
---
---
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

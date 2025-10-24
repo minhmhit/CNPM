@@ -1,4 +1,14 @@
 const schedule = require ('../Models/schedule.model');
+
+const getAllSchedules = async () => {
+    try {
+        let result = await schedule.getAllSchedules();
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const createSchedule = async (scheduleData) => {
     try {
         let result = await schedule.createSchedule(scheduleData);
@@ -109,4 +119,5 @@ module.exports = {
     getBusSchedule,
     getDriverSchedule,
     checkStudentInSchedule,
+    getAllSchedules
 };

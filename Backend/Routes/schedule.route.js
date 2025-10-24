@@ -12,6 +12,7 @@ const {
   getStudentsBySchedule,
   updatePickupStatus,
   updateDropoffStatus,
+  getAllSchedule
 } = require("../Controllers/schedule.controller");
 router.post('/create', createSchedule);
 router.put('/edit/:schedule_id', updateSchedule);
@@ -26,4 +27,5 @@ router.delete('/removeStudent', removeStudentFromSchedule);
 router.get('/students/:schedule_id', getStudentsBySchedule);
 router.put('/pickup', updatePickupStatus);
 router.put('/dropoff', updateDropoffStatus);
+router.get("/getall", getAllSchedule);
 module.exports = router;

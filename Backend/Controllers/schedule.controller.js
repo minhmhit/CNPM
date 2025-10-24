@@ -1,4 +1,15 @@
 const scheduleService = require('../Services/schedule.service');
+
+const getAllSchedule = async (req, res) => {
+    try {
+      const schedules = await scheduleService.getAllSchedules();
+      res.status(200).json(schedules);
+    } catch (error) {
+      console.error("lỗi khi lấy tất cả lịch trình:", error);
+      res.status(500).json({ message: "lỗi khi lấy tất cả lịch trình", error: error.message });
+    }
+};
+
 const createSchedule = async (req, res) => {
    
     try {
@@ -295,4 +306,5 @@ module.exports = {
   getStudentsBySchedule,
   updatePickupStatus,
   updateDropoffStatus,
+  getAllSchedule
 };
