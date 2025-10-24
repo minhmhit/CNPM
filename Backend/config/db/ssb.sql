@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3306
--- Thời gian đã tạo: Th10 22, 2025 lúc 11:23 AM
+-- Thời gian đã tạo: Th10 24, 2025 lúc 03:40 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `ssb4`
+-- Cơ sở dữ liệu: `ssb`
 --
 
 -- --------------------------------------------------------
@@ -64,7 +64,8 @@ INSERT INTO `attendance_logs` (`log_id`, `student_id`, `schedule_id`, `status`, 
 (3, 2, 2, 'picked_up', '2025-10-19 11:12:35'),
 (4, 9, 2, 'picked_up', '2025-10-19 11:18:35'),
 (5, 9, 2, 'dropped_off', '2025-10-19 11:19:27'),
-(6, 3, 2, 'dropped_off', '2025-10-21 12:23:08');
+(6, 3, 2, 'dropped_off', '2025-10-21 12:23:08'),
+(7, 2, 1, 'absent', '2025-10-24 13:39:59');
 
 -- --------------------------------------------------------
 
@@ -77,7 +78,6 @@ CREATE TABLE `drivers` (
   `name` varchar(255) NOT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `status` enum('active','on_leave','terminated') DEFAULT 'active',
   `userid` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -85,13 +85,13 @@ CREATE TABLE `drivers` (
 -- Đang đổ dữ liệu cho bảng `drivers`
 --
 
-INSERT INTO `drivers` (`driver_id`, `name`, `phone_number`, `email`, `status`, `userid`) VALUES
-(1, 'minh', '01234561954', 'driver01@gmail.com', 'active', 9),
-(2, 'Lê Văn Nam', '0912233445', 'driver02@gmail.com', 'active', 10),
-(3, 'minh2025', NULL, 'minh2025@gmail.com', 'active', 17),
-(4, 'pổ', NULL, 'driver@gmail.com', 'active', 19),
-(5, 'driver10', NULL, 'driver10@gmail.com', 'active', 23),
-(6, 'driver10', NULL, 'driver100@gmail.com', 'active', 24);
+INSERT INTO `drivers` (`driver_id`, `name`, `phone_number`, `email`, `userid`) VALUES
+(1, 'minh', '01234561954', 'driver01@gmail.com', 9),
+(2, 'Lê Văn Nam', '0912233445', 'driver02@gmail.com', 10),
+(3, 'minh2025', NULL, 'minh2025@gmail.com', 17),
+(4, 'pổ', NULL, 'driver@gmail.com', 19),
+(5, 'driver10', NULL, 'driver10@gmail.com', 23),
+(6, 'driver10', NULL, 'driver100@gmail.com', 24);
 
 -- --------------------------------------------------------
 
@@ -168,12 +168,17 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`notification_id`, `recipient_type`, `recipient_user_id`, `message`, `timestamp`, `sender_id`, `is_read`, `schedule_id`) VALUES
-(1, 'student', 11, 'Xe đã đón học sinh Nguyễn Minh thành công', '2025-10-12 23:48:10', 13, 0, 1),
-(2, 'driver', NULL, 'Bạn có chuyến mới vào ngày 14/10/2025', '2025-10-12 23:48:10', 13, 1, 2),
-(3, 'student', 12, 'Đón học sinh 01', '2025-10-22 09:09:50', 9, 0, 1),
+(2, 'driver', 9, 'Bạn có chuyến mới vào ngày 14/10/2025', '2025-10-12 23:48:10', 13, 1, 2),
+(3, 'student', 12, 'Đón học sinh 01', '2025-10-22 09:09:50', 9, 1, 1),
 (4, 'student', 14, 'Đón học sinh 02', '2025-10-22 09:11:11', 9, 0, 1),
-(5, 'student', 12, 'Đón học sinh 03', '2025-10-22 09:12:44', 9, 0, 1),
-(6, 'student', 12, 'Đón học sinh 04', '2025-10-22 09:13:17', 9, 0, 1);
+(5, 'student', 12, 'Đón học sinh 03', '2025-10-22 09:12:44', 9, 1, 1),
+(6, 'student', 12, 'Đón học sinh 04', '2025-10-22 09:13:17', 9, 1, 1),
+(7, 'student', 16, 'Đón học sinh 05', '2025-10-22 09:29:25', 9, 0, 1),
+(8, 'student', 21, 'Đón học sinh 05', '2025-10-22 09:30:19', 9, 1, 1),
+(9, 'student', 11, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1),
+(10, 'student', 14, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1),
+(11, 'student', 15, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1),
+(12, 'student', 16, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -219,7 +224,13 @@ INSERT INTO `routes` (`route_id`, `name`, `description`) VALUES
 (3, 'Q9 - trường', NULL),
 (4, 'Q10 - trường', 'đường gồ ghề'),
 (5, 'Q5 - Trường', 'Tuyến xe từ Quận 5 đến trường'),
-(6, 'Q6 - Trường', 'Tuyến xe từ Quận 6 đến trường');
+(6, 'Q6 - Trường', 'Tuyến xe từ Quận 6 đến trường'),
+(7, 'Q12 - Truong', 'Duong nhieu den do'),
+(8, 'Q12 - Truong', 'Duong nhieu den do'),
+(9, 'Q11 - Truong', 'Duong nhieu den do'),
+(10, 'Q11 - Truong', 'Duong nhieu den do'),
+(11, 'Q10 - Truong', 'Duong nhieu den do'),
+(12, 'Q12 - Truong', 'Duong nhieu den do');
 
 -- --------------------------------------------------------
 
@@ -256,7 +267,7 @@ CREATE TABLE `schedule_students` (
   `id` int(11) NOT NULL,
   `schedule_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
-  `pickup_status` enum('waiting','picked_up','absent') DEFAULT 'waiting',
+  `pickup_status` enum('waiting','picked_up','absent','on_leave') DEFAULT 'waiting',
   `dropoff_status` enum('waiting','dropped_off') DEFAULT 'waiting'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -265,7 +276,7 @@ CREATE TABLE `schedule_students` (
 --
 
 INSERT INTO `schedule_students` (`id`, `schedule_id`, `student_id`, `pickup_status`, `dropoff_status`) VALUES
-(1, 1, 2, 'waiting', 'dropped_off'),
+(1, 1, 2, 'absent', 'waiting'),
 (2, 2, 3, 'picked_up', 'dropped_off'),
 (3, 1, 4, 'picked_up', 'waiting'),
 (4, 1, 5, 'picked_up', 'waiting'),
@@ -309,7 +320,15 @@ INSERT INTO `stop_points` (`stop_id`, `route_id`, `stop_name`, `stop_order`, `lo
 (11, 5, 'Trạm A', 1, '106.660172', '10.762622'),
 (12, 5, 'Trạm B', 2, '106.662', '10.765'),
 (13, 6, 'Trạm A', 1, '106.660172', '10.762622'),
-(14, 6, 'Trạm B', 2, '106.662', '10.765');
+(14, 6, 'Trạm B', 2, '106.662', '10.765'),
+(15, 7, 'Trạm A', 1, '106.660172', '10.762622'),
+(16, 7, 'Trạm B', 2, '106.662', '10.765'),
+(17, 10, 'Trạm A', 1, '106.660172', '10.762622'),
+(18, 10, 'Trạm B', 2, '106.662', '10.765'),
+(19, 11, 'Trạm A', 1, '106.660172', '10.762622'),
+(20, 11, 'Trạm B', 2, '106.662', '10.765'),
+(21, 12, 'Trạm A', 1, '106.660172', '10.762622'),
+(22, 12, 'Trạm B', 2, '106.662', '10.765');
 
 -- --------------------------------------------------------
 
@@ -538,7 +557,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT cho bảng `attendance_logs`
 --
 ALTER TABLE `attendance_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `drivers`
@@ -562,7 +581,7 @@ ALTER TABLE `live_tracking`
 -- AUTO_INCREMENT cho bảng `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `reports`
@@ -574,7 +593,7 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT cho bảng `routes`
 --
 ALTER TABLE `routes`
-  MODIFY `route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `schedules`
@@ -592,7 +611,7 @@ ALTER TABLE `schedule_students`
 -- AUTO_INCREMENT cho bảng `stop_points`
 --
 ALTER TABLE `stop_points`
-  MODIFY `stop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `stop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT cho bảng `students`
