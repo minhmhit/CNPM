@@ -1,14 +1,19 @@
 import React from "react";
 import "../Parents.css";
-import logo from "../pics/logo.png";
-import studentImg from "../pics/account-icon.png";
 
 export default function Profile() {
   return (
     <div className="student-card">
       {/* Header */}
       <div className="student-header">
-        <img src={logo} alt="SGU logo" className="student-logo" />
+        <img 
+          src="/src/pics/sgu.png" 
+          alt="SGU" 
+          className="student-logo"
+          onError={(e) => {
+            e.target.src = "https://via.placeholder.com/60x60?text=SGU";
+          }}
+        />
         <div>
           <h3>Trường Đại Học Sài Gòn</h3>
           <p>Sai Gon University</p>
@@ -17,7 +22,11 @@ export default function Profile() {
 
       {/* Body */}
       <div className="student-body">
-        <img src={studentImg} alt="student" className="student-photo" />
+        <img 
+          src="https://via.placeholder.com/120x150?text=Student" 
+          alt="Student" 
+          className="student-photo"
+        />
 
         <div className="student-info">
           <p><b>Họ và tên:</b> Nguyễn Gia Khánh</p>

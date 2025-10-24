@@ -315,8 +315,8 @@ INSERT INTO `stop_points` (`stop_id`, `route_id`, `stop_name`, `stop_order`, `lo
 CREATE TABLE `students` (
   `student_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `pickup_location` varchar(255) DEFAULT NULL,
-  `dropoff_location` varchar(255) DEFAULT NULL,
+  `pickup_location` int(50) DEFAULT NULL,
+  `dropoff_location` int(50) DEFAULT NULL,
   `className` varchar(50) DEFAULT NULL,
   `userid` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
