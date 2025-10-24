@@ -10,7 +10,8 @@ const {
     getMyNotifications,
     getStudentById,
     checkInStudent,
-    checkOutStudent
+    checkOutStudent,
+    onLeaveStudent
 } = require("../Services/student.service");
 // const authMiddleware = require("../middleware/auth.middleware");
 
@@ -24,6 +25,7 @@ router.get("/notifications", getMyNotifications);
 router.get("/:student_id", getStudentById);
 router.post("/checkinStudent", checkInStudent);
 router.post("/checkoutStudent", checkOutStudent);
+router.post("/onLeaveStudent", onLeaveStudent );
 
 // Routes cho admin quản lý học sinh
 // router.get("/:student_id", getStudentProfile);

@@ -858,19 +858,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "route_name",
-									"value": "Q10 - trường",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "đường gồ ghề",
-									"type": "text"
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"route_name\":\"Q12 - Truong\",\r\n    \"description\": \"Duong nhieu den do\",\r\n    \"stop_points\": [\r\n        {      \r\n        \"stop_name\": \"Trạm A\",\r\n        \"latitude\": 10.762622,\r\n        \"longitude\": 106.660172,\r\n        \"stop_order\": 1\r\n        },\r\n        {      \r\n        \"stop_name\": \"Trạm B\",\r\n        \"latitude\": 10.765000,\r\n        \"longitude\": 106.662000,\r\n        \"stop_order\": 2\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "http://localhost:5000/api/v1/route/add",
@@ -1642,6 +1636,43 @@
 								"v1",
 								"student",
 								"checkoutstudent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "on leave student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "schedule_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/onLeaveStudent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"onLeaveStudent"
 							]
 						}
 					},
