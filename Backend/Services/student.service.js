@@ -250,6 +250,20 @@ const checkOutStudent = async (req, res) => {
   }
 };
 
+const onLeaveStudent = async (req, res) => {
+  try {
+    const { student_id, schedule_id } = req.body;
+    const result = await studentModel.onLeaveStudent(schedule_id, student_id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi server",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   updateStudentInfo,
   getStudentProfile,
@@ -260,5 +274,6 @@ module.exports = {
   getStudentById,
   getMyNotifications,
   checkInStudent,
-  checkOutStudent
+  checkOutStudent,
+  onLeaveStudent
 };

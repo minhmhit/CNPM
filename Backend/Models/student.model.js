@@ -295,6 +295,63 @@ const checkOutStudent = async (schedule_id, student_id) => {
   }
 };
 
+const onLeaveStudent = async (schedule_id, student_id) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    // Kiểm tra xem học sinh có trong lịch trình không
+    const [scheduleStudent] = await conn.query(
+      `SELECT pickup_status, dropoff_status 
+       FROM schedule_students 
+       WHERE schedule_id = ? AND student_id = ?
+       FOR UPDATE`,
+      [schedule_id, student_id]
+    );
+
+    if (scheduleStudent.length === 0) {
+      throw new Error("Học sinh không có trong lịch trình này");
+    }
+
+    // Chỉ cho phép đánh vắng khi học sinh chưa được đón
+    if (scheduleStudent[0].pickup_status !== "waiting") {
+      throw new Error(
+        `Không thể đánh vắng: học sinh đã ${scheduleStudent[0].pickup_status}`
+      );
+    }
+
+    // Cập nhật trạng thái trong schedule_students
+    await conn.query(
+      `UPDATE schedule_students 
+       SET pickup_status = 'absent', dropoff_status = 'waiting'
+       WHERE schedule_id = ? AND student_id = ?`,
+      [schedule_id, student_id]
+    );
+
+    // Thêm log vào attendance_logs
+    await conn.query(
+      `INSERT INTO attendance_logs (student_id, schedule_id, status) 
+       VALUES (?, ?, 'absent')`,
+      [student_id, schedule_id]
+    );
+
+    await conn.commit();
+    return {
+      success: true,
+      message: "Đã đánh dấu học sinh vắng mặt",
+      data: { student_id, schedule_id },
+    };
+  } catch (error) {
+    if (conn) await conn.rollback();
+    console.error("Lỗi khi đánh dấu học sinh vắng mặt:", error);
+    throw error;
+  } finally {
+    if (conn) conn.release();
+  }
+};
+
+
 module.exports = {
   addStudentInfo,
   getStudentById,
@@ -305,4 +362,5 @@ module.exports = {
   getStudentNotifications,
   checkInStudent,
   checkOutStudent,
+  onLeaveStudent 
 };
