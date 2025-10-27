@@ -169,6 +169,44 @@
 .cancel-btn:hover {
   background-color: #bbb;
 }
+/* Nhóm nhập ID */
+.id-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.id-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.id-field input,
+.id-field select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.id-field input:focus,
+.id-field select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  outline: none;
+}
+
+.id-field select:hover,
+.id-field input:hover {
+  border-color: #8b5cf6;
+}
+
 /* QL Dnah sách*/
 .manage-list-container {
   width: 100%;
