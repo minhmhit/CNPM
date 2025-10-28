@@ -293,6 +293,33 @@ const updateDropoffStatus = async (req, res) => {
     });
   }
 };
+const getAllSchedules = async (req, res) => {
+  try {
+    const allSchedules = await scheduleService.getAllSchedules();
+    res.status(200).json(allSchedules);
+  } catch (error) {
+    console.error("Lỗi khi lấy tất cả lịch trình:", error);
+    res.status(500).json({
+      message: "Lỗi khi lấy tất cả lịch trình",
+      error: error.message,
+    });
+  }
+};
+
+const getSchedulesByDate = async (req, res) => {
+  try {
+    const { date } = req.params;
+    const schedules = await scheduleService.getSchedulesByDate(date);
+    res.status(200).json(schedules);
+  } catch (error) {
+    console.error("Lỗi khi lấy lịch trình theo ngày:", error);
+    res.status(500).json({
+      message: "Lỗi khi lấy lịch trình theo ngày",
+      error: error.message,
+    });
+  }
+};
+
 
 module.exports = {
   createSchedule,
@@ -306,5 +333,10 @@ module.exports = {
   getStudentsBySchedule,
   updatePickupStatus,
   updateDropoffStatus,
+<<<<<<< Updated upstream
   getAllSchedule
+=======
+  getAllSchedules,
+  getSchedulesByDate,
+>>>>>>> Stashed changes
 };
