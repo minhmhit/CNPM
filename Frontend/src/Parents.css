@@ -190,64 +190,83 @@ body {
    🎯 4. SIDEBAR
 =========================== */
 .dashboard-sidebar {
-  width: 250px;
-  background: #2d3748;
+  width: 280px;
+  background: linear-gradient(180deg, #7c3aed 0%, #6d28d9 100%);
   color: white;
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
+  border-radius: 0 16px 16px 0;
 }
 
 .sidebar-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
-  padding: 12px 16px;
+  padding: 16px 20px;
   text-align: left;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 600;
   transition: all 0.3s;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .sidebar-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-btn.active {
-  background: #6a42f4;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-icon {
-  font-size: 20px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-footer {
   margin-top: auto;
+  padding-top: 20px;
 }
 
 .sidebar-logout {
-  background: #e53e3e !important;
-  color: white;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #7c3aed;
   border: none;
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 14px 20px;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 700;
   transition: all 0.3s;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 10px;
   width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-logout:hover {
-  background: #c53030 !important;
+  background: rgba(255, 255, 255, 1) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-logout .sidebar-icon {
+  font-size: 20px;
 }
 
 /* ===========================
