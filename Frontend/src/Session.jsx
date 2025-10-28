@@ -1,7 +1,7 @@
 import { SidePanel, Navbar } from "./Driver.jsx"
 import "./Session.css"
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "./util/axios.customize.js"
 
 const API_BASE = "http://localhost:5000/api/v1";
 
@@ -13,11 +13,13 @@ export default function Session(){
     const fetchSessions = async (date) => {
         try {
             const userid = localStorage.getItem("userId");
-            let url = `${API_BASE}/driver/sessions/${userid}`;
+            //let url = `${API_BASE}/driver/sessions/${userid}`;
+            let url = `/driver/sessions/${userid}`
             if (date) {
                 url += `?date=${date}`;
             }
-            const res = await axios.get(url);
+            //const res = await axios.get(url);
+            const res = await api.get(url);
             console.log("Sessions:", res.data.data);
             setSessions(res.data.data || []);  // ✅ cập nhật state
         } catch (err) {
@@ -37,9 +39,12 @@ export default function Session(){
 
     const handleStart = async (id) => {
         try {
-            const res = await axios.put(`${API_BASE}/driver/session/start`, {
-            session_id: id,
-            });
+            // const res = await axios.put(`${API_BASE}/driver/session/start`, {
+            // session_id: id,
+            // });
+
+            await api.put(`/driver/session/start`, { session_id: id });
+
             setSessions((prev) =>
             prev.map((s) =>
                 s.session_id === id ? { ...s, status: "started" } : s
@@ -52,7 +57,8 @@ export default function Session(){
 
     const handleEnd = async (id) => {
         try {
-            const res = await axios.put(`${API_BASE}/driver/session/${id}/end`);
+            //const res = await axios.put(`${API_BASE}/driver/session/${id}/end`);
+            await api.put(`/driver/session/${id}/end`);
             setSessions((prev) =>
             prev.map((s) =>
                 s.session_id === id ? { ...s, status: "completed" } : s

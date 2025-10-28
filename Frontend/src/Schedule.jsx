@@ -1,16 +1,18 @@
 import { SidePanel, Navbar } from "./Driver.jsx"
 import "./Schedule.css"
 import React, {useState} from "react";
-import axios from "axios";
+import api from "./util/axios.customize.js"
 import { useEffect } from "react";
 
 const API_BASE = "http://localhost:5000/api/v1";
 
 async function fetchSchedules() {
     try {
-        const userid = localStorage.getItem("userId")
-        const url = `${API_BASE}/driver/schedules/${userid}`
-        const res = await axios.get(url)
+        // const userid = localStorage.getItem("userId")
+        // const url = `${API_BASE}/driver/schedules/${userid}`
+        // const res = await axios.get(url)
+        const userid = localStorage.getItem("userId");
+        const res = await api.get(`/driver/schedules/${userid}`);
         console.log(res.data.data)
         return res.data.data
     } catch (err) {
@@ -20,10 +22,12 @@ async function fetchSchedules() {
 
 async function fetchStudents(schedule_id) {
     try {
-        const url = `${API_BASE}/schedule/students`
-        const res = await axios.post(url, {
-            schedule_id
-        })
+        // const url = `${API_BASE}/schedule/students`
+        // const res = await axios.post(url, {
+        //     schedule_id
+        // })
+
+        const res = await api.get(`/schedule/students/${schedule_id}`);
         console.log(res.data.data)
         return res.data.data
     } catch (err) {
@@ -33,8 +37,9 @@ async function fetchStudents(schedule_id) {
 
 async function checkInAPI(schedule_id, student_id) {
   try {
-    const url = `${API_BASE}/student/checkinStudent`;
-    const res = await axios.post(url, { schedule_id, student_id });
+    // const url = `${API_BASE}/student/checkinStudent`;
+    // const res = await axios.post(url, { schedule_id, student_id });
+    const res = await api.post("/student/checkinStudent", { schedule_id, student_id });
     return res.data;
   } catch (err) {
     console.error("Lỗi khi checkin:", err);
@@ -43,8 +48,9 @@ async function checkInAPI(schedule_id, student_id) {
 
 async function checkOutAPI(schedule_id, student_id) {
   try {
-    const url = `${API_BASE}/student/checkoutStudent`;
-    const res = await axios.post(url, { schedule_id, student_id });
+    // const url = `${API_BASE}/student/checkoutStudent`;
+    // const res = await axios.post(url, { schedule_id, student_id });
+    const res = await api.post("/student/checkoutStudent", { schedule_id, student_id });
     return res.data;
   } catch (err) {
     console.error("Lỗi khi checkout:", err);
@@ -52,14 +58,14 @@ async function checkOutAPI(schedule_id, student_id) {
 }
 
 async function markAbsentAPI(student_id, schedule_id) {
-    try {
-        const url = `${API_BASE}/schedule/pickup`;
-        const status = 'absent'
-        const res = await axios.put(url, { schedule_id, student_id, status });
-        return res.data;
-    } catch (err) {
-        console.error("Lỗi khi absent:", err);
-    }
+    // try {
+    //     const url = `${API_BASE}/schedule/pickup`;
+    //     const status = 'absent'
+    //     const res = await axios.put(url, { schedule_id, student_id, status });
+    //     return res.data;
+    // } catch (err) {
+    //     console.error("Lỗi khi absent:", err);
+    // }
 }
 
 function GetDayofWeek(dateString){
