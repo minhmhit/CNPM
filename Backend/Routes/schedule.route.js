@@ -12,12 +12,8 @@ const {
   getStudentsBySchedule,
   updatePickupStatus,
   updateDropoffStatus,
-<<<<<<< Updated upstream
-  getAllSchedule
-=======
   getAllSchedules,
   getSchedulesByDate,
->>>>>>> Stashed changes
 } = require("../Controllers/schedule.controller");
 router.post('/create', createSchedule);
 router.put('/edit/:schedule_id', updateSchedule);
@@ -40,11 +36,5 @@ router.delete('/removeStudent', removeStudentFromSchedule);
 router.get('/students/:schedule_id', getStudentsBySchedule);
 router.put('/pickup', updatePickupStatus);
 router.put('/dropoff', updateDropoffStatus);
-<<<<<<< Updated upstream
-router.get("/getall", getAllSchedule);
-=======
 
-
-
->>>>>>> Stashed changes
 module.exports = router;
