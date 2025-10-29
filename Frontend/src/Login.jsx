@@ -7,6 +7,7 @@ import "./Login.css";
 import "./App.css";
 
 import axios from "axios";
+import api from "./util/axios.customize.js";
 
 
 
@@ -49,13 +50,20 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/user/login",
+      // const response = await axios.post(
+      //   "http://localhost:5000/api/v1/user/login",
+      //   {
+      //     email,
+      //     password,
+      //   }
+      // );
+
+      const response = await api.post("http://localhost:5000/api/v1/user/login",
         {
           email,
           password,
         }
-      );
+      )
 
       // Lấy role từ cấu trúc data đúng
       const { userid , role, username,} = response.data.data.result;

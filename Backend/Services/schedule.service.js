@@ -106,14 +106,14 @@ const checkStudentInSchedule = async (schedule_id, student_id) => {
     }
 };
 
-const getAllSchedules = async () => {
-    try {
-        let result = await schedule.getAllSchedules();
-        return result;
-    } catch (error) {
-        throw error;
-    }
-};
+// const getAllSchedules = async () => {
+//     try {
+//         let result = await schedule.getAllSchedules();
+//         return result;
+//     } catch (error) {
+//         throw error;
+//     }
+// };
 
 const getSchedulesByDate = async (date) => {
   try {
@@ -138,11 +138,6 @@ module.exports = {
     getBusSchedule,
     getDriverSchedule,
     checkStudentInSchedule,
-<<<<<<< Updated upstream
-    getAllSchedules
-=======
     getAllSchedules,
     getSchedulesByDate,
-
->>>>>>> Stashed changes
 };
