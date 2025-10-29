@@ -2,13 +2,27 @@ const { pool } = require("../config/connection_mysql");
 
 const createNotification = async (notificationData) => {
   try {
-    const { recipient_type, recipient_id, message, type, sender_id } =
-      notificationData;
+    const {
+      recipient_type,
+      recipient_user_id,
+      message,
+      sender_id,
+      schedule_id,
+    } = notificationData;
     const [result] = await pool.query(
-      "INSERT INTO notifications (recipient_type, recipient_id, message, type, sender_id, timestamp, is_read) VALUES (?, ?, ?, ?, ?, NOW(), 0)",
-      [recipient_type, recipient_id, message, type, sender_id]
+      `INSERT INTO notifications (
+        recipient_type,
+        recipient_user_id, 
+        message, 
+        sender_id,
+        schedule_id,
+        is_read,
+        timestamp
+      ) VALUES (?, ?, ?, ?, ?, 0, NOW())`,
+      [recipient_type, recipient_user_id, message, sender_id, schedule_id]
     );
-    return result;
+    const data = { notification_id: result.insertId, ...notificationData };
+    return data;
   } catch (error) {
     console.error("Lỗi khi tạo thông báo:", error);
     throw error;
@@ -18,20 +32,31 @@ const createNotification = async (notificationData) => {
 const getNotificationsByUserId = async (user_id, limit = 20, offset = 0) => {
   try {
     const [rows] = await pool.query(
-      `
-            SELECT 
-                n.notification_id, 
-                n.message, 
-                n.type, 
-                n.timestamp, 
-                n.is_read,
-                sender.username as sender_name
-            FROM notifications n
-            LEFT JOIN users sender ON n.sender_id = sender.userid
-            WHERE n.recipient_id = ?
-            ORDER BY n.timestamp DESC
-            LIMIT ? OFFSET ?
-        `,
+      `SELECT 
+        n.notification_id,
+        n.recipient_type,
+        n.recipient_user_id,
+        n.message,
+        n.is_read,
+        n.timestamp,
+        n.schedule_id,
+        sender.username as sender_name,
+        sender.role as sender_role,
+        s.date as schedule_date,
+        s.start_time as schedule_time,
+        s.status as schedule_status,
+        CASE 
+          WHEN n.recipient_type = 'student' THEN st.name
+          WHEN n.recipient_type = 'driver' THEN d.name 
+        END as recipient_name
+      FROM notifications n
+      LEFT JOIN users sender ON n.sender_id = sender.userid
+      LEFT JOIN schedules s ON n.schedule_id = s.schedule_id
+      LEFT JOIN students st ON (n.recipient_type = 'student' AND st.userid = n.recipient_user_id)
+      LEFT JOIN drivers d ON (n.recipient_type = 'driver' AND d.userid = n.recipient_user_id)
+      WHERE n.recipient_user_id = ?
+      ORDER BY n.timestamp DESC
+      LIMIT ? OFFSET ?`,
       [user_id, limit, offset]
     );
     return rows;
@@ -41,10 +66,61 @@ const getNotificationsByUserId = async (user_id, limit = 20, offset = 0) => {
   }
 };
 
+const sendBroadcastNotification = async (
+  recipient_type,
+  message,
+  sender_id,
+  schedule_id
+) => {
+  try {
+    let query;
+    if (recipient_type === "student") {
+      query = `
+        INSERT INTO notifications (
+          recipient_type, 
+          recipient_user_id, 
+          message, 
+          sender_id, 
+          schedule_id,
+          is_read, 
+          timestamp
+        )
+        SELECT 
+          'student',
+          s.userid,
+          ?,
+          ?,
+          ?,
+          0,
+          NOW()
+        FROM schedule_students ss
+        JOIN students s ON ss.student_id = s.student_id
+        JOIN users u ON s.userid = u.userid
+        WHERE ss.schedule_id = ? 
+        AND u.isActive = 1 
+        AND u.role = 'student'
+      `;
+    }
+
+    const [result] = await pool.query(query, [
+      message,
+      sender_id,
+      schedule_id,
+      schedule_id,
+    ]);
+    return result;
+  } catch (error) {
+    console.error("Lỗi khi gửi thông báo broadcast:", error);
+    throw error;
+  }
+};
+
 const markNotificationAsRead = async (notification_id, user_id) => {
   try {
     const [result] = await pool.query(
-      "UPDATE notifications SET is_read = 1 WHERE notification_id = ? AND recipient_id = ?",
+      `UPDATE notifications 
+       SET is_read = 1 
+       WHERE notification_id = ? AND recipient_user_id = ?`,
       [notification_id, user_id]
     );
     return result;
@@ -57,7 +133,9 @@ const markNotificationAsRead = async (notification_id, user_id) => {
 const markAllNotificationsAsRead = async (user_id) => {
   try {
     const [result] = await pool.query(
-      "UPDATE notifications SET is_read = 1 WHERE recipient_id = ? AND is_read = 0",
+      `UPDATE notifications 
+       SET is_read = 1 
+       WHERE recipient_user_id = ?`,
       [user_id]
     );
     return result;
@@ -70,7 +148,9 @@ const markAllNotificationsAsRead = async (user_id) => {
 const getUnreadNotificationCount = async (user_id) => {
   try {
     const [rows] = await pool.query(
-      "SELECT COUNT(*) as unread_count FROM notifications WHERE recipient_id = ? AND is_read = 0",
+      `SELECT COUNT(*) as unread_count 
+       FROM notifications
+       WHERE recipient_user_id = ? AND is_read = 0`,
       [user_id]
     );
     return rows[0].unread_count;
@@ -83,54 +163,13 @@ const getUnreadNotificationCount = async (user_id) => {
 const deleteNotification = async (notification_id, user_id) => {
   try {
     const [result] = await pool.query(
-      "DELETE FROM notifications WHERE notification_id = ? AND recipient_id = ?",
+      `DELETE FROM notifications 
+       WHERE notification_id = ? AND recipient_user_id = ?`,
       [notification_id, user_id]
     );
     return result;
   } catch (error) {
     console.error("Lỗi khi xóa thông báo:", error);
-    throw error;
-  }
-};
-
-const sendBroadcastNotification = async (
-  recipient_type,
-  message,
-  type,
-  sender_id
-) => {
-  try {
-    let query;
-    if (recipient_type === "student") {
-      query = `
-                INSERT INTO notifications (recipient_type, recipient_id, message, type, sender_id, timestamp, is_read)
-                SELECT 'student', s.student_id, ?, ?, ?, NOW(), 0
-                FROM students s
-                JOIN users u ON s.userid = u.userid
-                WHERE u.isActive = 1
-            `;
-    } else if (recipient_type === "driver") {
-      query = `
-                INSERT INTO notifications (recipient_type, recipient_id, message, type, sender_id, timestamp, is_read)
-                SELECT 'driver', d.driver_id, ?, ?, ?, NOW(), 0
-                FROM drivers d
-                JOIN users u ON d.userid = u.userid
-                WHERE u.isActive = 1
-            `;
-    } else if (recipient_type === "parent") {
-      query = `
-                INSERT INTO notifications (recipient_type, recipient_id, message, type, sender_id, timestamp, is_read)
-                SELECT 'parent', s.student_id, ?, ?, ?, NOW(), 0
-                FROM students s
-                JOIN users u ON s.userid = u.userid
-                WHERE u.isActive = 1
-            `;
-    }
-
-    const [result] = await pool.query(query, [message, type, sender_id]);
-    return result;
-  } catch (error) {
-    console.error("Lỗi khi gửi thông báo broadcast:", error);
     throw error;
   }
 };
@@ -141,6 +180,6 @@ module.exports = {
   markNotificationAsRead,
   markAllNotificationsAsRead,
   getUnreadNotificationCount,
-  deleteNotification,
   sendBroadcastNotification,
+  deleteNotification,
 };

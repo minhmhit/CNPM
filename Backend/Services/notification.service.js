@@ -2,15 +2,14 @@ const notificationModel = require("../Models/notification.model");
 
 const createNotification = async (req, res) => {
   try {
-    const { recipient_type, recipient_id, message, type } = req.body;
-    const { userid } = req.user;
+    const { recipient_type, message, schedule_id, userid, recipient_user_id } = req.body;
 
     const notificationData = {
       recipient_type,
-      recipient_id,
+      recipient_user_id,
       message,
-      type,
       sender_id: userid,
+      schedule_id,
     };
 
     const result = await notificationModel.createNotification(notificationData);
@@ -18,7 +17,7 @@ const createNotification = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Tạo thông báo thành công",
-      data: { notification_id: result.insertId },
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
@@ -37,12 +36,12 @@ const getUserNotifications = async (req, res) => {
     const offset = (page - 1) * limit;
 
     // Kiểm tra quyền truy cập
-    if (req.user.userid !== parseInt(user_id) && req.user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Không có quyền truy cập",
-      });
-    }
+    // if (req.user.userid !== parseInt(user_id) && req.user.role !== "admin") {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Không có quyền truy cập",
+    //   });
+    // }
 
     const notifications = await notificationModel.getNotificationsByUserId(
       user_id,
@@ -74,7 +73,7 @@ const getUserNotifications = async (req, res) => {
 
 const getMyNotifications = async (req, res) => {
   try {
-    const { userid } = req.user;
+    const { userid } = req.params;
     const { page = 1, limit = 20 } = req.query;
 
     const offset = (page - 1) * limit;
@@ -109,8 +108,7 @@ const getMyNotifications = async (req, res) => {
 
 const markAsRead = async (req, res) => {
   try {
-    const { notification_id } = req.params;
-    const { userid } = req.user;
+    const { notification_id, userid } = req.body;
 
     const result = await notificationModel.markNotificationAsRead(
       notification_id,
@@ -139,7 +137,7 @@ const markAsRead = async (req, res) => {
 
 const markAllAsRead = async (req, res) => {
   try {
-    const { userid } = req.user;
+    const { userid } = req.params;
 
     await notificationModel.markAllNotificationsAsRead(userid);
 
@@ -158,8 +156,7 @@ const markAllAsRead = async (req, res) => {
 
 const deleteNotification = async (req, res) => {
   try {
-    const { notification_id } = req.params;
-    const { userid } = req.user;
+    const { notification_id, userid } = req.params;
 
     const result = await notificationModel.deleteNotification(
       notification_id,
@@ -188,22 +185,13 @@ const deleteNotification = async (req, res) => {
 
 const sendBroadcast = async (req, res) => {
   try {
-    const { recipient_type, message, type } = req.body;
-    const { userid } = req.user;
-
-    // Chỉ admin mới được gửi broadcast
-    if (req.user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Không có quyền gửi thông báo broadcast",
-      });
-    }
-
+    const { recipient_type, message, sender_id, schedule_id } = req.body;
     await notificationModel.sendBroadcastNotification(
       recipient_type,
       message,
-      type,
-      userid
+      sender_id,
+      schedule_id
+    
     );
 
     res.status(200).json({
@@ -221,7 +209,7 @@ const sendBroadcast = async (req, res) => {
 
 const getUnreadCount = async (req, res) => {
   try {
-    const { userid } = req.user;
+    const { userid } = req.params;
 
     const unreadCount = await notificationModel.getUnreadNotificationCount(
       userid
@@ -251,69 +239,69 @@ module.exports = {
   getUnreadCount,
 };
 
-class NotificationService {
-  // Gửi thông báo khi xe bắt đầu tuyến
-  static async notifyRouteStart(route_name, driver_name, estimated_time) {
-    const message = `Xe buýt tuyến ${route_name} đã khởi hành. Tài xế: ${driver_name}. Dự kiến đến điểm đón: ${estimated_time}`;
+// class NotificationService {
+//   // Gửi thông báo khi xe bắt đầu tuyến
+//   static async notifyRouteStart(route_name, driver_name, estimated_time) {
+//     const message = `Xe buýt tuyến ${route_name} đã khởi hành. Tài xế: ${driver_name}. Dự kiến đến điểm đón: ${estimated_time}`;
 
-    await notificationModel.sendBroadcastNotification(
-      "parent",
-      message,
-      "route_start",
-      null
-    );
-  }
+//     await notificationModel.sendBroadcastNotification(
+//       "parent",
+//       message,
+//       "route_start",
+//       null
+//     );
+//   }
 
-  // Gửi thông báo khi học sinh được đón
-  static async notifyStudentPickup(student_id, pickup_location, time) {
-    const message = `Con bạn đã được đón tại ${pickup_location} lúc ${time}`;
+//   // Gửi thông báo khi học sinh được đón
+//   static async notifyStudentPickup(student_id, pickup_location, time) {
+//     const message = `Con bạn đã được đón tại ${pickup_location} lúc ${time}`;
 
-    await notificationModel.createNotification({
-      recipient_type: "parent",
-      recipient_id: student_id,
-      message: message,
-      type: "pickup",
-      sender_id: null,
-    });
-  }
+//     await notificationModel.createNotification({
+//       recipient_type: "parent",
+//       recipient_id: student_id,
+//       message: message,
+//       type: "pickup",
+//       sender_id: null,
+//     });
+//   }
 
-  // Gửi thông báo khi học sinh được trả
-  static async notifyStudentDropoff(student_id, dropoff_location, time) {
-    const message = `Con bạn đã được trả tại ${dropoff_location} lúc ${time}`;
+//   // Gửi thông báo khi học sinh được trả
+//   static async notifyStudentDropoff(student_id, dropoff_location, time) {
+//     const message = `Con bạn đã được trả tại ${dropoff_location} lúc ${time}`;
 
-    await notificationModel.createNotification({
-      recipient_type: "parent",
-      recipient_id: student_id,
-      message: message,
-      type: "dropoff",
-      sender_id: null,
-    });
-  }
+//     await notificationModel.createNotification({
+//       recipient_type: "parent",
+//       recipient_id: student_id,
+//       message: message,
+//       type: "dropoff",
+//       sender_id: null,
+//     });
+//   }
 
-  // Gửi thông báo khi có sự cố
-  static async notifyEmergency(route_name, message, driver_id) {
-    const emergencyMessage = `KHẨN CẤP - Tuyến ${route_name}: ${message}`;
+//   // Gửi thông báo khi có sự cố
+//   static async notifyEmergency(route_name, message, driver_id) {
+//     const emergencyMessage = `KHẨN CẤP - Tuyến ${route_name}: ${message}`;
 
-    await notificationModel.sendBroadcastNotification(
-      "parent",
-      emergencyMessage,
-      "emergency",
-      driver_id
-    );
-  }
+//     await notificationModel.sendBroadcastNotification(
+//       "parent",
+//       emergencyMessage,
+//       "emergency",
+//       driver_id
+//     );
+//   }
 
-  // Gửi thông báo về lịch trình thay đổi
-  static async notifyScheduleChange(student_id, old_time, new_time, reason) {
-    const message = `Lịch trình xe buýt đã thay đổi. Từ ${old_time} thành ${new_time}. Lý do: ${reason}`;
+//   // Gửi thông báo về lịch trình thay đổi
+//   static async notifyScheduleChange(student_id, old_time, new_time, reason) {
+//     const message = `Lịch trình xe buýt đã thay đổi. Từ ${old_time} thành ${new_time}. Lý do: ${reason}`;
 
-    await notificationModel.createNotification({
-      recipient_type: "parent",
-      recipient_id: student_id,
-      message: message,
-      type: "schedule_change",
-      sender_id: null,
-    });
-  }
-}
+//     await notificationModel.createNotification({
+//       recipient_type: "parent",
+//       recipient_id: student_id,
+//       message: message,
+//       type: "schedule_change",
+//       sender_id: null,
+//     });
+//   }
+// }
 
-module.exports = NotificationService;
+// module.exports = NotificationService;

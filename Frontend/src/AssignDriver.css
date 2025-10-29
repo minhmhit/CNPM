@@ -1,95 +1,245 @@
+/* ===========================
+   🎯 1. BASE STRUCTURE
+=========================== */
 .assign-driver-page {
-  max-width: 700px;
+  width: 90%;
+  max-width: 800px;
   margin: 40px auto;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .assign-driver-page h2 {
+  color: #4f46e5;
+  font-size: 24px;
+  font-weight: 700;
   text-align: center;
-  color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
+/* ===========================
+   🎯 2. FORM
+=========================== */
 .assign-driver-form {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .assign-driver-form label {
-  margin: 10px 0 5px;
-  font-weight: bold;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
 }
 
 .assign-driver-form select {
-  padding: 8px;
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.2s;
+}
+.assign-driver-form select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+  outline: none;
 }
 
+/* ===========================
+   🎯 3. BUTTONS
+=========================== */
 .btn-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 14px;
   margin-top: 20px;
 }
 
-.assign-btn {
-  background-color: #28a745;
-  color: white;
+.assign-btn,
+.back-btn {
   border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
+  color: #fff;
+  transition: 0.25s;
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
+.assign-btn {
+  background-color: #22c55e;
+}
 .assign-btn:hover {
-  background-color: #218838;
+  background-color: #16a34a;
+  transform: translateY(-2px);
 }
 
 .back-btn {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
+  background-color: #6b7280;
+}
+.back-btn:hover {
+  background-color: #4b5563;
+  transform: translateY(-2px);
 }
 
-.back-btn:hover {
-  background-color: #5a6268;
+/* ===========================
+   🎯 4. DRIVER STATUS TABLE
+=========================== */
+.driver-status {
+  width: 100%;
+  margin-top: 28px;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .driver-status h3 {
-  margin-top: 30px;
-  margin-bottom: 10px;
   text-align: center;
-  color: #444;
+  color: #4f46e5;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 16px 0;
+  background: #f8f8ff;
+  margin-bottom: 0;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .driver-status table {
   width: 100%;
   border-collapse: collapse;
-  background: #fafafa;
+  text-align: center;
 }
 
 .driver-status th,
 .driver-status td {
-  padding: 10px;
-  border: 1px solid #ccc;
-  text-align: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+  color: #333;
 }
 
+.driver-status th {
+  background: #6a42f4;
+  color: white;
+  font-weight: 600;
+}
+
+.driver-status tr:nth-child(even) {
+  background: #faf9ff;
+}
+
+.driver-status tr:hover {
+  background: #f4f4ff;
+  transition: 0.2s;
+}
+
+/* ===========================
+   🎯 5. STATUS COLORS
+=========================== */
 .free {
-  color: green;
-  font-weight: bold;
+  color: #16a34a;
+  font-weight: 700;
 }
 
 .busy {
-  color: red;
-  font-weight: bold;
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* ===========================
+   🎯 6. RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+  .assign-driver-page {
+    width: 100%;
+    padding: 20px;
+  }
+  .driver-status table {
+    font-size: 13px;
+  }
+  .assign-btn,
+  .back-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+/* ===========================
+   🎯 7. ANIMATION
+=========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================
+   🎯 POPUP SIDEBAR
+=========================== */
+/* Nút menu 3 gạch trong header */
+.header-menu-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.header-menu-btn:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.header-menu-btn:hover {
+  filter: brightness(0.92);
+}
+
+/* Sidebar popup trượt */
+.dashboard-sidebar {
+  position: fixed;
+  top: 0;
+  right: -260px;
+  width: 240px;
+  height: 100vh;
+  background: #6a42f4;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 24px 20px;
+  gap: 12px;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  transition: right 0.3s ease;
+  z-index: 200;
+}
+.dashboard-sidebar.open {
+  right: 0;
+}
+
+/* Overlay làm mờ nền */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 150;
 }

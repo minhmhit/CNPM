@@ -54,39 +54,73 @@ export default function ManageList({ onBack }) {
 
 
   // Thêm mới
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    try {
-      let url = "";
-      switch (category) {
-        case "routes":
-          url = `${API_BASE}/route/add`;
-          break;
-        case "buses":
-          url = `${API_BASE}/bus/add`;
-          break;
-        case "drivers":
-          url = `${API_BASE}/driver/add`;
-          break;
-        case "students":
-          url = `${API_BASE}/student/add`;
-          break;
-        default:
-          return;
-      }
+const handleAdd = async (e) => {
+  e.preventDefault();
+  try {
+    let url = "";
+    let payload = {};
 
-      const res = await axios.post(url, newItem);
+    switch (category) {
+      case "routes":
+        url = `${API_BASE}/route/add`;
+        payload = newItem;
+        break;
+      case "buses":
+        url = `${API_BASE}/bus/add`;
+        payload = newItem;
+        break;
+      case "drivers":
+        url = `${API_BASE}/user/register`;
+        payload = {
+          username: newItem.username,
+          password: newItem.password,
+          email: newItem.email,
+          role: "driver",
+        };
+        break;
+      case "students":
+        url = `${API_BASE}/user/register`;
+        payload = {
+          username: newItem.username,
+          password: newItem.password,
+          email: newItem.email,
+          role: "student",
+        };
+        break;
+      default:
+        return;
+    }
+
+    const res = await axios.post(url, payload);
+    alert("Thêm mới thành công!");
+    setShowForm(false);
+    setNewItem({});
+
+    // Reload danh sách
+    const updatedRes = await axios.get(`${API_BASE}/admin/getAllUsers`);
+    const users = updatedRes.data.data || updatedRes.data;
+    if (category === "drivers") {
+      setData((prev) => ({
+        ...prev,
+        drivers: users.filter((u) => u.role === "driver" && u.isActive === 1),
+      }));
+    } else if (category === "students") {
+      setData((prev) => ({
+        ...prev,
+        students: users.filter((u) => u.role === "student" && u.isActive === 1),
+      }));
+    } else {
+      // Với bus và route thì thêm trực tiếp vào danh sách cũ
       setData((prev) => ({
         ...prev,
         [category]: [...prev[category], res.data],
       }));
-      setShowForm(false);
-      setNewItem({});
-    } catch (err) {
-      console.error("❌ Lỗi khi thêm:", err);
-      alert("Không thể thêm dữ liệu!");
     }
-  };
+  } catch (err) {
+    console.error("Lỗi khi thêm:", err);
+    alert("Không thể thêm dữ liệu!");
+  }
+};
 
   // Xóa
   const handleDelete = async (id) => {
@@ -132,60 +166,92 @@ export default function ManageList({ onBack }) {
 
   // Render form input
   const renderInputFields = () => {
-    switch (category) {
-      case "routes":
-        return (
-          <>
-            <label>Tên tuyến:</label>
-            <input
-              value={newItem.route_name || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, route_name: e.target.value })
-              }
-              placeholder="Nhập tên tuyến"
-            />
-            <label>Mô tả:</label>
-            <input
-              value={newItem.description || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, description: e.target.value })
-              }
-              placeholder="Nhập mô tả"
-            />
-          </>
-        );
-      case "buses":
-        return (
-          <>
-            <label>Biển số:</label>
-            <input
-              value={newItem.license_plate || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, license_plate: e.target.value })
-              }
-              placeholder="Nhâp biển số"
-            />
-            <label>Model:</label>
-            <input
-              value={newItem.model || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, model: e.target.value })
-              }
-            />
-            <label>Sức chứa:</label>
-            <input
-              type="number"
-              value={newItem.capacity || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, capacity: e.target.value })
-              }
-            />
-          </>
-        );
-      default:
-        return null;
-    }
-  };
+  switch (category) {
+    case "routes":
+      return (
+        <>
+          <label>Tên tuyến:</label>
+          <input
+            value={newItem.route_name || ""}
+            onChange={(e) =>
+              setNewItem({ ...newItem, route_name: e.target.value })
+            }
+            placeholder="Nhập tên tuyến"
+          />
+          <label>Mô tả:</label>
+          <input
+            value={newItem.description || ""}
+            onChange={(e) =>
+              setNewItem({ ...newItem, description: e.target.value })
+            }
+            placeholder="Nhập mô tả"
+          />
+        </>
+      );
+    case "buses":
+      return (
+        <>
+          <label>Biển số:</label>
+          <input
+            value={newItem.license_plate || ""}
+            onChange={(e) =>
+              setNewItem({ ...newItem, license_plate: e.target.value })
+            }
+            placeholder="Nhập biển số"
+          />
+          <label>Model:</label>
+          <input
+            value={newItem.model || ""}
+            onChange={(e) =>
+              setNewItem({ ...newItem, model: e.target.value })
+            }
+            placeholder="Nhập model xe"
+          />
+          <label>Sức chứa:</label>
+          <input
+            type="number"
+            value={newItem.capacity || ""}
+            onChange={(e) =>
+              setNewItem({ ...newItem, capacity: e.target.value })
+            }
+            placeholder="Nhập sức chứa"
+          />
+        </>
+      );
+    case "drivers":
+    case "students":
+      return (
+        <>
+          <label>Tên đăng nhập:</label>
+          <input
+            value={newItem.username || ""}
+            onChange={(e) =>
+              setNewItem({ ...newItem, username: e.target.value })
+            }
+            placeholder="Nhập tên đăng nhập"
+          />
+          <label>Mật khẩu:</label>
+          <input
+            type="password"
+            value={newItem.password || ""}
+            onChange={(e) =>
+              setNewItem({ ...newItem, password: e.target.value })
+            }
+            placeholder="Nhập mật khẩu"
+          />
+          <label>Email:</label>
+          <input
+            type="email"
+            value={newItem.email || ""}
+            onChange={(e) => setNewItem({ ...newItem, email: e.target.value })}
+            placeholder="Nhập email"
+          />
+        </>
+      );
+    default:
+      return null;
+  }
+};
 
   // Render bảng
   const list = data[category] || [];

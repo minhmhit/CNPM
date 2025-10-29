@@ -745,6 +745,14 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get all schedule",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			]
 		},
@@ -850,19 +858,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "route_name",
-									"value": "Q10 - trường",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "đường gồ ghề",
-									"type": "text"
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"route_name\":\"Q12 - Truong\",\r\n    \"description\": \"Duong nhieu den do\",\r\n    \"stop_points\": [\r\n        {      \r\n        \"stop_name\": \"Trạm A\",\r\n        \"latitude\": 10.762622,\r\n        \"longitude\": 106.660172,\r\n        \"stop_order\": 1\r\n        },\r\n        {      \r\n        \"stop_name\": \"Trạm B\",\r\n        \"latitude\": 10.765000,\r\n        \"longitude\": 106.662000,\r\n        \"stop_order\": 2\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "http://localhost:5000/api/v1/route/add",
@@ -1006,10 +1008,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "schedule",
-			"item": []
 		},
 		{
 			"name": "driver",
@@ -1212,8 +1210,41 @@
 				},
 				{
 					"name": "laydshocsinhtheoscheduleid",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/schedule/students/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"schedule",
+								"students",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getmystudent",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
@@ -1226,7 +1257,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/schedule/students",
+							"raw": "http://localhost:5000/api/v1/driver/students/10",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1235,8 +1266,9 @@
 							"path": [
 								"api",
 								"v1",
-								"schedule",
-								"students"
+								"driver",
+								"students",
+								"10"
 							]
 						}
 					},
@@ -1382,22 +1414,78 @@
 					"response": []
 				},
 				{
-					"name": "lay thong tin ca nhan",
+					"name": "get all class",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "userid",
-									"value": "25",
-									"type": "text"
-								}
-							]
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/student/profile",
+							"raw": "http://localhost:5000/api/v1/admin/getAllClasses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"getAllClasses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all student by className",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/admin/getAllStudentsByClass/1A",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"getAllStudentsByClass",
+								"1A"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lay thong tin ca nhan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/profile/25",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1407,7 +1495,8 @@
 								"api",
 								"v1",
 								"student",
-								"profile"
+								"profile",
+								"25"
 							]
 						}
 					},
@@ -1415,21 +1504,18 @@
 				},
 				{
 					"name": "lay lich trinh ca nhan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "userid",
-									"value": "25",
-									"type": "text"
-								}
-							]
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/student/schedules",
+							"raw": "http://localhost:5000/api/v1/student/schedules/16",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1439,7 +1525,8 @@
 								"api",
 								"v1",
 								"student",
-								"schedules"
+								"schedules",
+								"16"
 							]
 						}
 					},
@@ -1518,7 +1605,7 @@
 					"response": []
 				},
 				{
-					"name": "checkin Copy",
+					"name": "checkouot",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -1549,6 +1636,301 @@
 								"v1",
 								"student",
 								"checkoutstudent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "on leave student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "schedule_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "student_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/student/onLeaveStudent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"onLeaveStudent"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "notification",
+			"item": [
+				{
+					"name": "create notification",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userid",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "recipient_type",
+									"value": "student",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "Đón học sinh 05",
+									"type": "text"
+								},
+								{
+									"key": "schedule_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "recipient_user_id",
+									"value": "21",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send broadcast notification to schedule",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "sender_id",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "recipient_type",
+									"value": "student",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "chuyến đi 01 có mặt đầy đủ",
+									"type": "text"
+								},
+								{
+									"key": "schedule_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/sendAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"sendAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user notification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/user/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"user",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all my notification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/user/16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"user",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mark as read",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "notification_id",
+									"value": "8",
+									"type": "text"
+								},
+								{
+									"key": "userid",
+									"value": "21",
+									"description": "id người nhận",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/read",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"read"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get my notification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/my/12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"my",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mark all as read",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/readAll/12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"readAll",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete notification",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/notification/delete/11/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"notification",
+								"delete",
+								"11",
+								"1"
 							]
 						}
 					},
