@@ -346,3 +346,12 @@ body {
   margin: 0 auto;
   border-radius: 4px;
 }
+.map-container {
+  height: 500px;
+  width: 100%;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}

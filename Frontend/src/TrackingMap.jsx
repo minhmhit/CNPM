@@ -1,43 +1,75 @@
 import React, { useState } from "react";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import "./TrackingMap.css";
 
-const containerStyle = {
-  width: "100%",
-  height: "600px",
-};
+const markerIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png",
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -35],
+});
 
-const center = {
-  lat: 10.762622,
-  lng: 106.660172,
-};
+function LocationMarker({ onLocationSelect }) {
+  const [position, setPosition] = useState(null);
+
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      setPosition([lat, lng]);
+      onLocationSelect(lat, lng);
+    },
+  });
+
+  return position === null ? null : (
+    <Marker position={position} icon={markerIcon}></Marker>
+  );
+}
 
 export default function TrackingMap() {
-  const [marker, setMarker] = useState(null);
+  const [coords, setCoords] = useState(null);
+  const [address, setAddress] = useState("");
 
-  const handleClick = (e) => {
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
-    setMarker({ lat, lng });
-    console.log("📍 Kinh độ - Vĩ độ:", lat, lng);
+  const handleLocationSelect = async (lat, lng) => {
+    setCoords({ lat, lng });
+    console.log("Vĩ độ:", lat, " | Kinh độ:", lng);
+
+    // Gọi Google Geocoding API
+    const apiKey = "YOUR_API_KEY"; // Thay bằng API key của bạn
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
+    );
+    const data = await response.json();
+    if (data.results && data.results.length > 0) {
+      setAddress(data.results[0].formatted_address);
+    } else {
+      setAddress("Không tìm thấy địa chỉ!");
+    }
   };
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyB8FQH6ZOUxtGEsaddoDxM3499xnXSvgrI">
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={13}
-        onClick={handleClick}
-      >
-        {marker && <Marker position={marker} />}
-      </GoogleMap>
+    <div className="tracking-map-container">
+  <MapContainer
+    center={[10.762622, 106.660172]}
+    zoom={13}
+    className="tracking-map"
+  >
+    <TileLayer
+      attribution='&copy; OpenStreetMap contributors'
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    />
+    <LocationMarker onLocationSelect={handleLocationSelect} />
+  </MapContainer>
 
-      {marker && (
-        <div style={{ marginTop: 10 }}>
-          <b>Vĩ độ (lat):</b> {marker.lat} <br />
-          <b>Kinh độ (lng):</b> {marker.lng}
-        </div>
-      )}
-    </LoadScript>
+  {coords && (
+    <div className="tracking-info">
+      <p><b>Vĩ độ (lat):</b> {coords.lat}</p>
+      <p><b>Kinh độ (lng):</b> {coords.lng}</p>
+      <p><b>Địa chỉ (Google API):</b> {address}</p>
+    </div>
+  )}
+</div>
+
   );
 }

@@ -1,73 +1,25 @@
 import React, { useState } from "react";
 import "./AssignDriver.css";
+import AssignForm from "./AssignForm";
 
 export default function AssignDriver({ schedules, drivers, onAssign, onBack }) {
-  const [selectedSchedule, setSelectedSchedule] = useState("");
-  const [selectedDriver, setSelectedDriver] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
-  const availableDrivers = drivers.filter((d) => d.status === "Rảnh");
-  const unassignedSchedules = schedules.filter((s) => !s.driver);
-
-  const handleAssign = (e) => {
-    e.preventDefault();
-
-    if (!selectedSchedule || !selectedDriver) {
-      alert("Vui lòng chọn lịch trình và tài xế!");
-      return;
-    }
-
-    const schedule = schedules.find((s) => s.id === selectedSchedule);
-    const driver = drivers.find((d) => d.id === selectedDriver);
-
-    // Gửi dữ liệu phân công về ManageSchedule
-    onAssign(schedule, driver);
-
-    alert(`✅ Đã phân công tài xế ${driver.name} cho xe ${schedule.id}`);
-    setSelectedSchedule("");
-    setSelectedDriver("");
-  };
+  if (showForm) {
+    return (
+      <AssignForm
+        schedules={schedules}
+        drivers={drivers}
+        onAssign={onAssign}
+        onBack={() => setShowForm(false)}
+      />
+    );
+  }
 
   return (
     <div className="assign-driver-page">
-      <h2>👨‍✈️ Phân công tài xế</h2>
-
-      <form className="assign-driver-form" onSubmit={handleAssign}>
-        <label>Chọn lịch trình:</label>
-        <select
-          value={selectedSchedule}
-          onChange={(e) => setSelectedSchedule(e.target.value)}
-        >
-          <option value="">-- Chọn lịch trình --</option>
-          {unassignedSchedules.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.id} — {s.route} ({s.date})
-            </option>
-          ))}
-        </select>
-
-        <label>Chọn tài xế:</label>
-        <select
-          value={selectedDriver}
-          onChange={(e) => setSelectedDriver(e.target.value)}
-        >
-          <option value="">-- Chọn tài xế rảnh --</option>
-          {availableDrivers.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.name} ({d.phone})
-            </option>
-          ))}
-        </select>
-
-        <div className="btn-container">
-          <button type="submit" className="assign-btn">✅ Phân công</button>
-          <button type="button" className="back-btn" onClick={onBack}>
-            ↩ Quay lại
-          </button>
-        </div>
-      </form>
-
+      <h2>🚘 Danh sách tài xế</h2>
       <div className="driver-status">
-        <h3>🚘 Danh sách tài xế</h3>
         <table>
           <thead>
             <tr>
@@ -90,6 +42,15 @@ export default function AssignDriver({ schedules, drivers, onAssign, onBack }) {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="btn-container">
+        <button className="assign-btn" onClick={() => setShowForm(true)}>
+          👨‍✈️ Phân công tài xế
+        </button>
+        <button className="back-btn" onClick={onBack}>
+          ↩ Quay lại
+        </button>
       </div>
     </div>
   );
