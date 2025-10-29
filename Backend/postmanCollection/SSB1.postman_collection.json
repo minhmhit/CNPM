@@ -220,6 +220,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluMDJAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhZG1pbjAyIiwidXNlcmlkIjoyNiwiaWF0IjoxNzYxNzI0ODg0LCJleHAiOjE3NjE4MTEyODR9.6dQve1NjpGLzycuWk_7jX6w4zPhGGfayrIwzfnPc8wE",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -753,6 +763,29 @@
 						"header": []
 					},
 					"response": []
+				},
+				{
+					"name": "get admin profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/admin/profile/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"profile",
+								"13"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1021,24 +1054,19 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "name",
-									"value": "minh",
+									"key": "driver_id",
+									"value": "4",
 									"type": "text"
 								},
 								{
 									"key": "phone_number",
-									"value": "01234561954",
-									"type": "text"
-								},
-								{
-									"key": "status",
-									"value": "active",
+									"value": "01234561952",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/driver/edit/1",
+							"raw": "http://localhost:5000/api/v1/driver/editinfo",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1048,8 +1076,7 @@
 								"api",
 								"v1",
 								"driver",
-								"edit",
-								"1"
+								"editinfo"
 							],
 							"query": [
 								{
@@ -1086,6 +1113,36 @@
 								"v1",
 								"driver",
 								"schedules",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get my info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/driver/profile/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"driver",
+								"profile",
 								"9"
 							]
 						}

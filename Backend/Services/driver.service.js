@@ -5,22 +5,23 @@ const NotificationService = require("../Services/notification.service");
 
 const updateDriverInfo = async (req, res) => {
   try {
-    const { driver_id } = req.params;
-    const { name, phone_number, status } = req.body;
-    const driverData = { name, phone_number, status };
+    const { name, phone_number,  driver_id } = req.body;
+    const driverData = { name, phone_number };
 
     const result = await driverModel.addDriverInfo(driver_id, driverData);
 
-    if (result.affectedRows === 0) {
+    if (result.result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
         message: "Không tìm thấy tài xế",
+        
       });
     }
 
     res.status(200).json({
       success: true,
       message: "Cập nhật thông tin tài xế thành công",
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
@@ -59,7 +60,7 @@ const getDriverProfile = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
   try {
-    const { userid } = req.user;
+    const { userid } = req.params;
 
     const driver = await driverModel.getDriverByUserId(userid);
 

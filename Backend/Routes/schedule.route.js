@@ -14,6 +14,9 @@ const {
   updateDropoffStatus,
   getAllSchedule
 } = require("../Controllers/schedule.controller");
+const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
+router.use(authMiddleware);
+router.use(isAdmin);
 router.post('/create', createSchedule);
 router.put('/edit/:schedule_id', updateSchedule);
 router.delete('/delete/:schedule_id', deleteSchedule);

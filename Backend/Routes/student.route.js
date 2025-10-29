@@ -14,7 +14,8 @@ const {
     onLeaveStudent
 } = require("../Services/student.service");
 // const authMiddleware = require("../middleware/auth.middleware");
-
+const { authMiddleware, isStudent } = require("../middlewares/auth.middleware");
+router.use(authMiddleware);
 // Routes cho học sinh (cần xác thực)
 router.get("/profile/:userid", getMyProfile);
 router.get("/schedules/:userid", getMySchedules);

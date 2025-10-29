@@ -48,10 +48,22 @@ const getAllStudentsByClass = async (req, res) => {
   }
 };
 
+const getMyprofile = async (req, res) => {
+  try {
+    const userid = req.params.userid;
+    const profile = await adminService.getAdminProfileService(userid);
+    res.json(profile);
+  } catch (error) {
+    console.error("Error getting admin profile:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getAllDrivers,
   getAllStudents,
   getAllClasses,
-  getAllStudentsByClass
+  getAllStudentsByClass,
+  getMyprofile
 };
