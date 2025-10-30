@@ -1,0 +1,135 @@
+.driver-display-info .schedule-container {
+  padding: 20px;
+  font-size: 18px;
+  width: 90%;
+  background-color: #f9fcff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.driver-display-info .schedule-container h2 {
+  text-align: center;
+  color: #1b4f72;
+  margin-bottom: 16px;
+}
+
+.driver-display-info .schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.driver-display-info .schedule-table th {
+  background-color: #2471a3; /* xanh đậm */
+  color: black;
+  font-weight: bold;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.driver-display-info .schedule-table td {
+  background-color: #d6eaf8; /* xanh nhạt */
+  color: black;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.driver-display-info .schedule-table tr:hover td {
+  background-color: #aed6f1; /* xanh hover */
+  transition: 0.2s;
+}
+
+.driver-display-info .clickable-th {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.driver-display-info .clickable-th:hover {
+  background-color: #1b4f72;
+}
+
+.driver-display-info .day-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #f4f6f7;
+  border: 1px solid #ccc;
+  width: 100px;
+  z-index: 10;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.driver-display-info .day-option {
+  padding: 6px;
+  text-align: center;
+  cursor: pointer;
+  height: auto;
+}
+
+.driver-display-info .day-option:hover {
+  background-color: #aed6f1;
+}
+
+.driver-display-info .day-option.active {
+  font-weight: bold;
+  background-color: #5dade2;
+}
+
+.driver-display-info .selected-day {
+  color: #2471a3;
+  font-weight: bold;
+}
+
+.driver-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+  z-index: 1000;
+}
+
+.driver-modal-content {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 70%;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.driver-modal-content h2 {
+  margin-top: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.driver-modal-content p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.scrollable-table {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}
+
+.scrollable-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 5;
+}

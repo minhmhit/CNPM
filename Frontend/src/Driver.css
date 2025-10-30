@@ -1,0 +1,220 @@
+.account-info{
+    width: 10%;
+    height: 50%;
+    background-color: white;
+    border-radius: 20px;
+    margin-right: 20px;
+    display: flex;
+}
+.account-info span{
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+.account-info img{
+    width: 20%;
+    padding-right: 0%;
+}
+
+.driver-center-box{
+    flex: 1;
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #f0f0f0;
+    background: url("./pics/backgroud.png") no-repeat center center;
+    background-size: cover;   /* ảnh scale full */
+}
+
+.driver-display-info{
+    width: 85%;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+.driver-side-panel{
+    width: 15%;
+    height: 100%;
+    background-color: rgb(119, 19, 249);
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.driver-side-panel .side-button{
+    width: 100%;
+    height: 10%;
+    background-color: rgb(119, 19, 249);
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    border: 0.5px solid white;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.side-button.active {
+  background-color: whitesmoke;
+}
+
+/* .driver-side-panel button:hover{
+    background-color: rgb(126, 70, 246);
+    color: rgb(119, 19, 249);
+    cursor: pointer;
+    color : white;
+} */
+.logout-button{
+    width: 80%;
+    height:48%;
+    background-color: rgb(119, 19, 249);
+    position: absolute;
+    margin-left: 20%;
+}
+.logout-button button{
+    width: 80%;
+    height: 10%;
+    background-color: rgb(119, 19, 249);
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    border: 0.5px solid white;
+    border-radius: none;
+    position: absolute;
+    bottom: 0;
+}
+.logout-button button:hover{
+    background-color: rgb(233, 26, 26);
+    color: rgb(119, 19, 249);
+    cursor: pointer;
+    color : white;
+}
+
+/* --- Tiêu đề chào mừng --- */
+.driver-display-info h1 {
+  text-align: center;
+  font-size: 2rem;
+  color: #2a7de1;
+  font-weight: 700;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Thẻ thông tin tài xế --- */
+.driver-card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #ffffff;
+  height: 50%;
+  width: 100vh;
+  margin: 0 auto;
+  padding: 20px 25px; 
+  border-radius: 16px;
+  box-shadow: 18px 20px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Ảnh tài xế */
+.driver-profile-pic {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 0%;
+  overflow: hidden;
+  border: 3px solid #d2e7ff;
+  background-color: #f0f6ff;
+  margin-right: 20px;
+}
+
+.driver-profile-pic .card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Thông tin tài xế */
+.driver-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.driverCard-name {
+  font-size: 1.7rem;
+  color: #003366;
+  margin: 0 0 5px 0;
+  font-weight: 600;
+}
+
+.driver-info p {
+  font-size: 1.2rem;
+  color: #444;
+  margin: 5px 0;
+}
+
+.driver-info hr {
+  border: none;
+  height: 2px;
+  background-color: #eef2f7;
+  margin: 6px 0;
+}
+
+.edit-form {
+  margin: 20px auto;
+  padding: 20px;
+  width: 50%;
+  background: #f9fcff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.edit-form input {
+  display: block;
+  width: 95%;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.edit-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}

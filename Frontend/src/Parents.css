@@ -1,0 +1,357 @@
+/* ===========================
+   🎯 1. GLOBAL BASE
+=========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+body {
+  background: #f5f7fb;
+  color: #222;
+}
+
+/* ===========================
+   🎯 2. SHELL CHUNG (Header + Sidebar)
+=========================== */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.dashboard-header {
+  height: 60px;
+  background: #6a42f4;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+.header-title {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-user-icon-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-bell-btn {
+  margin-left: 6px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 6px;
+  background: #4caf50;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+.header-bell-btn:hover { filter: brightness(0.92); }
+
+/* Layout 2 cột: content + sidebar phải */
+.dashboard-content {
+  flex: 1;
+  display: flex;
+}
+.view-area {
+  flex: 1;
+  background: #3ca36b;
+  padding: 24px;
+  overflow: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Sidebar phải */
+.dashboard-sidebar {
+  width: 240px;
+  background: #6a42f4;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 24px 20px;
+  gap: 12px;
+}
+.sidebar-btn {
+  background: #7b58f7;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  text-align: left;
+  padding: 12px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.sidebar-btn:hover { background: #8c6ef9; }
+.sidebar-btn.active {
+  background: #dcdcdc;
+  color: #333;
+  font-weight: 700;
+}
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+}
+.sidebar-logout {
+  background: #fff;
+  color: #6a42f4;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s;
+}
+.sidebar-logout:hover { background: #ff5a5f; color: #fff; }
+
+/* ===========================
+   🎯 3. DASHBOARD (Trang chính)
+=========================== */
+.dashboard-home {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dashboard-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.15;
+}
+.bus-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+}
+.bus-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.bus-group {
+  font-size: 20px;
+  background: #fff;
+  padding: 6px 16px;
+  border-radius: 10px;
+  color: #222;
+}
+
+/* ===========================
+   🎯 4. MAP (Theo dõi vị trí xe)
+=========================== */
+.map-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.map-placeholder {
+  width: 90%;
+  height: 420px;
+  background: #e8e8e8;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #666;
+}
+.map-info-card {
+  width: 80%;
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+.map-info-text p {
+  font-size: 16px;
+  margin: 4px 0;
+}
+.map-driver-img {
+  width: 160px;
+  height: 110px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* ===========================
+   🎯 5. NOTIFICATIONS
+=========================== */
+.notification-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: #fff; /* đổi nền trắng */
+  padding: 24px;
+  border-radius: 12px;
+}
+.notification-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 90%;
+  justify-content: center;
+  position: relative;
+}
+.notification-header h2 {
+  font-weight: 700;
+  color: #000;
+}
+.back-btn {
+  position: absolute;
+  left: 0;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #000;
+}
+.notification-box {
+  width: 90%;
+  height: 360px;
+  background: #f5fff5; /* trắng hơi xanh nhẹ */
+  border-radius: 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.notification-box p {
+  color: #333;
+  font-weight: 600;
+}
+
+/* ===========================
+   🎯 6. PROFILE (Thông tin học sinh)
+=========================== */
+.student-card {
+  width: 85%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  background: #fff; /* đổi nền trắng */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.student-header {
+  width: 100%;
+  background: #4269f4;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  gap: 16px;
+}
+.student-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: white;
+  padding: 8px;
+}
+.student-body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+}
+.student-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.student-info p {
+  margin: 4px 0;
+  font-size: 16px;
+  color: black;
+  font-weight: 500;
+}
+.student-footer {
+  width: 100%;
+  text-align: center;
+  padding: 12px 0 20px;
+}
+.student-id {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.barcode {
+  width: 80%;
+  height: 40px;
+  background: repeating-linear-gradient(
+    90deg,
+    #000,
+    #000 2px,
+    #fff 2px,
+    #fff 4px
+  );
+  margin: 0 auto;
+  border-radius: 4px;
+}
+.map-container {
+  height: 500px;
+  width: 100%;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}

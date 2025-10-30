@@ -1,0 +1,142 @@
+/* ===========================
+   🎯 1. BASE STYLE
+=========================== */
+.manage-schedule {
+  width: 90%;
+  background: #fff;
+  color: #222;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.manage-schedule h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4f46e5;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   🎯 2. TABLE
+=========================== */
+.manage-schedule table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.manage-schedule th,
+.manage-schedule td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+}
+
+.manage-schedule th {
+  background-color: #6a42f4;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.manage-schedule tr:nth-child(even) {
+  background: #faf9ff;
+}
+
+.manage-schedule tr:hover {
+  background-color: #f4f4ff;
+  transition: 0.2s;
+}
+
+/* ===========================
+   🎯 3. STATUS LABELS
+=========================== */
+.status {
+  font-weight: 700;
+}
+.status.đang-chạy {
+  color: #16a34a;
+}
+.status.chờ-khởi-hành {
+  color: #f59e0b;
+}
+.status.hoàn-thành {
+  color: #2563eb;
+}
+
+/* ===========================
+   🎯 4. ACTION BUTTONS
+=========================== */
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 6px 12px;
+  margin: 0 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.edit-btn {
+  background-color: #4f46e5;
+}
+.edit-btn:hover {
+  background-color: #4338ca;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+}
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+/* ===========================
+   🎯 5. RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+  .manage-schedule {
+    width: 100%;
+    padding: 16px;
+  }
+  .manage-schedule table {
+    font-size: 13px;
+  }
+  .manage-schedule th,
+  .manage-schedule td {
+    padding: 8px;
+  }
+  .edit-btn,
+  .delete-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+/* ===========================
+   🎯 6. ANIMATION
+=========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
