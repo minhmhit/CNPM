@@ -5,9 +5,8 @@ import { IoMdClose } from "react-icons/io";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import "./Login.css";
 import "./App.css";
-
+import { toast } from 'react-toastify';
 import axios from "axios";
-
 
 
 export default function Login() {
@@ -15,6 +14,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   /***
    * tạo data account mẫu để test
@@ -26,7 +26,8 @@ export default function Login() {
       const role = "driver";
       const email = "driver2000@gmail.com";
       const password = "123456789";
-      const res = await axios.post(
+
+      await axios.post(
         "http://localhost:5000/api/v1/user/register",
         {
           username,
@@ -35,19 +36,19 @@ export default function Login() {
           role,
         }
       );
-      if(res){
-        console.log("create account success", res.data);
-      }
+      toast.info("Tạo tài khoản test thành công! Email: driver2000@gmail.com, Pass: 123456789", { position: "top-center", autoClose: 5000 });
     } catch (error) {
-      console.log ("create account error", error);
-      
+      console.log("create account error", error);
+      let errorMessage = error.response?.data?.message || "Lỗi tạo tài khoản";
+      toast.error(`❌ Lỗi: ${errorMessage}`, { position: "top-center" });
     }
   }
-  
-  //get data frome backend
-  // Lấy data từ backend
+
+  // Logic Đăng nhập chính
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/v1/user/login",
@@ -57,53 +58,71 @@ export default function Login() {
         }
       );
 
-      // Lấy role từ cấu trúc data đúng
-      const { userid , role, username,} = response.data.data.result;
+      // Trích xuất dữ liệu
+      const { userid, role, username } = response.data.data.result;
       const { accessToken } = response.data.data;
-      console.log("Access Token:", accessToken);
-      // Lưu token và thông tin user vào localStorage
+
+      // Lưu thông tin vào localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("userRole", role);
       localStorage.setItem("username", username);
       localStorage.setItem("email", email);
       localStorage.setItem("userId", userid);
-      //show toast success
 
-      // alert("Đăng nhập thành công");
+      // Hiển thị Toast thông báo thành công
+      toast.success(`👋 Chào mừng ${username}! Đăng nhập thành công.`, {
+        position: "top-center",
+        autoClose: 1000,
+      });
 
-      // Redirect dựa trên role
-      switch (role) {
-        case "admin":
-          navigate("/admin");
-          break;
-        case "driver":
-          navigate("/driver");
-          break;
-        case "student":
-          navigate("/parents");
-          break;
-        default:
-          navigate("/");
-      }
+      setTimeout(() => {
+        setIsLoading(false);
+        switch (role) {
+          case "admin":
+            navigate("/admin");
+            break;
+          case "driver":
+            navigate("/driver");
+            break;
+          case "student":
+            navigate("/parents");
+            break;
+          default:
+            navigate("/");
+        }
+      }, 1200);
     } catch (error) {
       console.error("Login failed:", error);
 
-      // Hiển thị lỗi cụ thể nếu có
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        alert(error.response.data.message);
-      } else {
-        alert("Đăng nhập thất bại");
+      let errorMessage = "Đăng nhập thất bại. Vui lòng kiểm tra lại Email và Mật khẩu.";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       }
+
+      toast.error(`❌ Lỗi: ${errorMessage}`, {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      setIsLoading(false);
     }
   };
 
- 
+  const renderLoadingOverlay = () => {
+    if (!isLoading) return null;
+
+    return (
+      <div className="loading-overlay">
+        <div className="loading-content">
+          <FaBus className="loading-bus-icon" />
+          <p>Đang xác thực, chờ chút nhé...</p>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="app">
+      {/* Navbar */}
       <div className="navbar">
         <div className="navbar-left">
           <FaBus className="bus-icon" />
@@ -121,7 +140,7 @@ export default function Login() {
               </div>
               <IoMdClose
                 className="close-icon"
-                onClick={() => navigate("/")} // bấm X về Home
+                onClick={() => navigate("/")}
               />
             </div>
 
@@ -133,6 +152,7 @@ export default function Login() {
                   placeholder="Tên đăng nhập"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
 
@@ -143,6 +163,7 @@ export default function Login() {
                   placeholder="Mật khẩu"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
                 />
                 <span
                   className="toggle-password"
@@ -152,18 +173,23 @@ export default function Login() {
                 </span>
               </div>
 
-              <button type="submit" className="login-btn">
-                Đăng nhập
+              <button
+                type="submit"
+                className="login-btn"
+                disabled={isLoading}
+              >
+                {isLoading ? "Đang xử lý..." : "Đăng nhập"}
               </button>
             </form>
 
             <div className="login-links">
               <a href="#">Quên mật khẩu</a>
             </div>
-            <button onClick={register}>tạo tài khoản test</button>
           </div>
         </div>
       </div>
+      {/* Hiển thị Loading Overlay */}
+      {renderLoadingOverlay()}
     </div>
   );
 }

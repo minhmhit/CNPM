@@ -56,11 +56,10 @@ export default function AssignForm({ schedules, drivers, onAssign, onBack }) {
             </option>
           ))}
         </select>
-
-        <div className="assign-btn-container">
-          <button type="submit" className="assign-btn">✅ Phân công</button>
-          <button type="button" className="back-btn" onClick={onBack}>
-            ↩ Quay lại
+        <div className="ass-button-container">
+          <button type="submit" className="assign-btn">Phân công</button>
+          <button className="ass-back-btn" onClick={onBack}>
+            Huỷ
           </button>
         </div>
       </form>

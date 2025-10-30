@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./ManageSchedule.css";
 
 export default function ManageSchedule() {
@@ -16,6 +18,7 @@ export default function ManageSchedule() {
   });
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
+  const [showingDetailId, setShowingDetailId] = useState(null);
 
   // ✅ Lấy dữ liệu ban đầu
   useEffect(() => {
@@ -25,10 +28,17 @@ export default function ManageSchedule() {
   const fetchSchedules = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/v1/schedule/getAll");
-      setSchedules(res.data || []);
+      // Đảm bảo dữ liệu ngày tháng đúng định dạng cho input date nếu cần
+      const formattedSchedules = (res.data || []).map(schedule => ({
+          ...schedule,
+          // Ví dụ: chỉ lấy phần ngày nếu API trả về timestamp
+          date: schedule.date ? schedule.date.slice(0, 10) : ""
+      }));
+      setSchedules(formattedSchedules);
     } catch (error) {
       console.error("❌ Lỗi khi load dữ liệu:", error);
-      alert("Không thể tải danh sách lịch trình!");
+      // 🔄 Thay thế alert
+      toast.error("Không thể tải danh sách lịch trình!");
     } finally {
       setLoading(false);
     }
@@ -42,10 +52,15 @@ export default function ManageSchedule() {
         return;
       }
       const res = await axios.get(`http://localhost:5000/api/v1/schedule/byDate/${date}`);
-      setSchedules(res.data || []);
+      const formattedSchedules = (res.data || []).map(schedule => ({
+          ...schedule,
+          date: schedule.date ? schedule.date.slice(0, 10) : ""
+      }));
+      setSchedules(formattedSchedules);
     } catch (error) {
       console.error("❌ Lỗi khi lọc lịch trình:", error);
-      alert("Không thể tải lịch trình theo ngày!");
+      // 🔄 Thay thế alert
+      toast.error("Không thể tải lịch trình theo ngày!");
     }
   };
 
@@ -55,10 +70,12 @@ export default function ManageSchedule() {
     try {
       await axios.delete(`http://localhost:5000/api/v1/schedule/delete/${id}`);
       setSchedules((prev) => prev.filter((item) => item.schedule_id !== id));
-      alert("Đã xóa lịch trình thành công!");
+      // 🔄 Thay thế alert
+      toast.success("Đã xóa lịch trình thành công!");
     } catch (error) {
       console.error("❌ Lỗi khi xóa:", error);
-      alert("Không thể xóa lịch trình!");
+      // 🔄 Thay thế alert
+      toast.error("Không thể xóa lịch trình!");
     }
   };
 
@@ -73,13 +90,15 @@ export default function ManageSchedule() {
     e.preventDefault();
     try {
       await axios.post("http://localhost:5000/api/v1/schedule/create", newSchedule);
-      alert("Thêm lịch trình thành công!");
+      // 🔄 Thay thế alert
+      toast.success("Thêm lịch trình thành công!");
       setShowAddForm(false);
       setNewSchedule({ driver_id: "", bus_id: "", route_id: "", date: "", start_time: "", end_time: "" });
       fetchSchedules();
     } catch (error) {
       console.error("❌ Lỗi khi thêm lịch:", error);
-      alert("Không thể thêm lịch trình!");
+      // 🔄 Thay thế alert
+      toast.error("Không thể thêm lịch trình!");
     }
   };
 
@@ -97,25 +116,47 @@ export default function ManageSchedule() {
         `http://localhost:5000/api/v1/schedule/edit/${editingSchedule.schedule_id}`,
         editingSchedule
       );
-      alert("Cập nhật lịch trình thành công!");
+      // 🔄 Thay thế alert
+      toast.success("Cập nhật lịch trình thành công!");
       setEditingSchedule(null);
       fetchSchedules();
     } catch (error) {
       console.error("❌ Lỗi khi cập nhật:", error);
-      alert("Không thể cập nhật lịch trình!");
+      // 🔄 Thay thế alert
+      toast.error("Không thể cập nhật lịch trình!");
     }
+  };
+
+  // 🆕 Hàm toggle hiển thị chi tiết
+  const handleToggleDetail = (id) => {
+    setShowingDetailId(id === showingDetailId ? null : id);
   };
 
   if (loading) return <p>⏳ Đang tải dữ liệu...</p>;
 
   return (
     <div className="manage-schedule">
+      <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+      />
+
       <h2>📋 Quản lý lịch trình xe buýt</h2>
 
+      {/* ... Phần còn lại của component không thay đổi ... */}
+      
       {/* Nút thêm lịch trình */}
       {!showAddForm && !editingSchedule && (
         <div className="add-schedule-container">
-          <button className="add-btn" onClick={handleAddClick}>+ Thêm lịch trình</button>
+          {/* Đã đổi tên class nút để tránh xung đột nếu có */}
+          <button className="ms-add-btn" onClick={handleAddClick}>+ Thêm lịch trình</button>
         </div>
       )}
 
@@ -266,34 +307,53 @@ export default function ManageSchedule() {
               <th>Xe</th>
               <th>Tài xế</th>
               <th>Tuyến</th>
-              <th>Ngày</th>
-              <th>Giờ bắt đầu</th>
-              <th>Giờ kết thúc</th>
-              <th>Trạng thái</th>
               <th>Hành động</th>
+              <th>Chi tiết</th>
             </tr>
           </thead>
           <tbody>
             {schedules.length > 0 ? (
               schedules.map((item) => (
-                <tr key={item.schedule_id}>
-                  <td>{item.schedule_id}</td>
-                  <td>{item.bus_id}</td>
-                  <td>{item.driver_id}</td>
-                  <td>{item.route_id}</td>
-                  <td>{new Date(item.date).toLocaleDateString("vi-VN")}</td>
-                  <td>{item.start_time}</td>
-                  <td>{item.end_time}</td>
-                  <td>{item.status}</td>
-                  <td>
-                    <button className="edit-btn" onClick={() => handleEdit(item)}>Sửa</button>
-                    <button className="delete-btn" onClick={() => handleDelete(item.schedule_id)}>Xóa</button>
-                  </td>
-                </tr>
+                <React.Fragment key={item.schedule_id}>
+                  {/* Hàng chính (dạng rút gọn) */}
+                  <tr>
+                    <td>{item.schedule_id}</td>
+                    <td>{item.bus_id}</td>
+                    <td>{item.driver_id}</td>
+                    <td>{item.route_id}</td>
+                    <td>
+                      <button className="edit-btn" onClick={() => handleEdit(item)}>Sửa</button>
+                      <button className="delete-btn" onClick={() => handleDelete(item.schedule_id)}>Xóa</button>
+                    </td>
+                    {/* Nút Chi tiết/Ẩn chi tiết */}
+                    <td>
+                      <button 
+                        className="detail-btn"
+                        onClick={() => handleToggleDetail(item.schedule_id)}
+                      >
+                        {item.schedule_id === showingDetailId ? 'Ẩn chi tiết' : 'Chi tiết'}
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Hàng chi tiết (ẩn/hiện) */}
+                  {item.schedule_id === showingDetailId && (
+                    <tr className="detail-row">
+                      <td colSpan="6">
+                        <div className="detail-content">
+                          <p><strong>Ngày:</strong> {item.date ? new Date(item.date).toLocaleDateString("vi-VN") : 'N/A'}</p>
+                          <p><strong>Giờ Bắt Đầu:</strong> {item.start_time}</p>
+                          <p><strong>Giờ Kết Thúc:</strong> {item.end_time}</p>
+                          <p><strong>Trạng Thái:</strong> {item.status}</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))
             ) : (
               <tr>
-                <td colSpan="9" style={{ textAlign: "center" }}>Không có lịch trình nào!</td>
+                <td colSpan="6" style={{ textAlign: "center" }}>Không có lịch trình nào!</td>
               </tr>
             )}
           </tbody>

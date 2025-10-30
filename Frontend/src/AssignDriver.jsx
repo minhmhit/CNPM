@@ -45,11 +45,8 @@ export default function AssignDriver({ schedules, drivers, onAssign, onBack }) {
       </div>
 
       <div className="btn-container">
-        <button className="assign-btn" onClick={() => setShowForm(true)}>
+        <button className="a-assign-btn" onClick={() => setShowForm(true)}>
           👨‍✈️ Phân công tài xế
-        </button>
-        <button className="back-btn" onClick={onBack}>
-          ↩ Quay lại
         </button>
       </div>
     </div>

@@ -9,7 +9,7 @@ export default function SendMessage({ onBack }) {
   const [message, setMessage] = useState("");
   const [scheduleId, setScheduleId] = useState("");
   const [recipientUserId, setRecipientUserId] = useState("");
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(""); // Khởi tạo state cho userId
   const [loading, setLoading] = useState(false);
 
   const [drivers, setDrivers] = useState([]);
@@ -34,10 +34,19 @@ export default function SendMessage({ onBack }) {
     };
     fetchData();
   }, []);
+  
+  // 🛠️ Lấy userId từ localStorage khi component mount
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []); // Chạy 1 lần khi component mount
 
   const handleSend = async (e) => {
     e.preventDefault();
 
+    // userId đã được tự động lấy, chỉ cần kiểm tra
     if (!message.trim() || !recipientUserId || !userId) {
       alert("⚠️ Vui lòng nhập đầy đủ thông tin!");
       return;
@@ -49,7 +58,7 @@ export default function SendMessage({ onBack }) {
         recipientType === "parents" ? "student" : recipientType;
 
       const res = await axios.post(`${API_BASE}/notification/create`, {
-        userid: userId,
+        userid: userId, // Dùng userId đã lấy từ localStorage
         recipient_type: mappedRecipientType,
         message: message,
         schedule_id: scheduleId || null,
@@ -60,7 +69,7 @@ export default function SendMessage({ onBack }) {
       setMessage("");
       setRecipientUserId("");
       setScheduleId("");
-      setUserId("");
+      // Không reset userId vì nó đã được lấy tự động
       onBack();
     } catch (err) {
       console.error("Lỗi khi gửi tin:", err);
@@ -72,10 +81,7 @@ export default function SendMessage({ onBack }) {
       setLoading(false);
     }
   };
-
-  // 🧩 Tự động đổi danh sách người nhận
-  const recipientList =
-    recipientType === "driver" ? drivers : students;
+  
 
   return (
     <div className="send-message-container">
@@ -84,17 +90,16 @@ export default function SendMessage({ onBack }) {
         {/* --- KHỐI ID --- */}
         <div className="id-group">
           <div className="id-field">
-            <label>Người gửi (User ID):</label>
+            <label>Người gửi (User ID): </label>
             <input
-              type="number"
+              type="text"
               value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder="Nhập ID người gửi"
+              disabled 
             />
           </div>
 
           <div className="id-field">
-            <label>Người nhận:</label>
+            <label>Người nhận: </label>
             <select
               value={recipientType}
               onChange={(e) => setRecipientType(e.target.value)}
@@ -105,7 +110,7 @@ export default function SendMessage({ onBack }) {
           </div>
 
           <div className="id-field">
-            <label>ID người nhận:</label>
+            <label>ID người nhận: </label>
             <input
               type="number"
               value={recipientUserId}
@@ -115,7 +120,7 @@ export default function SendMessage({ onBack }) {
           </div>
 
           <div className="id-field">
-            <label>ID lịch trình:</label>
+            <label>ID lịch trình: </label>
             <input
               type="number"
               value={scheduleId}
@@ -126,7 +131,7 @@ export default function SendMessage({ onBack }) {
         </div>
 
         {/* --- NỘI DUNG --- */}
-        <label>Nội dung:</label>
+        <label>Nội dung: </label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
