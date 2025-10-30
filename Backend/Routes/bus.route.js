@@ -9,6 +9,6 @@ router.use(isAdmin);
 router.post('/add', addBus);
 router.put('/update/:bus_id', updateBus);
 router.delete('/delete/:bus_id', deleteBus);
-router.get('/', getAllBuses);
+router.get('/getallbus', getAllBuses);
 
 module.exports = router;
