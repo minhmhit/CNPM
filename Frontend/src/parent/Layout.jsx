@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiHome,
@@ -28,7 +28,6 @@ export default function ParentLayout() {
     { key: "profile", label: "Thông tin học sinh", icon: <FiUser /> },
   ];
 
-  // Chuyển giữa các view
   const renderView = () => {
     switch (view) {
       case "dashboard":
@@ -68,14 +67,7 @@ export default function ParentLayout() {
           />
           <span>Xin chào, name!</span>
 
-          {/* Chuông thông báo */}
-          <button
-            className="header-bell-btn"
-            title="Xem thông báo"
-            onClick={() => setView("notifications")}
-          >
-            <FiBell />
-          </button>
+          {/* XÓA NÚT CHUÔNG */}
 
           {/* Menu icon */}
           <button
@@ -90,6 +82,14 @@ export default function ParentLayout() {
 
       {/* Nội dung chính */}
       <div className="dashboard-content">
+        {/* Overlay khi mở sidebar */}
+        {isSidebarOpen && (
+          <div
+            className="sidebar-overlay show"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         <main className="view-area">{renderView()}</main>
 
         {/* Sidebar */}
@@ -97,10 +97,10 @@ export default function ParentLayout() {
           {NAVS.map((nav) => (
             <button
               key={nav.key}
-className={`sidebar-btn ${view === nav.key ? "active" : ""}`}
+              className={`sidebar-btn ${view === nav.key ? "active" : ""}`}
               onClick={() => {
                 setView(nav.key);
-                setIsSidebarOpen(false); // đóng sidebar sau khi chọn
+                setIsSidebarOpen(false);
               }}
             >
               <span style={{ fontSize: 18 }}>{nav.icon}</span>

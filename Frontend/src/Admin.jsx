@@ -103,7 +103,7 @@ export default function Admin() {
     { key: "sendMessage", label: "Gửi tin nhắn", icon: <FiSend /> },
     { key: "manageList", label: "Quản lý danh sách", icon: <FiList /> },
   ];
-
+  const username = localStorage.getItem("username");
   return (
     <div className="admin-dashboard-container">
       <ToastContainer
@@ -129,7 +129,7 @@ export default function Admin() {
 
         <div className="admin-header-right">
           <img src={accountIcon} alt="account" className="admin-header-user-icon-img" />
-          <span>Xin chào, Quản lý</span>
+          <span>Xin chào, {username}</span>
           {/* Nút menu 3 gạch */}
           <button
             className="admin-header-menu-btn"
