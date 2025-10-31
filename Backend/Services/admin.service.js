@@ -43,10 +43,20 @@ const getAllStudentsByClassService = async (className) => {
   }
 }
 
+const getAdminProfileService = async (userid) => {
+  try {
+    const profile = await admin.getAdminProfile(userid);
+    return profile;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   getAllUsersService,
   getAllDriversService,
   getAllStudentsService,
   getAllClassesService,
-  getAllStudentsByClassService
+  getAllStudentsByClassService,
+  getAdminProfileService
 };

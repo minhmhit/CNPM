@@ -68,11 +68,27 @@ const getAllStudentsByClass = async (className) => {
     throw error;
   }
 };
+const getAdminProfile = async (userid) => {
+  try {
+    const sql = `SELECT a.admin_id, a.full_name, u.userid, u.username, u.email
+      FROM admins a
+      JOIN users u 
+      ON a.userid = u.userid
+      WHERE u.userid = ?
+      LIMIT 1`;
+    const [rows] = await pool.query(sql, [userid]);
+    return rows[0];
+  } catch (error) {
+    console.error("Error getting admin profile:", error);
+    throw error;
+  }
+};
 
 module.exports = {
   getAllUsers,
   getAllDrivers,
   getAllStudents,
   getAllClasses,
-  getAllStudentsByClass
+  getAllStudentsByClass,
+  getAdminProfile,
 };

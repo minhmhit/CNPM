@@ -14,10 +14,12 @@ const {
   updateDropoffStatus,
   getAllSchedule
 } = require("../Controllers/schedule.controller");
+const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
+router.use(authMiddleware);
+router.use(isAdmin);
 router.post('/create', createSchedule);
 router.put('/edit/:schedule_id', updateSchedule);
 router.delete('/delete/:schedule_id', deleteSchedule);
-
 router.get('/driver/:driver_id', getDriverSchedule);
 router.get('/bus/:bus_id', getBusSchedule);
 //add student to schedule

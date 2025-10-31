@@ -2,12 +2,30 @@ const { pool } = require("../config/connection_mysql");
 
 const addDriverInfo = async (driver_id, driverData) => {
   try {
-    const { name, phone_number, status } = driverData;
+    const { name, phone_number } = driverData;
+    const fields = [];
+    const values = [];
+
+    if (name) {
+      fields.push("name = ?");
+      values.push(name);
+    }
+    if (phone_number) {
+      fields.push("phone_number = ?");
+      values.push(phone_number);
+    }
+    values.push(driver_id);
+
+    if (fields.length === 0) {
+      throw new Error("No fields to update");
+    }
+
     const [result] = await pool.query(
-      "UPDATE drivers SET name = ?, phone_number = ?, status = ? WHERE driver_id = ?",
-      [name, phone_number, status, driver_id]
+      `UPDATE drivers SET ${fields.join(", ")} WHERE driver_id = ?`,
+      [...values, driver_id]
     );
-    return result;
+    const data = { result, driver_id, ...driverData };
+    return data;
   } catch (error) {
     console.error("lỗi khi thêm thông tin tài xế:", error);
     throw error;

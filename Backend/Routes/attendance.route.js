@@ -6,9 +6,9 @@ const {
     getRouteAttendance
 } = require("../Controllers/attendance.controller");
 
-router.post("/checkin", checkin);
-router.post("/checkout", checkout);
-router.get("/student/:student_id", getStudentAttendance);
-router.get("/route/:route_id", getRouteAttendance);
+// router.post("/checkin", checkin);
+// router.post("/checkout", checkout);
+// router.get("/student/:student_id", getStudentAttendance);
+// router.get("/route/:route_id", getRouteAttendance);
 
 module.exports = router;

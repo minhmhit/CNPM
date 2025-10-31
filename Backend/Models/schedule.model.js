@@ -240,19 +240,6 @@ const checkStudentInSchedule = async (schedule_id, student_id) => {
     }
 };
 
-
-const getSchedulesByDate = async (date) => {
-  try {
-    const sql = "SELECT * FROM schedules WHERE DATE(date) = ? ORDER BY start_time ASC";
-    const [rows] = await pool.query(sql, [date]);
-    return rows;
-  } catch (error) {
-    console.error("Lỗi khi lấy lịch trình theo ngày:", error);
-    throw error;
-  }
-};
-
-
 module.exports = {
     createSchedule,
     updateSchedule,
