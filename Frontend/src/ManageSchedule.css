@@ -1,80 +1,218 @@
+/* ===========================
+   🎯 1. BASE STYLE
+=========================== */
 .manage-schedule {
-  width: 100%;
-  padding: 20px;
-  background-color: #ffffff;
-  color: #333;
-  border-radius: 10px;
+  width: 90%;
+  background: #fff;
+  color: #222;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
 }
 
 .manage-schedule h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4f46e5;
   text-align: center;
   margin-bottom: 20px;
-  color: rgb(119, 19, 249);
 }
 
+/* ===========================
+   🎯 2. TABLE
+=========================== */
 .manage-schedule table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
 .manage-schedule th,
 .manage-schedule td {
-  border: 1px solid #ddd;
-  text-align: center;
-  padding: 10px;
-  font-size: 14px;
+  padding: 1% 1%;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
 }
 
 .manage-schedule th {
-  background-color: rgb(119, 19, 249);
+  background-color: #6a42f4;
   color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.manage-schedule tr:nth-child(even) {
+  background: #faf9ff;
 }
 
 .manage-schedule tr:hover {
-  background-color: #f0f0ff;
+  background-color: #f4f4ff;
+  transition: 0.2s;
 }
 
+/* ===========================
+   🎯 3. STATUS LABELS
+=========================== */
+.status {
+  font-weight: 700;
+}
 .status.đang-chạy {
-  color: green;
-  font-weight: bold;
+  color: #16a34a;
 }
-
 .status.chờ-khởi-hành {
-  color: orange;
-  font-weight: bold;
+  color: #f59e0b;
 }
-
 .status.hoàn-thành {
-  color: blue;
-  font-weight: bold;
+  color: #2563eb;
 }
 
-/* 🛠 Nút hành động */
+/* ===========================
+   🎯 4. ACTION BUTTONS
+=========================== */
 .edit-btn,
 .delete-btn {
   border: none;
-  padding: 6px 10px;
-  margin: 2px;
-  border-radius: 5px;
+  padding: 6px 12px;
+  margin: 0 4px;
+  border-radius: 8px;
   cursor: pointer;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .edit-btn {
-  background-color: #2196f3;
+  background-color: #4f46e5;
 }
-
 .edit-btn:hover {
-  background-color: #0b7dda;
+  background-color: #4338ca;
 }
 
 .delete-btn {
-  background-color: #f44336;
+  background-color: #ef4444;
+}
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+.ms-add-btn{
+  margin-bottom: 5%;
+background-color: #00ff5e;
+}
+/* ===========================
+   🎯 5. RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+  .manage-schedule {
+    width: 100%;
+    padding: 16px;
+  }
+  .manage-schedule table {
+    font-size: 13px;
+  }
+  .manage-schedule th,
+  .manage-schedule td {
+    padding: 8px;
+  }
+  .edit-btn,
+  .delete-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
 }
 
-.delete-btn:hover {
-  background-color: #d32f2f;
+/* ===========================
+   🎯 6. ANIMATION
+=========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ===========================
+    🎯 6. DETAIL VIEW & BUTTON
+=========================== */
+
+/* Style cho nút Chi tiết */
+.detail-btn {
+    border: none;
+    padding: 6px 12px;
+    margin-left: 8px; /* Tách biệt với nút Sửa/Xóa */
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    
+    /* Màu sắc mặc định: Xanh ngọc - cho nút 'Chi tiết' */
+    background-color: #00bcd4; 
+    color: white;
+}
+
+.detail-btn:hover {
+    background-color: #00838f;
+}
+
+/* Style cho hàng chi tiết ẩn/hiện */
+.detail-row td {
+    padding: 0 !important; 
+    border: none !important;
+    background-color: transparent !important; /* Loại bỏ màu nền xen kẽ */
+}
+
+.detail-content {
+    /* Đảm bảo chiếm toàn bộ chiều rộng (colSpan) */
+    width: 100%; 
+    background-color: #fcfcfc; /* Nền nhẹ nhàng để phân biệt */
+    padding: 10px 20px;
+    border-top: 1px dashed #ddd; /* Đường phân cách tinh tế */
+    border-bottom: 2px solid #6a42f4; /* Viền dưới nổi bật theo màu chủ đạo */
+    text-align: left;
+    font-size: 0.9em;
+    display: flex; /* Dùng flexbox để sắp xếp thông tin */
+    gap: 20px;
+    justify-content: flex-start;
+    animation: slideDown 0.3s ease-out; /* Hiệu ứng mở chi tiết */
+}
+
+.detail-content p {
+    margin: 5px 0;
+    white-space: nowrap; /* Ngăn thông tin bị xuống dòng quá mức */
+}
+
+.detail-content strong {
+    color: #4f46e5; /* Màu nổi bật cho nhãn */
+    font-weight: 700;
+}
+
+/* Hiệu ứng trượt xuống khi mở chi tiết */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: hidden;
+    }
+    to {
+        opacity: 1;
+        max-height: 100px; /* Giá trị đủ lớn để hiển thị nội dung */
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
 }
