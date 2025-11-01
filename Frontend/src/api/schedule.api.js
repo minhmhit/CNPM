@@ -42,8 +42,7 @@ export const checkOutAPI = async (schedule_id, student_id) => {
 
 export const markAbsentAPI = async (student_id, schedule_id) => {
     try {
-        const status = 'absent';
-        const res = await axios.put("/schedule/pickup", { schedule_id, student_id, status });
+        const res = await axios.post("/student/onLeaveStudent", { schedule_id, student_id });
         return res.data;
     } catch (err) {
         console.error("Lỗi khi absent:", err);
