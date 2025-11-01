@@ -333,10 +333,6 @@ module.exports = {
   getStudentsBySchedule,
   updatePickupStatus,
   updateDropoffStatus,
-<<<<<<< Updated upstream
-  getAllSchedule
-=======
   getAllSchedules,
   getSchedulesByDate,
->>>>>>> Stashed changes
 };
