@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify'; 
+import { getAllUsers, addNew, deleteItem, getAllRoutes, getAllBuses } from "./api/ManageList.api";
 
 import "./Admin.css";
 
@@ -24,10 +25,7 @@ export default function ManageList({ onBack }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let url = `${API_BASE}/admin/getAllUsers`;
-        const res = await axios.get(url);
-        const users = res.data.data || res.data;
-
+        const users = await getAllUsers();
         // Lọc theo danh mục
         let filteredData = [];
         if (category === "drivers") {
@@ -39,10 +37,10 @@ export default function ManageList({ onBack }) {
             (u) => u.role === "student" && u.isActive === 1
           );
         } else if (category === "routes") {
-          const routeRes = await axios.get(`${API_BASE}/route/getAllRoutes`);
+          const routeRes = await getAllRoutes;
           filteredData = routeRes.data.data || routeRes.data;
         } else if (category === "buses") {
-          const busRes = await axios.get(`${API_BASE}/bus/`);
+          const busRes = await getAllBuses;
           filteredData = busRes.data.data || busRes.data;
         }
 
@@ -66,15 +64,15 @@ const handleAdd = async (e) => {
 
     switch (category) {
       case "routes":
-        url = `${API_BASE}/route/add`;
+        url = `/route/add`;
         payload = newItem;
         break;
       case "buses":
-        url = `${API_BASE}/bus/add`;
+        url = `/bus/add`;
         payload = newItem;
         break;
       case "drivers":
-        url = `${API_BASE}/user/register`;
+        url = `/user/register`;
         payload = {
           username: newItem.username,
           password: newItem.password,
@@ -83,7 +81,7 @@ const handleAdd = async (e) => {
         };
         break;
       case "students":
-        url = `${API_BASE}/user/register`;
+        url = `/user/register`;
         payload = {
           username: newItem.username,
           password: newItem.password,
@@ -95,7 +93,7 @@ const handleAdd = async (e) => {
         return;
     }
 
-    const res = await axios.post(url, payload);
+    const res = await addNew(url, payload);
     // 💡 Thay thế alert("Thêm mới thành công!") bằng toast
     toast.success("✅ Thêm mới thành công!", { position: "top-center" });
     
@@ -103,7 +101,7 @@ const handleAdd = async (e) => {
     setNewItem({});
 
     // Reload danh sách
-    const updatedRes = await axios.get(`${API_BASE}/admin/getAllUsers`);
+    const updatedRes = await getAllUsers();
     const users = updatedRes.data.data || updatedRes.data;
     if (category === "drivers") {
       setData((prev) => ({
@@ -153,7 +151,7 @@ const handleAdd = async (e) => {
           return;
       }
 
-      const res = await axios.delete(url);
+      const res = await deleteItem(url);
 
       if (res.status === 200) {
         // Cập nhật lại danh sách bằng cách loại bỏ item đã xóa (hoặc chuyển thành inactive)

@@ -3,15 +3,14 @@ import "./Schedule.css"
 import React, {useState} from "react";
 import axios from "axios";
 import { useEffect } from "react";
+import { checkIn, checkOut, getScheduleByUserId, getScheduleStudent } from "./api/Schedule.api";
 
 const API_BASE = "http://localhost:5000/api/v1";
 
 async function fetchSchedules() {
     try {
         const userid = localStorage.getItem("userId")
-        const url = `${API_BASE}/driver/schedules/${userid}`
-        const res = await axios.get(url)
-        console.log(res.data.data)
+        const res = await getScheduleByUserId(userid)
         return res.data.data
     } catch (err) {
         console.error("Lỗi khi gọi API:", err);
@@ -20,11 +19,7 @@ async function fetchSchedules() {
 
 async function fetchStudents(schedule_id) {
     try {
-        const url = `${API_BASE}/schedule/students`
-        const res = await axios.post(url, {
-            schedule_id
-        })
-        console.log(res.data.data)
+        const res = await getScheduleStudent(schedule_id)
         return res.data.data
     } catch (err) {
         console.error("Lỗi khi gọi API:", err);
@@ -33,8 +28,8 @@ async function fetchStudents(schedule_id) {
 
 async function checkInAPI(schedule_id, student_id) {
   try {
-    const url = `${API_BASE}/student/checkinStudent`;
-    const res = await axios.post(url, { schedule_id, student_id });
+    const data = { schedule_id, student_id };
+    const res = await checkIn(data);
     return res.data;
   } catch (err) {
     console.error("Lỗi khi checkin:", err);
@@ -43,8 +38,8 @@ async function checkInAPI(schedule_id, student_id) {
 
 async function checkOutAPI(schedule_id, student_id) {
   try {
-    const url = `${API_BASE}/student/checkoutStudent`;
-    const res = await axios.post(url, { schedule_id, student_id });
+    const data = { schedule_id, student_id };
+    const res = await checkOut(data);
     return res.data;
   } catch (err) {
     console.error("Lỗi khi checkout:", err);

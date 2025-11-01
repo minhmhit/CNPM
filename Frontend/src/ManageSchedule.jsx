@@ -3,6 +3,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./ManageSchedule.css";
+import {getAllSchedules, deleteSchedule, createSchedule, updateSchedule} from "./api/ManageSchedule.api";
 
 export default function ManageSchedule() {
   const [schedules, setSchedules] = useState([]);
@@ -27,7 +28,7 @@ export default function ManageSchedule() {
 
   const fetchSchedules = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/v1/schedule/getAll");
+      const res = await getAllSchedules();
       // Đảm bảo dữ liệu ngày tháng đúng định dạng cho input date nếu cần
       const formattedSchedules = (res.data || []).map(schedule => ({
           ...schedule,
@@ -68,7 +69,7 @@ export default function ManageSchedule() {
   const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc muốn xóa lịch trình này không?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/v1/schedule/delete/${id}`);
+      await deleteSchedule(id);
       setSchedules((prev) => prev.filter((item) => item.schedule_id !== id));
       // 🔄 Thay thế alert
       toast.success("Đã xóa lịch trình thành công!");
@@ -89,7 +90,7 @@ export default function ManageSchedule() {
   const handleAddSchedule = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/v1/schedule/create", newSchedule);
+      await createSchedule(newSchedule);
       // 🔄 Thay thế alert
       toast.success("Thêm lịch trình thành công!");
       setShowAddForm(false);
@@ -112,13 +113,13 @@ export default function ManageSchedule() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(
-        `http://localhost:5000/api/v1/schedule/edit/${editingSchedule.schedule_id}`,
-        editingSchedule
-      );
+      const res = await updateSchedule(editingSchedule.schedule_id, editingSchedule);
+      if (res){
+         toast.success("Cập nhật lịch trình thành công!");
+        setEditingSchedule(null);
+      }
       // 🔄 Thay thế alert
-      toast.success("Cập nhật lịch trình thành công!");
-      setEditingSchedule(null);
+     
       fetchSchedules();
     } catch (error) {
       console.error("❌ Lỗi khi cập nhật:", error);
