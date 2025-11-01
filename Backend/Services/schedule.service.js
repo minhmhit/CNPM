@@ -106,16 +106,6 @@ const checkStudentInSchedule = async (schedule_id, student_id) => {
     }
 };
 
-const getSchedulesByDate = async (date) => {
-  try {
-    let result = await schedule.getSchedulesByDate(date);
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
-
-
 module.exports = {
     createSchedule,
     updateSchedule,
@@ -129,6 +119,5 @@ module.exports = {
     getBusSchedule,
     getDriverSchedule,
     checkStudentInSchedule,
-    getAllSchedules,
-    getSchedulesByDate,
+    getAllSchedules
 };

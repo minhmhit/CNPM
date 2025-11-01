@@ -36,7 +36,7 @@
 
 .manage-schedule th,
 .manage-schedule td {
-  padding: 12px 16px;
+  padding: 1% 1%;
   border-bottom: 1px solid #eee;
   font-size: 15px;
 }
@@ -104,7 +104,10 @@
 .delete-btn:hover {
   background-color: #dc2626;
 }
-
+.ms-add-btn{
+  margin-bottom: 5%;
+background-color: #00ff5e;
+}
 /* ===========================
    🎯 5. RESPONSIVE
 =========================== */
@@ -139,4 +142,77 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+/* ===========================
+    🎯 6. DETAIL VIEW & BUTTON
+=========================== */
+
+/* Style cho nút Chi tiết */
+.detail-btn {
+    border: none;
+    padding: 6px 12px;
+    margin-left: 8px; /* Tách biệt với nút Sửa/Xóa */
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    
+    /* Màu sắc mặc định: Xanh ngọc - cho nút 'Chi tiết' */
+    background-color: #00bcd4; 
+    color: white;
+}
+
+.detail-btn:hover {
+    background-color: #00838f;
+}
+
+/* Style cho hàng chi tiết ẩn/hiện */
+.detail-row td {
+    padding: 0 !important; 
+    border: none !important;
+    background-color: transparent !important; /* Loại bỏ màu nền xen kẽ */
+}
+
+.detail-content {
+    /* Đảm bảo chiếm toàn bộ chiều rộng (colSpan) */
+    width: 100%; 
+    background-color: #fcfcfc; /* Nền nhẹ nhàng để phân biệt */
+    padding: 10px 20px;
+    border-top: 1px dashed #ddd; /* Đường phân cách tinh tế */
+    border-bottom: 2px solid #6a42f4; /* Viền dưới nổi bật theo màu chủ đạo */
+    text-align: left;
+    font-size: 0.9em;
+    display: flex; /* Dùng flexbox để sắp xếp thông tin */
+    gap: 20px;
+    justify-content: flex-start;
+    animation: slideDown 0.3s ease-out; /* Hiệu ứng mở chi tiết */
+}
+
+.detail-content p {
+    margin: 5px 0;
+    white-space: nowrap; /* Ngăn thông tin bị xuống dòng quá mức */
+}
+
+.detail-content strong {
+    color: #4f46e5; /* Màu nổi bật cho nhãn */
+    font-weight: 700;
+}
+
+/* Hiệu ứng trượt xuống khi mở chi tiết */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: hidden;
+    }
+    to {
+        opacity: 1;
+        max-height: 100px; /* Giá trị đủ lớn để hiển thị nội dung */
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
 }

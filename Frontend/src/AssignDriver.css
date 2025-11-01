@@ -91,7 +91,26 @@
   background-color: #4b5563;
   transform: translateY(-2px);
 }
+.a-assign-btn
+ {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  transition: 0.25s;
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
 
+.a-assign-btn {
+  background-color: #22c55e;
+}
+.a-assign-btn:hover {
+  background-color: #16a34a;
+  transform: translateY(-2px);
+}
 /* ===========================
    🎯 4. DRIVER STATUS TABLE
 =========================== */
