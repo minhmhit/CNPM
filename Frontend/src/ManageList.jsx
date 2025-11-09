@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from 'react-toastify'; 
 import { getAllUsers, addNew, deleteItem, getAllRoutes, getAllBuses } from "./api/ManageList.api";
-
 import "./Admin.css";
 
 const API_BASE = "http://localhost:5000/api/v1";
@@ -37,10 +35,10 @@ export default function ManageList({ onBack }) {
             (u) => u.role === "student" && u.isActive === 1
           );
         } else if (category === "routes") {
-          const routeRes = await getAllRoutes;
+          const routeRes = await getAllRoutes();
           filteredData = routeRes.data.data || routeRes.data;
         } else if (category === "buses") {
-          const busRes = await getAllBuses;
+          const busRes = await getAllBuses();
           filteredData = busRes.data.data || busRes.data;
         }
 
@@ -94,9 +92,7 @@ const handleAdd = async (e) => {
     }
 
     const res = await addNew(url, payload);
-    // 💡 Thay thế alert("Thêm mới thành công!") bằng toast
-    toast.success("✅ Thêm mới thành công!", { position: "top-center" });
-    
+    toast.success("Thêm mới thành công!", { position: "top-center" });
     setShowForm(false);
     setNewItem({});
 
@@ -122,7 +118,6 @@ const handleAdd = async (e) => {
     }
   } catch (err) {
     console.error("Lỗi khi thêm:", err);
-    // 💡 Thay thế alert("Không thể thêm dữ liệu!") bằng toast
     toast.error("❌ Lỗi: Không thể thêm dữ liệu!", { position: "top-center" });
   }
 };
@@ -170,18 +165,18 @@ const handleAdd = async (e) => {
         if (category === "drivers" || category === "students") {
             toast.info(`Thông báo: Đã cập nhật trạng thái của ${category} ID ${id} thành Ngưng hoạt động.`, { position: "top-center" });
         } else {
-            toast.success(`✅ Đã xóa ${category} ID ${id} thành công!`, { position: "top-center" });
+            toast.success(`Đã xóa ${category} ID ${id} thành công!`, { position: "top-center" });
         }
       }
     } catch (err) {
       console.error("Lỗi khi xóa:", err);
-      toast.error(`❌ Lỗi: Không thể xóa ${category} ID ${id}!`, { position: "top-center" });
+      toast.error(`Lỗi: Không thể xóa ${category} ID ${id}!`, { position: "top-center" });
     }
   };
 
 
 
-  // Render form input (Giữ nguyên)
+  // Render form input
   const renderInputFields = () => {
   switch (category) {
     case "routes":
@@ -270,7 +265,7 @@ const handleAdd = async (e) => {
   }
 };
 
-  // Render bảng (Giữ nguyên)
+  // Render bảng
   const list = data[category] || [];
   const totalPages = Math.ceil(list.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
