@@ -21,6 +21,7 @@ async function fetchDriver() {
         Authorization: `Bearer ${token}` // gửi token cho backend
       }
     });
+    localStorage.setItem("driver_id", res.data.data.driver_id);
     return res.data.data;   // dữ liệu từ backend
   } catch (err) {
     console.error("Lỗi khi gọi API:", err);

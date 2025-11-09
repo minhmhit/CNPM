@@ -7,6 +7,7 @@ import "./Login.css";
 import "./App.css";
 import { toast } from 'react-toastify';
 import axios from "axios";
+import api from "./util/axios.customize.js";
 
 
 export default function Login() {
@@ -50,13 +51,20 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/user/login",
+      // const response = await axios.post(
+      //   "http://localhost:5000/api/v1/user/login",
+      //   {
+      //     email,
+      //     password,
+      //   }
+      // );
+
+      const response = await api.post("http://localhost:5000/api/v1/user/login",
         {
           email,
           password,
         }
-      );
+      )
 
       // Trích xuất dữ liệu
       const { userid, role, username } = response.data.data.result;
