@@ -1,50 +1,37 @@
-import axios from "../util/axios.customize.js"
+import axios from "../util/axios.customize";
 
-export const fetchStudents = async (schedule_id) => {
+export const getScheduleByUserId = async (userId) => {
+    try {
+        const res = await axios.get(`/driver/schedules/${userId}`);
+        return res;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getScheduleStudent = async (schedule_id) => {
     try {
         const res = await axios.get(`/schedule/students/${schedule_id}`);
-        console.log(res.data.data)
-        return res.data.data
-    } catch (err) {
-        console.error("Lỗi khi gọi API:", err);
+        return res;
+    } catch (error) {
+        throw error;
     }
 };
 
-export const fetchSchedules = async () => {
+export const checkIn = async (data) => {
     try {
-        const userid = localStorage.getItem("userId");
-        const res = await axios.get(`/driver/schedules/${userid}`);
-        console.log(res.data.data)
-        return res.data.data
-    } catch (err) {
-        console.error("Lỗi khi gọi API:", err);
+        const res = await axios.post(`/student/checkinStudent`, data);
+        return res;
+    } catch (error) {
+        throw error;
     }
 };
 
-export const checkInAPI = async (schedule_id, student_id) => {
-  try {
-   
-    const res = await axios.post("/student/checkinStudent", { schedule_id, student_id });
-    return res.data;
-  } catch (err) {
-    console.error("Lỗi khi checkin:", err);
-  }
-};
-
-export const checkOutAPI = async (schedule_id, student_id) => {
+export const checkOut = async (data) => {
     try {
-        const res = await axios.post("/student/checkoutStudent", { schedule_id, student_id });
-        return res.data;
-    } catch (err) {
-        console.error("Lỗi khi checkout:", err);
+        const res = await axios.post(`/student/checkoutStudent`, data);
+        return res;
+    } catch (error) {
+        throw error;
     }
 };
-
-export const markAbsentAPI = async (student_id, schedule_id) => {
-    try {
-        const res = await axios.post("/student/onLeaveStudent", { schedule_id, student_id });
-        return res.data;
-    } catch (err) {
-        console.error("Lỗi khi absent:", err);
-    }
-}
