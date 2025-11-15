@@ -11,7 +11,7 @@ export const getAllSchedules = async () => {
 };
 export const deleteSchedule = async (scheduleId) => {
   try {
-    const res = await axios.delete(`/schedules/delete/${scheduleId}`);
+    const res = await axios.delete(`/schedule/delete/${scheduleId}`);
     return res;
   } catch (error) {
     console.error("Error deleting schedule:", error);
@@ -21,7 +21,7 @@ export const deleteSchedule = async (scheduleId) => {
 
 export const createSchedule = async (scheduleData) => {
   try {
-    const res = await axios.post("/schedules/create", scheduleData);
+    const res = await axios.post("/schedule/create", scheduleData);
     return res;
   } catch (error) {
     console.error("Error creating schedule:", error);
@@ -31,7 +31,7 @@ export const createSchedule = async (scheduleData) => {
 
 export const updateSchedule = async (scheduleId, scheduleData) => {
   try {
-    const res = await axios.put(`/schedules/edit/${scheduleId}`, scheduleData);
+    const res = await axios.put(`/schedule/edit/${scheduleId}`, scheduleData);
     return res;
   } catch (error) {
     console.error("Error updating schedule:", error);

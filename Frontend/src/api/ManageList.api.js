@@ -35,7 +35,7 @@ export const deleteItem = async (url) => {
 
 export const getAllBuses = async () => {
   try {
-    let url = `/bus/`;
+    let url = `/bus/getallbus`;
     const res = await axios.get(url);
     return res;
   } catch (error) {

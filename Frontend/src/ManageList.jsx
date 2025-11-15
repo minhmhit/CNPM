@@ -45,7 +45,6 @@ export default function ManageList({ onBack }) {
         setData((prev) => ({ ...prev, [category]: filteredData }));
       } catch (err) {
         console.error("❌ Lỗi tải dữ liệu:", err);
-        // Toast cho lỗi tải dữ liệu
         toast.error("Lỗi: Không thể tải dữ liệu!", { toastId: 'fetch-error' });
       }
     };
@@ -117,8 +116,8 @@ const handleAdd = async (e) => {
       }));
     }
   } catch (err) {
-    console.error("Lỗi khi thêm:", err);
-    toast.error("❌ Lỗi: Không thể thêm dữ liệu!", { position: "top-center" });
+//     console.error("Lỗi khi thêm:", err);
+//     toast.error("❌ Lỗi: Không thể thêm dữ liệu!", { position: "top-center" });
   }
 };
 
