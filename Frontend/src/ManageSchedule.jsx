@@ -9,6 +9,8 @@ import {
   updateSchedule,
 } from "./api/ManageSchedule.api";
 import { getAllBuses, getAllUsers, getAllRoutes } from "./api/ManageList.api";
+import { FiSave, FiPlus, FiTrash2, FiSend, FiArrowLeft, FiEye, FiSmile } from "react-icons/fi";
+import { MdCancel } from "react-icons/md";
 
 export default function ManageSchedule() {
   const [schedules, setSchedules] = useState([]);
@@ -29,6 +31,11 @@ export default function ManageSchedule() {
     start_time: "",
     end_time: "",
   });
+
+  // PHÂN TRANG
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
   useEffect(() => {
     fetchSchedules();
     fetchDrivers();
@@ -50,6 +57,7 @@ export default function ManageSchedule() {
 
       setSchedules(formatted);
       setOriginalSchedules(formatted);
+      setCurrentPage(1);
     } catch (err) {
       console.error(err);
       toast.error("Không thể tải danh sách lịch trình!");
@@ -57,21 +65,21 @@ export default function ManageSchedule() {
       setLoading(false);
     }
   };
+
   const fetchDrivers = async () => {
     try {
-      const users = await getAllUsers();  // API trả về mảng users
-      // console.log("Users:", users);
+      const users = await getAllUsers();
       const driverList = users.filter(u => u.role === "driver");
-      // console.log("Drivers:", driverList);
       setDrivers(driverList);
     } catch (err) {
       console.error(err);
       toast.error("Không thể tải danh sách tài xế!");
     }
   };
+
   const fetchBuses = async () => {
     try {
-      const res = await getAllBuses(); // res là object axios
+      const res = await getAllBuses();
       const busList = res?.data || [];
       setBuses(busList);
     } catch (err) {
@@ -82,7 +90,7 @@ export default function ManageSchedule() {
 
   const fetchRoutes = async () => {
     try {
-      const res = await getAllRoutes(); // res là object axios
+      const res = await getAllRoutes();
       const routeList = res?.data || [];
       setRoutes(routeList);
     } catch (err) {
@@ -91,17 +99,17 @@ export default function ManageSchedule() {
     }
   };
 
-  //lọc theo ngày
   const fetchSchedulesByDate = (date) => {
     if (!date) {
       setSchedules(originalSchedules);
+      setCurrentPage(1);
       return;
     }
-
     const filtered = originalSchedules.filter((s) => s.date === date);
     setSchedules(filtered);
+    setCurrentPage(1);
   };
-  //xoá lịch trình (chỉnh thành canceled)
+
   const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc muốn hủy lịch trình này?")) return;
 
@@ -120,7 +128,6 @@ export default function ManageSchedule() {
     }
   };
 
-  //thêm lịch trình
   const handleAddClick = () => {
     setShowAddForm(true);
     setEditingSchedule(null);
@@ -128,18 +135,14 @@ export default function ManageSchedule() {
 
   const handleAddSchedule = async (e) => {
     e.preventDefault();
-
     try {
       const res = await createSchedule(newSchedule);
-      console.log(res);
       if (!res) {
         toast.error("Không thể thêm lịch trình!");
         return;
       }
-
       toast.success("Thêm lịch trình thành công!");
       setShowAddForm(false);
-
       setNewSchedule({
         driver_id: "",
         bus_id: "",
@@ -148,7 +151,6 @@ export default function ManageSchedule() {
         start_time: "",
         end_time: "",
       });
-
       fetchSchedules();
     } catch (err) {
       console.error(err);
@@ -156,7 +158,6 @@ export default function ManageSchedule() {
     }
   };
 
-  //sửa lịch trình
   const handleEdit = (schedule) => {
     setEditingSchedule(schedule);
     setShowAddForm(false);
@@ -164,18 +165,12 @@ export default function ManageSchedule() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await updateSchedule(
-        editingSchedule.schedule_id,
-        editingSchedule
-      );
-
+      const res = await updateSchedule(editingSchedule.schedule_id, editingSchedule);
       if (!res) {
         toast.error("Không thể cập nhật lịch trình!");
         return;
       }
-
       toast.success("Cập nhật thành công!");
       setEditingSchedule(null);
       fetchSchedules();
@@ -189,6 +184,11 @@ export default function ManageSchedule() {
     setShowingDetailId((prev) => (prev === id ? null : id));
   };
 
+  // PHÂN TRANG
+  const totalPages = Math.ceil(schedules.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentItems = schedules.slice(startIdx, startIdx + itemsPerPage);
+
   if (loading) return <p>Đang tải dữ liệu...</p>;
 
   return (
@@ -199,111 +199,90 @@ export default function ManageSchedule() {
 
       {/* Nút thêm */}
       {!showAddForm && !editingSchedule && (
-        <div className="add-schedule-container">
-          <button className="ms-add-btn" onClick={handleAddClick}>
-            + Thêm lịch trình
+        <div className="schedule-toolbar">
+          <button className="btn-add-schedule" onClick={handleAddClick}>
+            <FiPlus size={18} /> Thêm lịch trình
           </button>
-        </div>
-      )}
 
-      {/* Lọc ngày */}
-      {!showAddForm && !editingSchedule && (
-        <div className="filter-bar">
-          <label>Chọn ngày: </label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => {
-              setSelectedDate(e.target.value);
-              fetchSchedulesByDate(e.target.value);
-            }}
-          />
           <button
+            className="btn-show-all"
             onClick={() => {
               setSelectedDate("");
               fetchSchedules();
             }}
           >
-            Hiện tất cả
+            <FiSend size={18} /> Hiện tất cả
           </button>
+
+          <div className="date-filter">
+            <label>Chọn ngày:</label>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => {
+                setSelectedDate(e.target.value);
+                fetchSchedulesByDate(e.target.value);
+              }}
+            />
+          </div>
         </div>
       )}
+
 
       {/* FORM ADD */}
       {showAddForm && (
         <form className="schedule-form enhanced-form" onSubmit={handleAddSchedule}>
-          <h3>➕ Thêm lịch trình</h3>
-
-          {/* Chọn tài xế */}
+          <h3>Thêm lịch trình</h3>
           <label>Tài xế:</label>
           <select
             required
             value={newSchedule.driver_id}
-            onChange={(e) =>
-              setNewSchedule({ ...newSchedule, driver_id: e.target.value })
-            }
+            onChange={(e) => setNewSchedule({ ...newSchedule, driver_id: e.target.value })}
           >
             <option value="">-- Chọn tài xế --</option>
-            {drivers.length > 0
-              ? drivers.map(driver => (
-                <option key={driver.userid} value={driver.userid}>
-                  {driver.username}
-                </option>
-              ))
-              : <option value="">Chưa có tài xế</option>}
+            {drivers.length > 0 ? drivers.map(driver => (
+              <option key={driver.userid} value={driver.userid}>
+                {driver.username}
+              </option>
+            )) : <option value="">Chưa có tài xế</option>}
           </select>
 
-          {/* Chọn xe */}
           <label>Xe:</label>
           <select
             required
             value={newSchedule.bus_id}
-            onChange={(e) =>
-              setNewSchedule({ ...newSchedule, bus_id: e.target.value })
-            }
+            onChange={(e) => setNewSchedule({ ...newSchedule, bus_id: e.target.value })}
           >
             <option value="">-- Chọn xe --</option>
-            {buses.length > 0
-              ? buses.map(bus => (
-                // console.log(bus),
-                <option key={bus.bus_id} value={bus.bus_id}>
-                  {bus.model || bus.bus_id}
-                </option>
-              ))
-              : <option value="">Chưa có xe</option>}
+            {buses.length > 0 ? buses.map(bus => (
+              <option key={bus.bus_id} value={bus.bus_id}>
+                {bus.model || bus.bus_id}
+              </option>
+            )) : <option value="">Chưa có xe</option>}
           </select>
 
-          {/* Chọn tuyến */}
           <label>Tuyến:</label>
           <select
             required
             value={newSchedule.route_id}
-            onChange={(e) =>
-              setNewSchedule({ ...newSchedule, route_id: e.target.value })
-            }
+            onChange={(e) => setNewSchedule({ ...newSchedule, route_id: e.target.value })}
           >
             <option value="">-- Chọn tuyến --</option>
-            {routes.length > 0
-              ? routes.map(route => (
-                <option key={route.route_id} value={route.route_id}>
-                  {route.name}
-                </option>
-              ))
-              : <option value="">Chưa có tuyến</option>}
+            {routes.length > 0 ? routes.map(route => (
+              <option key={route.route_id} value={route.route_id}>
+                {route.name}
+              </option>
+            )) : <option value="">Chưa có tuyến</option>}
           </select>
 
-          {/* Ngày */}
           <label>Ngày:</label>
           <input
             type="date"
             required
             value={newSchedule.date}
-            onChange={(e) =>
-              setNewSchedule({ ...newSchedule, date: e.target.value })
-            }
+            onChange={(e) => setNewSchedule({ ...newSchedule, date: e.target.value })}
           />
 
-          {/* Thời gian */}
           <div className="time-group">
             <div>
               <label>Bắt đầu:</label>
@@ -311,9 +290,7 @@ export default function ManageSchedule() {
                 type="time"
                 required
                 value={newSchedule.start_time}
-                onChange={(e) =>
-                  setNewSchedule({ ...newSchedule, start_time: e.target.value })
-                }
+                onChange={(e) => setNewSchedule({ ...newSchedule, start_time: e.target.value })}
               />
             </div>
             <div>
@@ -322,109 +299,108 @@ export default function ManageSchedule() {
                 type="time"
                 required
                 value={newSchedule.end_time}
-                onChange={(e) =>
-                  setNewSchedule({ ...newSchedule, end_time: e.target.value })
-                }
+                onChange={(e) => setNewSchedule({ ...newSchedule, end_time: e.target.value })}
               />
             </div>
           </div>
 
           <div className="form-actions">
-            <button className="as-save-btn" type="submit">Lưu</button>
-            <button
-              className="as-cancel-btn"
-              type="button"
-              onClick={() => setShowAddForm(false)}
-            >
+            <button className="as-save-btn" type="submit">
+              <FiSave size={18} style={{ marginRight: 6 }} />
+              Lưu
+            </button>
+
+            <button className="as-cancel-btn" type="button" onClick={() => setShowAddForm(false)}>
+              <MdCancel size={20} style={{ marginRight: 6 }} />
               Hủy
             </button>
           </div>
         </form>
       )}
 
-
       {/* FORM EDIT */}
       {editingSchedule && (
-        <form className="schedule-form" onSubmit={handleUpdate}>
-          <h3>✏️ Chỉnh sửa #{editingSchedule.schedule_id}</h3>
-
-          <input
-            type="number"
+        <form className="schedule-form enhanced-form" onSubmit={handleUpdate}>
+          <h3>Chỉnh sửa lịch trình #{editingSchedule.schedule_id}</h3>
+          <label>Tài xế:</label>
+          <select
             required
             value={editingSchedule.driver_id}
-            onChange={(e) =>
-              setEditingSchedule({
-                ...editingSchedule,
-                driver_id: e.target.value,
-              })
-            }
-          />
+            onChange={(e) => setEditingSchedule({ ...editingSchedule, driver_id: e.target.value })}
+          >
+            <option value="">-- Chọn tài xế --</option>
+            {drivers.map(driver => (
+              <option key={driver.userid} value={driver.userid}>
+                {driver.username}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
+          <label>Xe:</label>
+          <select
             required
             value={editingSchedule.bus_id}
-            onChange={(e) =>
-              setEditingSchedule({
-                ...editingSchedule,
-                bus_id: e.target.value,
-              })
-            }
-          />
+            onChange={(e) => setEditingSchedule({ ...editingSchedule, bus_id: e.target.value })}
+          >
+            <option value="">-- Chọn xe --</option>
+            {buses.map(bus => (
+              <option key={bus.bus_id} value={bus.bus_id}>
+                {bus.model || bus.bus_id}
+              </option>
+            ))}
+          </select>
 
-          <input
-            type="number"
+          <label>Tuyến:</label>
+          <select
             required
             value={editingSchedule.route_id}
-            onChange={(e) =>
-              setEditingSchedule({
-                ...editingSchedule,
-                route_id: e.target.value,
-              })
-            }
-          />
+            onChange={(e) => setEditingSchedule({ ...editingSchedule, route_id: e.target.value })}
+          >
+            <option value="">-- Chọn tuyến --</option>
+            {routes.map(route => (
+              <option key={route.route_id} value={route.route_id}>
+                {route.name}
+              </option>
+            ))}
+          </select>
 
+          <label>Ngày:</label>
           <input
             type="date"
             required
             value={editingSchedule.date || ""}
-            onChange={(e) =>
-              setEditingSchedule({
-                ...editingSchedule,
-                date: e.target.value,
-              })
-            }
+            onChange={(e) => setEditingSchedule({ ...editingSchedule, date: e.target.value })}
           />
 
-          <input
-            type="time"
-            required
-            value={editingSchedule.start_time}
-            onChange={(e) =>
-              setEditingSchedule({
-                ...editingSchedule,
-                start_time: e.target.value,
-              })
-            }
-          />
-
-          <input
-            type="time"
-            required
-            value={editingSchedule.end_time}
-            onChange={(e) =>
-              setEditingSchedule({
-                ...editingSchedule,
-                end_time: e.target.value,
-              })
-            }
-          />
+          <div className="time-group">
+            <div>
+              <label>Bắt đầu:</label>
+              <input
+                type="time"
+                required
+                value={editingSchedule.start_time}
+                onChange={(e) => setEditingSchedule({ ...editingSchedule, start_time: e.target.value })}
+              />
+            </div>
+            <div>
+              <label>Kết thúc:</label>
+              <input
+                type="time"
+                required
+                value={editingSchedule.end_time}
+                onChange={(e) => setEditingSchedule({ ...editingSchedule, end_time: e.target.value })}
+              />
+            </div>
+          </div>
 
           <div className="form-actions">
-            <button className="save-btn" type="submit">
+            <button className="as-save-btn" type="submit">
+              <FiSave size={18} style={{ marginRight: 6 }} />
               Cập nhật
             </button>
-            <button type="button" onClick={() => setEditingSchedule(null)}>
+
+            <button className="as-cancel-btn" type="button" onClick={() => setEditingSchedule(null)}>
+              <MdCancel size={20} style={{ marginRight: 6 }} />
               Hủy
             </button>
           </div>
@@ -433,85 +409,78 @@ export default function ManageSchedule() {
 
       {/* TABLE */}
       {!showAddForm && !editingSchedule && (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Xe</th>
-              <th>Tài xế</th>
-              <th>Tuyến</th>
-              <th>Hành động</th>
-              <th>Chi tiết</th>
-            </tr>
-          </thead>
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Xe</th>
+                <th>Tài xế</th>
+                <th>Tuyến</th>
+                <th>Hành động</th>
+                <th>Chi tiết</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {schedules.length > 0 ? (
-              schedules.map((item) => (
-                <React.Fragment key={item.schedule_id}>
-                  <tr>
-                    <td>{item.schedule_id}</td>
-                    <td>{item.bus_id}</td>
-                    <td>{item.driver_id}</td>
-                    <td>{item.route_id}</td>
+            <tbody>
+              {currentItems.length > 0 ? (
+                currentItems.map((item) => (
+                  <React.Fragment key={item.schedule_id}>
+                    <tr>
+                      <td>{item.schedule_id}</td>
+                      <td>{item.bus_id}</td>
+                      <td>{item.driver_id}</td>
+                      <td>{item.route_id}</td>
 
-                    <td>
-                      <button
-                        className="edit-btn"
-                        onClick={() => handleEdit(item)}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDelete(item.schedule_id)}
-                      >
-                        Hủy
-                      </button>
-                    </td>
+                      <td>
+                        <button className="edit-btn" onClick={() => handleEdit(item)}>
+                          <FiSave size={16} style={{ marginRight: 4 }} /> Sửa
+                        </button>
 
-                    <td>
-                      <button
-                        className="detail-btn"
-                        onClick={() => handleToggleDetail(item.schedule_id)}
-                      >
-                        {showingDetailId === item.schedule_id
-                          ? "Ẩn"
-                          : "Chi tiết"}
-                      </button>
-                    </td>
-                  </tr>
+                        <button className="delete-btn" onClick={() => handleDelete(item.schedule_id)}>
+                          <FiTrash2 size={16} style={{ marginRight: 4 }} /> Hủy
+                        </button>
+                      </td>
 
-                  {showingDetailId === item.schedule_id && (
-                    <tr className="detail-row">
-                      <td colSpan="6">
-                        <div className="detail-content">
-                          <p>
-                            <strong>Ngày:</strong> {item.date}
-                          </p>
-                          <p>
-                            <strong>Bắt đầu:</strong> {item.start_time}
-                          </p>
-                          <p>
-                            <strong>Kết thúc:</strong> {item.end_time}
-                          </p>
-                          <p>
-                            <strong>Trạng thái:</strong> Active</p>
-                        </div>
+                      <td>
+                        <button className="detail-btn" onClick={() => handleToggleDetail(item.schedule_id)}>
+                          <FiEye size={16} style={{ marginRight: 6 }} />
+                          {showingDetailId === item.schedule_id ? "Ẩn" : "Chi tiết"}
+                        </button>
                       </td>
                     </tr>
-                  )}
-                </React.Fragment>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
-                  Không có lịch trình!
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+
+                    {showingDetailId === item.schedule_id && (
+                      <tr className="detail-row">
+                        <td colSpan="6">
+                          <div className="detail-content">
+                            <p><strong>Ngày:</strong> {item.date}</p>
+                            <p><strong>Bắt đầu:</strong> {item.start_time}</p>
+                            <p><strong>Kết thúc:</strong> {item.end_time}</p>
+                            <p><strong>Trạng thái:</strong> Active</p>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: "center" }}>
+                    Không có lịch trình!
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          {/* PHÂN TRANG */}
+          <div className="pagination">
+            <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>-</button>
+            <span>Trang {currentPage}/{totalPages || 1}</span>
+            <button disabled={currentPage === totalPages || totalPages === 0} onClick={() => setCurrentPage(p => p + 1)}>+</button>
+          </div>
+        </>
       )}
     </div>
   );

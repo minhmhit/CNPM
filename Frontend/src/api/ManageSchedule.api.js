@@ -9,6 +9,7 @@ export const getAllSchedules = async () => {
     return null;
   }
 };
+
 export const deleteSchedule = async (scheduleId) => {
   try {
     const res = await axios.delete(`/schedule/delete/${scheduleId}`);
@@ -36,5 +37,16 @@ export const updateSchedule = async (scheduleId, scheduleData) => {
   } catch (error) {
     console.error("Error updating schedule:", error);
     return null;
+  }
+};
+
+export const getDriverSchedules = async (driverId) => {
+  try {
+    const res = await axios.get(`/schedule/driver/${driverId}`);
+    // console.log(res.data);
+    return res;
+  } catch (error) {
+    console.error("Error fetching driver schedules:", error);
+    return [];
   }
 };

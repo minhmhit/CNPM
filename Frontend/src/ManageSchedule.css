@@ -1,6 +1,4 @@
-/* ===========================
-   🎯 1. BASE STYLE
-=========================== */
+
 .manage-schedule {
   width: 90%;
   background: #fff;
@@ -13,7 +11,6 @@
   align-items: center;
   animation: fadeIn 0.3s ease;
 }
-
 .manage-schedule h2 {
   font-size: 24px;
   font-weight: 700;
@@ -22,9 +19,6 @@
   margin-bottom: 20px;
 }
 
-/* ===========================
-   🎯 2. TABLE
-=========================== */
 .manage-schedule table {
   width: 100%;
   border-collapse: collapse;
@@ -58,9 +52,6 @@
   transition: 0.2s;
 }
 
-/* ===========================
-   🎯 3. STATUS LABELS
-=========================== */
 .status {
   font-weight: 700;
 }
@@ -74,9 +65,6 @@
   color: #2563eb;
 }
 
-/* ===========================
-   🎯 4. ACTION BUTTONS
-=========================== */
 .edit-btn,
 .delete-btn {
   border: none;
@@ -106,7 +94,8 @@
 }
 .ms-add-btn{
   margin-bottom: 5%;
-background-color: #00ff5e;
+  background-color: #00ff5e;
+  font-size: larger;
 }
 .as-save-btn{
     margin-bottom: 5%;
@@ -119,9 +108,6 @@ background-color: #00ff5e;
     margin-top : 2%;
 background-color: #655c5c;
 }
-/* ===========================
-   🎯 5. RESPONSIVE
-=========================== */
 @media (max-width: 768px) {
   .manage-schedule {
     width: 100%;
@@ -141,9 +127,6 @@ background-color: #655c5c;
   }
 }
 
-/* ===========================
-   🎯 6. ANIMATION
-=========================== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -154,23 +137,17 @@ background-color: #655c5c;
     transform: translateY(0);
   }
 }
-/* ===========================
-    🎯 6. DETAIL VIEW & BUTTON
-=========================== */
 
-/* Style cho nút Chi tiết */
 .detail-btn {
     border: none;
     padding: 6px 12px;
-    margin-left: 8px; /* Tách biệt với nút Sửa/Xóa */
+    margin-left: 8px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     font-size: 13px;
     transition: background-color 0.2s ease, color 0.2s ease;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    
-    /* Màu sắc mặc định: Xanh ngọc - cho nút 'Chi tiết' */
     background-color: #00bcd4; 
     color: white;
 }
@@ -179,39 +156,36 @@ background-color: #655c5c;
     background-color: #00838f;
 }
 
-/* Style cho hàng chi tiết ẩn/hiện */
 .detail-row td {
     padding: 0 !important; 
     border: none !important;
-    background-color: transparent !important; /* Loại bỏ màu nền xen kẽ */
+    background-color: transparent !important;
 }
 
 .detail-content {
-    /* Đảm bảo chiếm toàn bộ chiều rộng (colSpan) */
     width: 100%; 
-    background-color: #fcfcfc; /* Nền nhẹ nhàng để phân biệt */
+    background-color: #fcfcfc;
     padding: 10px 20px;
-    border-top: 1px dashed #ddd; /* Đường phân cách tinh tế */
-    border-bottom: 2px solid #6a42f4; /* Viền dưới nổi bật theo màu chủ đạo */
+    border-top: 1px dashed #ddd;
+    border-bottom: 2px solid #6a42f4;
     text-align: left;
     font-size: 0.9em;
-    display: flex; /* Dùng flexbox để sắp xếp thông tin */
+    display: flex;
     gap: 20px;
     justify-content: flex-start;
-    animation: slideDown 0.3s ease-out; /* Hiệu ứng mở chi tiết */
+    animation: slideDown 0.3s ease-out;
 }
 
 .detail-content p {
     margin: 5px 0;
-    white-space: nowrap; /* Ngăn thông tin bị xuống dòng quá mức */
+    white-space: nowrap;
 }
 
 .detail-content strong {
-    color: #4f46e5; /* Màu nổi bật cho nhãn */
+    color: #4f46e5;
     font-weight: 700;
 }
 
-/* Hiệu ứng trượt xuống khi mở chi tiết */
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -222,7 +196,7 @@ background-color: #655c5c;
     }
     to {
         opacity: 1;
-        max-height: 100px; /* Giá trị đủ lớn để hiển thị nội dung */
+        max-height: 100px;
         padding-top: 10px;
         padding-bottom: 10px;
     }
@@ -281,4 +255,72 @@ background-color: #655c5c;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+.schedule-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.schedule-toolbar button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-schedule {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.btn-add-schedule:hover {
+  background-color: #45a049;
+}
+
+.btn-show-all {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+.btn-show-all:hover {
+  background-color: #1976d2;
+}
+
+.date-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.date-filter label {
+  font-weight: 500;
+}
+
+.date-filter input[type="date"] {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+button,
+.ms-add-btn,
+.as-save-btn,
+.as-cancel-btn,
+.edit-btn,
+.delete-btn,
+.detail-btn,
+.showall-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px;
+  vertical-align: middle;
 }
