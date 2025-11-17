@@ -428,9 +428,9 @@ export default function ManageSchedule() {
                   <React.Fragment key={item.schedule_id}>
                     <tr>
                       <td>{item.schedule_id}</td>
-                      <td>{item.bus_id}</td>
-                      <td>{item.driver_id}</td>
-                      <td>{item.route_id}</td>
+                      <td>{item.bus_name}</td>
+                      <td>{item.driver_name}</td>
+                      <td>{item.route_name}</td>
 
                       <td>
                         <button className="edit-btn" onClick={() => handleEdit(item)}>
