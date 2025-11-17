@@ -1,431 +1,374 @@
-import { SidePanel, Navbar } from "./Driver.jsx"
-import "./Schedule.css"
-import React, {useState} from "react";
-import axios from "axios";
-import { useEffect } from "react";
+// import { SidePanel, Navbar } from "./Driver.jsx"
+// import "./Schedule.css"
+// import React, {useState} from "react";
+// import axios from "./util/axios.customize.js"
+// import { useEffect } from "react";
+// import {fetchStudents, fetchSchedules, checkInAPI, checkOutAPI, markAbsentAPI} from "./api/schedule.api.js"
 
-const API_BASE = "http://localhost:5000/api/v1";
+// function GetDayofWeek(dateString){
+//     const days = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
+//     const date = new Date(dateString);
+//     return days[date.getDay()];
+// }
 
-async function fetchSchedules() {
-    try {
-        const userid = localStorage.getItem("userId")
-        const url = `${API_BASE}/driver/schedules/${userid}`
-        const res = await axios.get(url)
-        console.log(res.data.data)
-        return res.data.data
-    } catch (err) {
-        console.error("Lỗi khi gọi API:", err);
-    }
-}
+// export default function Schedule(){
 
-async function fetchStudents(schedule_id) {
-    try {
-        const url = `${API_BASE}/schedule/students`
-        const res = await axios.post(url, {
-            schedule_id
-        })
-        console.log(res.data.data)
-        return res.data.data
-    } catch (err) {
-        console.error("Lỗi khi gọi API:", err);
-    }
-}
-
-async function checkInAPI(schedule_id, student_id) {
-  try {
-    const url = `${API_BASE}/student/checkinStudent`;
-    const res = await axios.post(url, { schedule_id, student_id });
-    return res.data;
-  } catch (err) {
-    console.error("Lỗi khi checkin:", err);
-  }
-}
-
-async function checkOutAPI(schedule_id, student_id) {
-  try {
-    const url = `${API_BASE}/student/checkoutStudent`;
-    const res = await axios.post(url, { schedule_id, student_id });
-    return res.data;
-  } catch (err) {
-    console.error("Lỗi khi checkout:", err);
-  }
-}
-
-async function markAbsentAPI(student_id, schedule_id) {
-    try {
-        const url = `${API_BASE}/schedule/pickup`;
-        const status = 'absent'
-        const res = await axios.put(url, { schedule_id, student_id, status });
-        return res.data;
-    } catch (err) {
-        console.error("Lỗi khi absent:", err);
-    }
-}
-
-function GetDayofWeek(dateString){
-    const days = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
-    const date = new Date(dateString);
-    return days[date.getDay()];
-}
-
-export default function Schedule(){
-
-    const [schedules, setSchedules] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [selectedSchedule, setSelectedSchedule] = useState(null);
+//     const [schedules, setSchedules] = useState([]);
+//     const [showModal, setShowModal] = useState(false);
+//     const [selectedSchedule, setSelectedSchedule] = useState(null);
 
     
-    const [students, setStudents] = useState([]);
-    const [showStudents, setShowStudents] = useState(false);
-    const [loadingStudents, setLoadingStudents] = useState(false);
+//     const [students, setStudents] = useState([]);
+//     const [showStudents, setShowStudents] = useState(false);
+//     const [loadingStudents, setLoadingStudents] = useState(false);
 
-    useEffect(() => {
-        setShowStudents(false);
-        setStudents([]);
-        setLoadingStudents(false);
-    }, [selectedSchedule]);
+//     useEffect(() => {
+//         setShowStudents(false);
+//         setStudents([]);
+//         setLoadingStudents(false);
+//     }, [selectedSchedule]);
 
-    useEffect(() => {
-    fetchSchedules().then(data => {
-        if (data) setSchedules(data);
-    });
-    }, []);
+//     useEffect(() => {
+//     fetchSchedules().then(data => {
+//         if (data) setSchedules(data);
+//     });
+//     }, []);
 
-    const handleToggleStudents = async (schedule_id) => {
-        if (showStudents) {
-        // Nếu đang mở thì ẩn
-        setShowStudents(false);
-        return;
-        }
+//     const handleToggleStudents = async (schedule_id) => {
+//         if (showStudents) {
+//         // Nếu đang mở thì ẩn
+//         setShowStudents(false);
+//         return;
+//         }
 
-        // Nếu đang ẩn thì load dữ liệu
-        setLoadingStudents(true);
-        const data = await fetchStudents(schedule_id);
-        setLoadingStudents(false);
+//         // Nếu đang ẩn thì load dữ liệu
+//         setLoadingStudents(true);
+//         const data = await fetchStudents(schedule_id);
+//         setLoadingStudents(false);
 
-        if (!data || data.length === 0) {
-        setStudents([]);
-        setShowStudents(true);
-        return;
-        }
+//         if (!data || data.length === 0) {
+//         setStudents([]);
+//         setShowStudents(true);
+//         return;
+//         }
 
-        const filtered = data.map((s) => ({
-        student_id: s.student_id,
-        student_name: s.student_name,
-        className: s.className,
-        pickup_status: s.pickup_status,
-        dropoff_status: s.dropoff_status,
-        pickup_name: s.pickup_stop_name,
-        dropoff_name: s.dropoff_stop_name,
-        }));
+//         const filtered = data.map((s) => ({
+//         student_id: s.student_id,
+//         student_name: s.student_name,
+//         className: s.className,
+//         pickup_status: s.pickup_status,
+//         dropoff_status: s.dropoff_status,
+//         pickup_name: s.pickup_stop_name,
+//         dropoff_name: s.dropoff_stop_name,
+//         }));
 
-        setStudents(filtered);
-        setShowStudents(true);
-    };
+//         setStudents(filtered);
+//         setShowStudents(true);
+//     };
 
-    //Xác định thứ hiện tại
-    const days = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
-    const today = days[new Date().getDay()]; //Mặc định là hôm nay
-    const [selectedDay, setSelectedDay] = useState(today);
-    const [showDropdown, setShowDropdown] = useState(false);
+//     //Xác định thứ hiện tại
+//     const days = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
+//     const today = days[new Date().getDay()]; //Mặc định là hôm nay
+//     const [selectedDay, setSelectedDay] = useState(today);
+//     const [showDropdown, setShowDropdown] = useState(false);
 
-    //Lọc lịch trình theo thứ được chọn
-    const filteredSchedules = schedules.filter(
-        (s) => GetDayofWeek(s.date) === selectedDay
-    );
+//     //Lọc lịch trình theo thứ được chọn
+//     const filteredSchedules = schedules.filter(
+//         (s) => GetDayofWeek(s.date) === selectedDay
+//     );
 
-    return(
-        <div className="app">
-            <Navbar />
-            <div className="driver-center-box">
-                <div className="driver-display-info">
-                    <div className="schedule-container">
-                        <h2>Lịch trình làm việc</h2>
-                        <table className="schedule-table">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                {/* <th>Thứ</th> */}
-                                <th
-                                    className="clickable-th"
-                                    onClick={() => setShowDropdown(!showDropdown)}
-                                >
-                                    {selectedDay} ▾
-                                    {showDropdown && (
-                                        <div className="day-dropdown">
-                                            {days.map((d) => (
-                                                <div
-                                                    key={d}
-                                                    className={`day-option ${
-                                                        d === selectedDay ? "active" : ""
-                                                    }`}
-                                                    onClick={() => {
-                                                        setSelectedDay(d);
-                                                        setShowDropdown(false);
-                                                    }}
-                                                >
-                                                    {d}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </th>
-                                <th>Ngày</th>
-                                <th>Giờ bắt đầu</th>
-                                <th>Giờ kết thúc</th>
-                                <th>Trạng thái</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {filteredSchedules.length > 0 ? (
-                                filteredSchedules.map((item) => (
-                                <tr
-                                    key={item.schedule_id}
-                                    onClick={() => {
-                                        setShowStudents(false);
-                                        setStudents([]);
-                                        setLoadingStudents(false);
+//     return(
+//         <div className="app">
+//             <Navbar />
+//             <div className="driver-center-box">
+//                 <div className="driver-display-info">
+//                     <div className="schedule-container">
+//                         <h2>Lịch trình làm việc</h2>
+//                         <table className="schedule-table">
+//                             <thead>
+//                             <tr>
+//                                 <th>ID</th>
+//                                 {/* <th>Thứ</th> */}
+//                                 <th
+//                                     className="clickable-th"
+//                                     onClick={() => setShowDropdown(!showDropdown)}
+//                                 >
+//                                     {selectedDay} ▾
+//                                     {showDropdown && (
+//                                         <div className="day-dropdown">
+//                                             {days.map((d) => (
+//                                                 <div
+//                                                     key={d}
+//                                                     className={`day-option ${
+//                                                         d === selectedDay ? "active" : ""
+//                                                     }`}
+//                                                     onClick={() => {
+//                                                         setSelectedDay(d);
+//                                                         setShowDropdown(false);
+//                                                     }}
+//                                                 >
+//                                                     {d}
+//                                                 </div>
+//                                             ))}
+//                                         </div>
+//                                     )}
+//                                 </th>
+//                                 <th>Ngày</th>
+//                                 <th>Giờ bắt đầu</th>
+//                                 <th>Giờ kết thúc</th>
+//                                 <th>Trạng thái</th>
+//                             </tr>
+//                             </thead>
+//                             <tbody>
+//                             {filteredSchedules.length > 0 ? (
+//                                 filteredSchedules.map((item) => (
+//                                 <tr
+//                                     key={item.schedule_id}
+//                                     onClick={() => {
+//                                         setShowStudents(false);
+//                                         setStudents([]);
+//                                         setLoadingStudents(false);
                                         
-                                        setSelectedSchedule(item);
-                                        setShowModal(true);
-                                    }}
-                                    style={{ cursor: "pointer" }}
-                                >
-                                    <td>{item.schedule_id}</td>
-                                    <td>{GetDayofWeek(item.date)}</td>
-                                    <td>{item.date}</td>
-                                    <td>{item.start_time}</td>
-                                    <td>{item.end_time}</td>
-                                    <td>{item.status}</td>
-                                </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                <td colSpan="6" style={{ textAlign: "center" }}>
-                                    Không có lịch làm việc cho {selectedDay}
-                                </td>
-                                </tr>
-                            )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <SidePanel />
-            </div>
-            {showModal && selectedSchedule && (
-                <div className="driver-modal-overlay">
-                    <div className="driver-modal-content">
-                    <h2>Chi tiết lịch trình #{selectedSchedule.schedule_id}</h2>
-                    <p><b>Ngày:</b> {selectedSchedule.date} ({GetDayofWeek(selectedSchedule.date)})</p>
-                    <p><b>Thời gian:</b> {selectedSchedule.start_time} - {selectedSchedule.end_time}</p>
-                    <p><b>Trạng thái:</b> {selectedSchedule.status}</p>
-                    <hr />
-                    <p><b>Tuyến:</b> {selectedSchedule.route_name} - {selectedSchedule.route_description}</p>
-                    <p><b>Xe:</b> {selectedSchedule.bus_model} ({selectedSchedule.license_plate})</p>
-                    <p><b>Sức chứa:</b> {selectedSchedule.capacity}</p>
-                    <p><b>Số học sinh:</b> {selectedSchedule.student_count}</p>
+//                                         setSelectedSchedule(item);
+//                                         setShowModal(true);
+//                                     }}
+//                                     style={{ cursor: "pointer" }}
+//                                 >
+//                                     <td>{item.schedule_id}</td>
+//                                     <td>{GetDayofWeek(item.date)}</td>
+//                                     <td>{item.date}</td>
+//                                     <td>{item.start_time}</td>
+//                                     <td>{item.end_time}</td>
+//                                     <td>{item.status}</td>
+//                                 </tr>
+//                                 ))
+//                             ) : (
+//                                 <tr>
+//                                 <td colSpan="6" style={{ textAlign: "center" }}>
+//                                     Không có lịch làm việc cho {selectedDay}
+//                                 </td>
+//                                 </tr>
+//                             )}
+//                             </tbody>
+//                         </table>
+//                     </div>
+//                 </div>
+//                 <SidePanel />
+//             </div>
+//             {showModal && selectedSchedule && (
+//                 <div className="driver-modal-overlay">
+//                     <div className="driver-modal-content">
+//                     <h2>Chi tiết lịch trình #{selectedSchedule.schedule_id}</h2>
+//                     <p><b>Ngày:</b> {selectedSchedule.date} ({GetDayofWeek(selectedSchedule.date)})</p>
+//                     <p><b>Thời gian:</b> {selectedSchedule.start_time} - {selectedSchedule.end_time}</p>
+//                     <p><b>Trạng thái:</b> {selectedSchedule.status}</p>
+//                     <hr />
+//                     <p><b>Tuyến:</b> {selectedSchedule.route_name} - {selectedSchedule.route_description}</p>
+//                     <p><b>Xe:</b> {selectedSchedule.bus_model} ({selectedSchedule.license_plate})</p>
+//                     <p><b>Sức chứa:</b> {selectedSchedule.capacity}</p>
+//                     <p><b>Số học sinh:</b> {selectedSchedule.student_count}</p>
 
-                     {/* Nút xem danh sách học sinh */}
-                    <button
-                        onClick={() => handleToggleStudents(selectedSchedule.schedule_id)}
-                        style={{
-                            marginTop: "10px",
-                            marginRight: "15px",
-                            padding: "8px 16px",
-                            border: "none",
-                            borderRadius: "5px",
-                            background: "#28a745",
-                            color: "white",
-                            cursor: "pointer",
-                        }}
-                    >
-                    {showStudents ? "Ẩn danh sách học sinh" : "Xem danh sách học sinh"}
-                    </button>
+//                      {/* Nút xem danh sách học sinh */}
+//                     <button
+//                         onClick={() => handleToggleStudents(selectedSchedule.schedule_id)}
+//                         style={{
+//                             marginTop: "10px",
+//                             marginRight: "15px",
+//                             padding: "8px 16px",
+//                             border: "none",
+//                             borderRadius: "5px",
+//                             background: "#28a745",
+//                             color: "white",
+//                             cursor: "pointer",
+//                         }}
+//                     >
+//                     {showStudents ? "Ẩn danh sách học sinh" : "Xem danh sách học sinh"}
+//                     </button>
 
-                    {loadingStudents && <p>Đang tải danh sách học sinh...</p>}
+//                     {loadingStudents && <p>Đang tải danh sách học sinh...</p>}
 
-                    {/* Bảng danh sách học sinh */}
-                    {showStudents && students.length > 0 && (
-                        <div style={{ marginTop: "20px" }}>
-                            <h3>Danh sách học sinh</h3>
-                            <div className="scrollable-table">
-                                <table
-                                style={{
-                                    width: "100%",
-                                    borderCollapse: "collapse",
-                                    overflow: "scroll",
-                                    maxHeight: "20%",
-                                }}
-                                >
-                                <thead>
-                                    <tr>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>ID</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Tên học sinh</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Lớp</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Trạng thái đón</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Trạng thái trả</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Điểm đón</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Điểm trả</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Lên</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Xuống</th>
-                                    <th style={{ border: "1px solid #ccc", padding: "8px" }}>Vắng</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {students.map((s) => (
-                                    <tr key={s.student_id}>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                        {s.student_id}
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                        {s.student_name}
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                        {s.className}
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                        {s.pickup_status}
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                        {s.dropoff_status}
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                        {s.pickup_name}
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                        {s.dropoff_name}
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                            {/* Nút Checkin */}
-                                            <button
-                                                onClick={async () => {
-                                                const res = await checkInAPI(selectedSchedule.schedule_id, s.student_id);
-                                                if (res?.success) {
-                                                    setStudents(prev =>
-                                                    prev.map(st =>
-                                                        st.student_id === s.student_id
-                                                        ? { ...st, pickup_status: "picked_up" }
-                                                        : st
-                                                    )
-                                                    );
-                                                } else {
-                                                    alert(res?.message || "Không thể checkin");
-                                                }
-                                                }}
-                                                disabled={s.pickup_status !== "waiting"} // chỉ bật khi chưa làm gì
-                                                style={{
-                                                padding: "6px 10px",
-                                                border: "none",
-                                                borderRadius: "4px",
-                                                background: s.pickup_status === "waiting" ? "#28a745" : "#ccc",
-                                                color: "white",
-                                                cursor: s.pickup_status === "waiting" ? "pointer" : "not-allowed",
-                                                }}
-                                            >
-                                                Checkin
-                                            </button>
-                                        </td>
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                            {/* Nút Checkout */}
-                                            <button
-                                                onClick={async () => {
-                                                const res = await checkOutAPI(selectedSchedule.schedule_id, s.student_id);
-                                                if (res?.success) {
-                                                    setStudents(prev =>
-                                                    prev.map(st =>
-                                                        st.student_id === s.student_id
-                                                        ? { ...st, dropoff_status: "dropped_off" }
-                                                        : st
-                                                    )
-                                                    );
-                                                } else {
-                                                    alert(res?.message || "Không thể checkout");
-                                                }
-                                                }}
-                                                disabled={
-                                                !(
-                                                    s.pickup_status === "picked_up" &&
-                                                    s.dropoff_status === "waiting"
-                                                )
-                                                }
-                                                style={{
-                                                padding: "6px 10px",
-                                                border: "none",
-                                                borderRadius: "4px",
-                                                background:
-                                                    s.pickup_status === "picked_up" &&
-                                                    s.dropoff_status === "waiting"
-                                                    ? "#007bff"
-                                                    : "#ccc",
-                                                color: "white",
-                                                cursor:
-                                                    s.pickup_status === "picked_up" &&
-                                                    s.dropoff_status === "waiting"
-                                                    ? "pointer"
-                                                    : "not-allowed",
-                                                }}
-                                            >
-                                                Checkout
-                                            </button>
-                                        </td>
+//                     {/* Bảng danh sách học sinh */}
+//                     {showStudents && students.length > 0 && (
+//                         <div style={{ marginTop: "20px" }}>
+//                             <h3>Danh sách học sinh</h3>
+//                             <div className="scrollable-table">
+//                                 <table
+//                                 style={{
+//                                     width: "100%",
+//                                     borderCollapse: "collapse",
+//                                     overflow: "scroll",
+//                                     maxHeight: "20%",
+//                                 }}
+//                                 >
+//                                 <thead>
+//                                     <tr>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>ID</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Tên học sinh</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Lớp</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Trạng thái đón</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Trạng thái trả</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Điểm đón</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Điểm trả</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Lên</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Xuống</th>
+//                                     <th style={{ border: "1px solid #ccc", padding: "8px" }}>Vắng</th>
+//                                     </tr>
+//                                 </thead>
+//                                 <tbody>
+//                                     {students.map((s) => (
+//                                     <tr key={s.student_id}>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                         {s.student_id}
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                         {s.student_name}
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                         {s.className}
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                         {s.pickup_status}
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                         {s.dropoff_status}
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                         {s.pickup_name}
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                         {s.dropoff_name}
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                             {/* Nút Checkin */}
+//                                             <button
+//                                                 onClick={async () => {
+//                                                 const res = await checkInAPI(selectedSchedule.schedule_id, s.student_id);
+//                                                 if (res?.success) {
+//                                                     setStudents(prev =>
+//                                                     prev.map(st =>
+//                                                         st.student_id === s.student_id
+//                                                         ? { ...st, pickup_status: "picked_up" }
+//                                                         : st
+//                                                     )
+//                                                     );
+//                                                 } else {
+//                                                     alert(res?.message || "Không thể checkin");
+//                                                 }
+//                                                 }}
+//                                                 disabled={s.pickup_status !== "waiting"} // chỉ bật khi chưa làm gì
+//                                                 style={{
+//                                                 padding: "6px 10px",
+//                                                 border: "none",
+//                                                 borderRadius: "4px",
+//                                                 background: s.pickup_status === "waiting" ? "#28a745" : "#ccc",
+//                                                 color: "white",
+//                                                 cursor: s.pickup_status === "waiting" ? "pointer" : "not-allowed",
+//                                                 }}
+//                                             >
+//                                                 Checkin
+//                                             </button>
+//                                         </td>
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                             {/* Nút Checkout */}
+//                                             <button
+//                                                 onClick={async () => {
+//                                                 const res = await checkOutAPI(selectedSchedule.schedule_id, s.student_id);
+//                                                 if (res?.success) {
+//                                                     setStudents(prev =>
+//                                                     prev.map(st =>
+//                                                         st.student_id === s.student_id
+//                                                         ? { ...st, dropoff_status: "dropped_off" }
+//                                                         : st
+//                                                     )
+//                                                     );
+//                                                 } else {
+//                                                     alert(res?.message || "Không thể checkout");
+//                                                 }
+//                                                 }}
+//                                                 disabled={
+//                                                 !(
+//                                                     s.pickup_status === "picked_up" &&
+//                                                     s.dropoff_status === "waiting"
+//                                                 )
+//                                                 }
+//                                                 style={{
+//                                                 padding: "6px 10px",
+//                                                 border: "none",
+//                                                 borderRadius: "4px",
+//                                                 background:
+//                                                     s.pickup_status === "picked_up" &&
+//                                                     s.dropoff_status === "waiting"
+//                                                     ? "#007bff"
+//                                                     : "#ccc",
+//                                                 color: "white",
+//                                                 cursor:
+//                                                     s.pickup_status === "picked_up" &&
+//                                                     s.dropoff_status === "waiting"
+//                                                     ? "pointer"
+//                                                     : "not-allowed",
+//                                                 }}
+//                                             >
+//                                                 Checkout
+//                                             </button>
+//                                         </td>
 
-                                        <td style={{ border: "1px solid #ccc", padding: "8px" }}>
-                                            {/* Nút Vắng */}
-                                            <button
-                                                onClick={async () => {
-                                                if (window.confirm(`Đánh dấu vắng ${s.student_name}?`)) {
-                                                    const res = await markAbsentAPI(s.student_id, selectedSchedule.schedule_id);
-                                                    if (res?.success) {
-                                                        setStudents(prev =>
-                                                        prev.map(st =>
-                                                            st.student_id === s.student_id
-                                                            ? { ...st, pickup_status: "absent" }
-                                                            : st
-                                                        )
-                                                        );
-                                                    } else {
-                                                        alert(res?.message || "Không thể đánh dấu vắng");
-                                                    }
-                                                }
-                                                }}
-                                                disabled={s.pickup_status !== "waiting"} // chỉ khi chưa checkin
-                                                style={{
-                                                padding: "6px 10px",
-                                                border: "none",
-                                                borderRadius: "4px",
-                                                background: s.pickup_status === "waiting" ? "#d9dd0dff" : "#ccc",
-                                                color: "white",
-                                                cursor: s.pickup_status === "waiting" ? "pointer" : "not-allowed",
-                                                }}
-                                            >
-                                                Absent
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    ))}
-                                </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
+//                                         <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+//                                             {/* Nút Vắng */}
+//                                             <button
+//                                                 onClick={async () => {
+//                                                 if (window.confirm(`Đánh dấu vắng ${s.student_name}?`)) {
+//                                                     const res = await markAbsentAPI(s.student_id, selectedSchedule.schedule_id);
+//                                                     if (res?.success) {
+//                                                         setStudents(prev =>
+//                                                         prev.map(st =>
+//                                                             st.student_id === s.student_id
+//                                                             ? { ...st, pickup_status: "absent" }
+//                                                             : st
+//                                                         )
+//                                                         );
+//                                                     } else {
+//                                                         alert(res?.message || "Không thể đánh dấu vắng");
+//                                                     }
+//                                                 }
+//                                                 }}
+//                                                 disabled={s.pickup_status !== "waiting"} // chỉ khi chưa checkin
+//                                                 style={{
+//                                                 padding: "6px 10px",
+//                                                 border: "none",
+//                                                 borderRadius: "4px",
+//                                                 background: s.pickup_status === "waiting" ? "#d9dd0dff" : "#ccc",
+//                                                 color: "white",
+//                                                 cursor: s.pickup_status === "waiting" ? "pointer" : "not-allowed",
+//                                                 }}
+//                                             >
+//                                                 Absent
+//                                             </button>
+//                                         </td>
+//                                     </tr>
+//                                     ))}
+//                                 </tbody>
+//                                 </table>
+//                             </div>
+//                         </div>
+//                     )}
 
-                    <button 
-                        onClick={() => setShowModal(false)} 
-                        style={{
-                        marginTop: "15px",
-                        padding: "8px 16px",
-                        border: "none",
-                        borderRadius: "5px",
-                        background: "#007bff",
-                        color: "white",
-                        cursor: "pointer"
-                        }}
-                    >
-                        Đóng
-                    </button>
-                    </div>
-                </div>
-                )}
-        </div>
-    )
-}
+//                     <button 
+//                         onClick={() => setShowModal(false)} 
+//                         style={{
+//                         marginTop: "15px",
+//                         padding: "8px 16px",
+//                         border: "none",
+//                         borderRadius: "5px",
+//                         background: "#007bff",
+//                         color: "white",
+//                         cursor: "pointer"
+//                         }}
+//                     >
+//                         Đóng
+//                     </button>
+//                     </div>
+//                 </div>
+//                 )}
+//         </div>
+//     )
+// }

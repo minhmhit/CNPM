@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { FiMenu, FiCalendar, FiUserCheck, FiMap, FiSend, FiList, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS của toastify
-
+import 'react-toastify/dist/ReactToastify.css';
 import logo from "./pics/logo.png";
 import accountIcon from "./pics/account-icon.png";
 import SendMessage from "./SendMessage";
@@ -11,7 +10,7 @@ import ManageList from "./ManageList";
 import ManageSchedule from "./ManageSchedule.jsx";
 import AssignDriver from "./AssignDriver.jsx";
 import TrackingMap from "./TrackingMap.jsx";
-import "./Admin.css"; // Đảm bảo bạn đang dùng file Admin.css đã đổi class
+import "./Admin.css";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -130,14 +129,6 @@ export default function Admin() {
         <div className="admin-header-right">
           <img src={accountIcon} alt="account" className="admin-header-user-icon-img" />
           <span>Xin chào, {username}</span>
-          {/* Nút menu 3 gạch */}
-          <button
-            className="admin-header-menu-btn"
-            title="Mở menu"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            <FiMenu />
-          </button>
         </div>
       </header>
 

@@ -1,79 +1,83 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import "./Admin.css";
-
-const API_BASE = "http://localhost:5000/api/v1";
+import { toast } from "react-toastify";
+import { getAllUsers } from "./api/ManageList.api";
+import { getAllSchedules } from "./api/ManageSchedule.api";
+import { sendMessage } from "./api/SendMessage.api";
+import { FiSave, FiPlus, FiTrash2, FiSend } from "react-icons/fi";
+import { MdCancel } from "react-icons/md";
 
 export default function SendMessage({ onBack }) {
   const [recipientType, setRecipientType] = useState("driver");
   const [message, setMessage] = useState("");
   const [scheduleId, setScheduleId] = useState("");
   const [recipientUserId, setRecipientUserId] = useState("");
-  const [userId, setUserId] = useState(""); // Khởi tạo state cho userId
+  const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [drivers, setDrivers] = useState([]);
   const [students, setStudents] = useState([]);
   const [schedules, setSchedules] = useState([]);
 
-  // 🟣 Lấy danh sách từ DB
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [driversRes, studentsRes, schedulesRes] = await Promise.all([
-          axios.get(`${API_BASE}/drivers`),
-          axios.get(`${API_BASE}/students`),
-          axios.get(`${API_BASE}/schedules`),
-        ]);
-        setDrivers(driversRes.data);
-        setStudents(studentsRes.data);
-        setSchedules(schedulesRes.data);
+        const users = await getAllUsers();
+        const schedulesRes = await getAllSchedules();
+
+        setDrivers(users.filter((u) => u.role === "driver"));
+        setStudents(users.filter((u) => u.role === "student"));
+        setSchedules(schedulesRes);
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu:", err);
       }
     };
+
     fetchData();
   }, []);
-  
-  // 🛠️ Lấy userId từ localStorage khi component mount
+
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      setUserId(storedUserId);
-    }
-  }, []); // Chạy 1 lần khi component mount
+    if (storedUserId) setUserId(storedUserId);
+  }, []);
 
   const handleSend = async (e) => {
     e.preventDefault();
 
-    // userId đã được tự động lấy, chỉ cần kiểm tra
     if (!message.trim() || !recipientUserId || !userId) {
-      alert("⚠️ Vui lòng nhập đầy đủ thông tin!");
+      toast.warning("Vui lòng nhập đầy đủ thông tin!");
       return;
     }
 
     try {
       setLoading(true);
+
       const mappedRecipientType =
         recipientType === "parents" ? "student" : recipientType;
 
-      const res = await axios.post(`${API_BASE}/notification/create`, {
-        userid: userId, // Dùng userId đã lấy từ localStorage
+      const payload = {
+        userid: Number(userId),
         recipient_type: mappedRecipientType,
-        message: message,
+        message,
         schedule_id: scheduleId || null,
-        recipient_user_id: recipientUserId,
-      });
+        recipient_user_id: Number(recipientUserId),
+      };
 
-      alert(res.data.message || "✅ Gửi thông báo thành công!");
+      const res = await sendMessage(payload);
+
+      if (!res) {
+        toast.error("Không gửi được tin nhắn!");
+        return;
+      }
+
+      toast.success(res.message || "Gửi thông báo thành công!");
+
       setMessage("");
       setRecipientUserId("");
       setScheduleId("");
-      // Không reset userId vì nó đã được lấy tự động
-      onBack();
     } catch (err) {
       console.error("Lỗi khi gửi tin:", err);
-      alert(
+      toast.error(
         err.response?.data?.message ||
         "Không thể gửi tin nhắn. Vui lòng thử lại!"
       );
@@ -81,25 +85,20 @@ export default function SendMessage({ onBack }) {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="send-message-container">
       <h3>Gửi thông báo</h3>
       <form className="send-message-form" onSubmit={handleSend}>
-        {/* --- KHỐI ID --- */}
+        {/* KHỐI ID */}
         <div className="id-group">
           <div className="id-field">
-            <label>Người gửi (User ID): </label>
-            <input
-              type="text"
-              value={userId}
-              disabled 
-            />
+            <label>Người gửi (User ID):</label>
+            <input type="text" value={userId} disabled />
           </div>
 
           <div className="id-field">
-            <label>Người nhận: </label>
+            <label>Người nhận:</label>
             <select
               value={recipientType}
               onChange={(e) => setRecipientType(e.target.value)}
@@ -110,28 +109,28 @@ export default function SendMessage({ onBack }) {
           </div>
 
           <div className="id-field">
-            <label>ID người nhận: </label>
+            <label>ID người nhận:</label>
             <input
               type="number"
               value={recipientUserId}
               onChange={(e) => setRecipientUserId(e.target.value)}
-              placeholder="Nhập ID người nhận (recipientUserId)"
+              placeholder="Nhập ID người nhận"
             />
           </div>
 
           <div className="id-field">
-            <label>ID lịch trình: </label>
+            <label>ID lịch trình:</label>
             <input
               type="number"
               value={scheduleId}
               onChange={(e) => setScheduleId(e.target.value)}
-              placeholder="Nhập ID lịch trình (scheduleId)"
+              placeholder="Nhập ID lịch trình"
             />
           </div>
         </div>
 
-        {/* --- NỘI DUNG --- */}
-        <label>Nội dung: </label>
+        {/* NỘI DUNG */}
+        <label>Nội dung:</label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -143,15 +142,25 @@ export default function SendMessage({ onBack }) {
           <button
             type="button"
             onClick={onBack}
-            className="cancel-btn"
+            className="sm-cancel-btn"
             disabled={loading}
           >
+            <MdCancel size={18} style={{ marginRight: 6 }} />
             Hủy
           </button>
+
           <button type="submit" className="send-btn" disabled={loading}>
-            {loading ? "Đang gửi..." : "Gửi"}
+            {loading ? (
+              "Đang gửi..."
+            ) : (
+              <>
+                <FiSend size={18} style={{ marginRight: 6 }} />
+                Gửi
+              </>
+            )}
           </button>
         </div>
+
       </form>
     </div>
   );

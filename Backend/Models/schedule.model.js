@@ -3,10 +3,17 @@ const {pool} = require('../config/connection_mysql');
 const getAllSchedules = async () => {
     try {
         const sql = `
-            SELECT *
-            FROM schedules
-            ORDER BY date DESC, start_time DESC
-        `;
+    SELECT 
+        s.*,
+        r.name as route_name,
+        d.name as driver_name,
+        v.license_plate as bus_name
+    FROM schedules s
+    LEFT JOIN routes r ON s.route_id = r.route_id
+    LEFT JOIN drivers d ON s.driver_id = d.driver_id
+    LEFT JOIN vehicles v ON s.bus_id = v.bus_id
+    ORDER BY s.date DESC, s.start_time DESC
+`;
         const [rows] = await pool.query(sql);
         return rows;
     } catch (error) {
