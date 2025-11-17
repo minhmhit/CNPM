@@ -10,13 +10,15 @@ const {
     getMyNotifications,
     getStudentById,
     checkInStudent,
-    checkOutStudent
+    checkOutStudent,
+    onLeaveStudent
 } = require("../Services/student.service");
 // const authMiddleware = require("../middleware/auth.middleware");
-
+const { authMiddleware, isStudent } = require("../middlewares/auth.middleware");
+router.use(authMiddleware);
 // Routes cho học sinh (cần xác thực)
-router.post("/profile", getMyProfile);
-router.post("/schedules", getMySchedules);
+router.get("/profile/:userid", getMyProfile);
+router.get("/schedules/:userid", getMySchedules);
 // router.post("/attendance", getMyAttendance);
 // router.get("/route", getMyRoute);
 router.post("/updateInfo", updateStudentInfo);
@@ -24,6 +26,7 @@ router.get("/notifications", getMyNotifications);
 router.get("/:student_id", getStudentById);
 router.post("/checkinStudent", checkInStudent);
 router.post("/checkoutStudent", checkOutStudent);
+router.post("/onLeaveStudent", onLeaveStudent );
 
 // Routes cho admin quản lý học sinh
 // router.get("/:student_id", getStudentProfile);

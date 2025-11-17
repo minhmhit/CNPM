@@ -1,33 +1,38 @@
 import axios from "axios";
-const instance = axios.create({
+
+const api = axios.create({
   baseURL: "http://localhost:5000/api/v1",
-  timeout: 10000,
-  headers: { "Content-Type": "application/json" },
+  timeout: 100000,
 });
 
-
-
-// Add a request interceptor
-instance.interceptors.request.use(function (config) {
-    // Do something before request is sent
-    // add accesstoken into headers
+// ✅ Request Interceptor – gắn token
+api.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
     return config;
-  }, function (error) {
-    // Do something with request error
-    return Promise.reject(error);
   },
-  { synchronous: true, runWhen: () => true }
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Add a response interceptor
-instance.interceptors.response.use(function onFulfilled(response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
+// ✅ Response Interceptor – xử lý 401
+api.interceptors.response.use(
+  (response) => {
     return response;
-  }, function onRejected(error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  },
+  (error) => {
+    if (error?.response?.status === 401) {
+      console.log("Token expired or invalid");
+      // Optionally: logout
+      // localStorage.removeItem("accessToken");
+      // window.location.href = "/login";
+    }
     return Promise.reject(error);
-  });
+  }
+);
 
-export default instance;
+export default api;

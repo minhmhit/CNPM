@@ -2,12 +2,30 @@ const { pool } = require("../config/connection_mysql");
 
 const addDriverInfo = async (driver_id, driverData) => {
   try {
-    const { name, phone_number, status } = driverData;
+    const { name, phone_number } = driverData;
+    const fields = [];
+    const values = [];
+
+    if (name) {
+      fields.push("name = ?");
+      values.push(name);
+    }
+    if (phone_number) {
+      fields.push("phone_number = ?");
+      values.push(phone_number);
+    }
+    values.push(driver_id);
+
+    if (fields.length === 0) {
+      throw new Error("No fields to update");
+    }
+
     const [result] = await pool.query(
-      "UPDATE drivers SET name = ?, phone_number = ?, status = ? WHERE driver_id = ?",
-      [name, phone_number, status, driver_id]
+      `UPDATE drivers SET ${fields.join(", ")} WHERE driver_id = ?`,
+      [...values, driver_id]
     );
-    return result;
+    const data = { result, driver_id, ...driverData };
+    return data;
   } catch (error) {
     console.error("lỗi khi thêm thông tin tài xế:", error);
     throw error;
@@ -98,12 +116,17 @@ const getDriverSessions = async (driver_id, date = null) => {
 };
 
 const startDriverSession = async (session_id) => {
+  //cập nhật trạng thái driver_sessions thành started và trạng thái schedule thành in_progress
+  let newSession_id = null;
   try {
-    const [result] = await pool.query(
-      "UPDATE driver_sessions SET start_time = NOW(), status = 'started' WHERE session_id = ?",
-      [session_id]
-    );
-    if (result.affectedRows) { newSession_id = session_id; }
+    const sql = `UPDATE schedules sch
+      JOIN driver_sessions ds ON sch.schedule_id = ds.schedule_id
+      SET ds.start_time = NOW(), ds.status = 'started', sch.status = 'in_progress'
+      WHERE ds.session_id = ?`;
+    const [result] = await pool.query(sql, [session_id]);
+    if (result.affectedRows) {
+      newSession_id = session_id;
+    }
     return newSession_id;
   } catch (error) {
     console.error("lỗi khi bắt đầu phiên làm việc:", error);
@@ -113,10 +136,11 @@ const startDriverSession = async (session_id) => {
 
 const endDriverSession = async (session_id) => {
   try {
-    const [result] = await pool.query(
-      "UPDATE driver_sessions SET end_time = NOW(), status = 'completed' WHERE session_id = ?",
-      [session_id]
-    );
+    const sql = `UPDATE schedules sch
+      JOIN driver_sessions ds ON sch.schedule_id = ds.schedule_id
+      SET ds.end_time = NOW(), ds.status = 'completed', sch.status = 'completed'
+      WHERE ds.session_id = ?`;
+    const [result] = await pool.query(sql, [session_id]);
     if (result.affectedRows) {
       endSession_id = session_id;
     }
@@ -153,27 +177,26 @@ const getDriverLocation = async (driver_id) => {
   }
 };
 
-const getAssignedStudents = async (driver_id, schedule_id = null) => {
+const getAssignedStudents = async (driver_id, schedule_id) => {
   try {
     let query = `
-            SELECT 
-                s.student_id, s.name, s.className,
-                u.username, u.email,
-                sch.schedule_id, sch.date, sch.start_time,
-                ss.pickup_status, ss.dropoff_status,
-                ss.pickup_time, ss.dropoff_time,
-                pickup.stop_name as pickup_stop,
-                pickup.stop_order,
-                dropoff.stop_name as dropoff_stop
-            FROM schedules sch
-            JOIN schedule_students ss ON sch.schedule_id = ss.schedule_id
-            JOIN students s ON ss.student_id = s.student_id
-            JOIN users u ON s.userid = u.userid
-            LEFT JOIN student_route_assignments sra ON s.student_id = sra.student_id
-            LEFT JOIN stop_points pickup ON sra.pickup_stop_id = pickup.stop_id
-            LEFT JOIN stop_points dropoff ON sra.dropoff_stop_id = dropoff.stop_id
-            WHERE sch.driver_id = ?
-        `;
+      SELECT 
+        s.student_id, s.name, s.className,
+        u.username, u.email,
+        sch.schedule_id, sch.date, sch.start_time,
+        ss.pickup_status, ss.dropoff_status,
+      
+        pickup.stop_name as pickup_stop,
+        pickup.stop_order,
+        dropoff.stop_name as dropoff_stop
+      FROM schedules sch
+      JOIN schedule_students ss ON sch.schedule_id = ss.schedule_id
+      JOIN students s ON ss.student_id = s.student_id
+      JOIN users u ON s.userid = u.userid
+      LEFT JOIN stop_points pickup ON s.pickup_location = pickup.stop_id
+      LEFT JOIN stop_points dropoff ON s.dropoff_location = dropoff.stop_id
+      WHERE sch.driver_id = ?
+    `;
     const params = [driver_id];
 
     if (schedule_id) {

@@ -11,17 +11,15 @@ const {
     sendBroadcast
 } = require("../Services/notification.service");
 
+const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
 // Routes cho người dùng (cần xác thực)
-router.get("/my",getMyNotifications);
-router.get("/unread-count",getUnreadCount);
-router.put("/:notification_id/read",markAsRead);
-router.put("/read-all",markAllAsRead);
-router.delete("/:notification_id",deleteNotification);
-
 // Routes cho admin
-router.post("/create",createNotification);
-
-router.post("/broadcast",sendBroadcast);
+router.use(authMiddleware);
+router.delete("/delete/:userid/:notification_id",deleteNotification);
+router.post("/sendAll",isAdmin, sendBroadcast);
+router.get("/my/:userid",getMyNotifications);
+router.put("/readAll/:userid",markAllAsRead);
 router.get("/user/:user_id",getUserNotifications);
-
+router.post("/create",createNotification);
+router.post("/read",markAsRead);
 module.exports = router;

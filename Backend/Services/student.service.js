@@ -81,7 +81,7 @@ const getStudentById = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
   try {
-    const { userid } = req.body;
+    const { userid } = req.params;
 
     const student = await studentModel.getStudentByUserId(userid);
 
@@ -107,7 +107,7 @@ const getMyProfile = async (req, res) => {
 
 const getMySchedules = async (req, res) => {
   try {
-    const { userid } = req.body;
+    const { userid } = req.params;
 
     const student = await studentModel.getStudentByUserId(userid);
     if (!student) {
@@ -250,6 +250,20 @@ const checkOutStudent = async (req, res) => {
   }
 };
 
+const onLeaveStudent = async (req, res) => {
+  try {
+    const { student_id, schedule_id } = req.body;
+    const result = await studentModel.onLeaveStudent(schedule_id, student_id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi server",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   updateStudentInfo,
   getStudentProfile,
@@ -260,5 +274,6 @@ module.exports = {
   getStudentById,
   getMyNotifications,
   checkInStudent,
-  checkOutStudent
+  checkOutStudent,
+  onLeaveStudent
 };

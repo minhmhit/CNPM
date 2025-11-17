@@ -1,5 +1,26 @@
 const {pool} = require('../config/connection_mysql');
 
+const getAllSchedules = async () => {
+    try {
+        const sql = `
+    SELECT 
+        s.*,
+        r.name as route_name,
+        d.name as driver_name,
+        v.license_plate as bus_name
+    FROM schedules s
+    LEFT JOIN routes r ON s.route_id = r.route_id
+    LEFT JOIN drivers d ON s.driver_id = d.driver_id
+    LEFT JOIN vehicles v ON s.bus_id = v.bus_id
+    ORDER BY s.date DESC, s.start_time DESC
+`;
+        const [rows] = await pool.query(sql);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const createSchedule = async (scheduleData) => {
   //if date is null set to current day
   if (!scheduleData.date) {
@@ -157,29 +178,28 @@ const getStudentsBySchedule = async (schedule_id) => {
   try {
     const [rows] = await pool.query(
       `
-            SELECT 
-                ss.id,
-                ss.schedule_id,
-                ss.student_id,
-                ss.pickup_status,
-                ss.dropoff_status,                
-                s.name as student_name,
-                s.className,
-                u.username,
-                u.email,
-                sra.pickup_stop_id,
-                sra.dropoff_stop_id,
-                pickup_stop.stop_name as pickup_stop_name,
-                dropoff_stop.stop_name as dropoff_stop_name
-            FROM schedule_students ss
-            JOIN students s ON ss.student_id = s.student_id
-            JOIN users u ON s.userid = u.userid
-            LEFT JOIN student_route_assignments sra ON s.student_id = sra.student_id
-            LEFT JOIN stop_points pickup_stop ON sra.pickup_stop_id = pickup_stop.stop_id
-            LEFT JOIN stop_points dropoff_stop ON sra.dropoff_stop_id = dropoff_stop.stop_id
-            WHERE ss.schedule_id = ?
-            ORDER BY pickup_stop.stop_order ASC, s.name ASC
-        `,
+        SELECT 
+          ss.id,
+          ss.schedule_id,
+          ss.student_id,
+          ss.pickup_status,
+          ss.dropoff_status,                
+          s.name as student_name,
+          s.className,
+          u.username,
+          u.email,
+          s.pickup_location,
+          s.dropoff_location,
+          pickup_stop.stop_name as pickup_stop_name,
+          dropoff_stop.stop_name as dropoff_stop_name
+        FROM schedule_students ss
+        JOIN students s ON ss.student_id = s.student_id
+        JOIN users u ON s.userid = u.userid
+        LEFT JOIN stop_points pickup_stop ON s.pickup_location = pickup_stop.stop_id
+        LEFT JOIN stop_points dropoff_stop ON s.dropoff_location = dropoff_stop.stop_id
+        WHERE ss.schedule_id = ?
+        ORDER BY pickup_stop.stop_order ASC, s.name ASC
+      `,
       [schedule_id]
     );
     return rows;
@@ -240,4 +260,5 @@ module.exports = {
     getStudentsBySchedule,
     updateStudentPickupStatus,
     updateStudentDropoffStatus,
+    getAllSchedules
 };

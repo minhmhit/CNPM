@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const {addRoute, updateRoute, deleteRoute, getAllRoutes, addStopPoints, getStopPointsByScheduleId} = require("../Controllers/route.controller");
+const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
 
+// Apply authentication and admin authorization middleware to all route routes
+router.use(authMiddleware);
+router.use(isAdmin);
 router.post("/add", addRoute);
 router.put("/update/:route_id", updateRoute);
 router.delete("/delete/:route_id", deleteRoute);

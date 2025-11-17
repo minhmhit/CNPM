@@ -1,95 +1,280 @@
-.assign-driver-page {
-  max-width: 700px;
-  margin: 40px auto;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+
+.manage-schedule {
+  width: 90%;
+  background: #fff;
+  color: #222;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
 }
 
-.assign-driver-page h2 {
+.manage-schedule h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4f46e5;
   text-align: center;
-  color: #333;
   margin-bottom: 20px;
 }
 
-.assign-driver-form {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 30px;
-}
-
-.assign-driver-form label {
-  margin: 10px 0 5px;
-  font-weight: bold;
-}
-
-.assign-driver-form select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.btn-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.assign-btn {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.assign-btn:hover {
-  background-color: #218838;
-}
-
-.back-btn {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.back-btn:hover {
-  background-color: #5a6268;
-}
-
-.driver-status h3 {
-  margin-top: 30px;
-  margin-bottom: 10px;
-  text-align: center;
-  color: #444;
-}
-
-.driver-status table {
+.manage-schedule table {
   width: 100%;
   border-collapse: collapse;
-  background: #fafafa;
-}
-
-.driver-status th,
-.driver-status td {
-  padding: 10px;
-  border: 1px solid #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
-.free {
-  color: green;
-  font-weight: bold;
+.manage-schedule th,
+.manage-schedule td {
+  padding: 1% 1%;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
 }
 
-.busy {
-  color: red;
-  font-weight: bold;
+.manage-schedule th {
+  background-color: #6a42f4;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.manage-schedule tr:nth-child(even) {
+  background: #faf9ff;
+}
+
+.manage-schedule tr:hover {
+  background-color: #f4f4ff;
+  transition: 0.2s;
+}
+
+.status {
+  font-weight: 700;
+}
+.status.đang-chạy {
+  color: #16a34a;
+}
+.status.chờ-khởi-hành {
+  color: #f59e0b;
+}
+.status.hoàn-thành {
+  color: #2563eb;
+}
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 6px 12px;
+  margin: 0 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.edit-btn {
+  background-color: #4f46e5;
+}
+.edit-btn:hover {
+  background-color: #4338ca;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+}
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+.ms-add-btn{
+  margin-bottom: 5%;
+  background-color: #00ff5e;
+  font-size: larger;
+}
+.as-save-btn{
+    margin-bottom: 5%;
+    margin-top : 2%;
+    margin-right: 2%;
+background-color: #00ff5e;
+}
+.as-cancel-btn{
+    margin-bottom: 5%;
+    margin-top : 2%;
+background-color: #655c5c;
+}
+
+@media (max-width: 768px) {
+  .manage-schedule {
+    width: 100%;
+    padding: 16px;
+  }
+  .manage-schedule table {
+    font-size: 13px;
+  }
+  .manage-schedule th,
+  .manage-schedule td {
+    padding: 8px;
+  }
+  .edit-btn,
+  .delete-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detail-btn {
+    border: none;
+    padding: 6px 12px;
+    margin-left: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    background-color: #00bcd4; 
+    color: white;
+}
+
+.detail-btn:hover {
+    background-color: #00838f;
+}
+
+.detail-row td {
+    padding: 0 !important; 
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.detail-content {
+    width: 100%; 
+    background-color: #fcfcfc;
+    padding: 10px 20px;
+    border-top: 1px dashed #ddd; 
+    border-bottom: 2px solid #6a42f4; 
+    text-align: left;
+    font-size: 0.9em;
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    animation: slideDown 0.3s ease-out; 
+}
+
+.detail-content p {
+    margin: 5px 0;
+    white-space: nowrap; 
+}
+
+.detail-content strong {
+    color: #4f46e5; 
+    font-weight: 700;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: hidden;
+    }
+    to {
+        opacity: 1;
+        max-height: 100px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+.enhanced-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background: #ffffff;
+  border-radius: 8px;
+  max-width: 400px;
+}
+
+.enhanced-form label {
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.enhanced-form select,
+.enhanced-form input {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.time-group {
+  display: flex;
+  gap: 10px;
+}
+
+.time-group div {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.as-save-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.as-cancel-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.showall-btn{
+  margin-bottom: 5%;
+  background-color: #0095ff;
+  font-size: 10;
+}
+
+button,
+.ms-add-btn,
+.as-save-btn,
+.as-cancel-btn,
+.edit-btn,
+.delete-btn,
+.detail-btn,
+.showall-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px;
+  vertical-align: middle;
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3306
--- Thời gian đã tạo: Th10 19, 2025 lúc 01:22 PM
+-- Thời gian đã tạo: Th10 24, 2025 lúc 03:40 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `ssb2`
+-- Cơ sở dữ liệu: `ssb`
 --
 
 -- --------------------------------------------------------
@@ -63,7 +63,9 @@ INSERT INTO `attendance_logs` (`log_id`, `student_id`, `schedule_id`, `status`, 
 (2, 3, 2, 'absent', '2025-10-12 23:40:00'),
 (3, 2, 2, 'picked_up', '2025-10-19 11:12:35'),
 (4, 9, 2, 'picked_up', '2025-10-19 11:18:35'),
-(5, 9, 2, 'dropped_off', '2025-10-19 11:19:27');
+(5, 9, 2, 'dropped_off', '2025-10-19 11:19:27'),
+(6, 3, 2, 'dropped_off', '2025-10-21 12:23:08'),
+(7, 2, 1, 'absent', '2025-10-24 13:39:59');
 
 -- --------------------------------------------------------
 
@@ -76,7 +78,6 @@ CREATE TABLE `drivers` (
   `name` varchar(255) NOT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `status` enum('active','on_leave','terminated') DEFAULT 'active',
   `userid` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -84,13 +85,13 @@ CREATE TABLE `drivers` (
 -- Đang đổ dữ liệu cho bảng `drivers`
 --
 
-INSERT INTO `drivers` (`driver_id`, `name`, `phone_number`, `email`, `status`, `userid`) VALUES
-(1, 'minh', '01234561954', 'driver01@gmail.com', 'active', 9),
-(2, 'Lê Văn Nam', '0912233445', 'driver02@gmail.com', 'active', 10),
-(3, 'minh2025', NULL, 'minh2025@gmail.com', 'active', 17),
-(4, 'pổ', NULL, 'driver@gmail.com', 'active', 19),
-(5, 'driver10', NULL, 'driver10@gmail.com', 'active', 23),
-(6, 'driver10', NULL, 'driver100@gmail.com', 'active', 24);
+INSERT INTO `drivers` (`driver_id`, `name`, `phone_number`, `email`, `userid`) VALUES
+(1, 'minh', '01234561954', 'driver01@gmail.com', 9),
+(2, 'Lê Văn Nam', '0912233445', 'driver02@gmail.com', 10),
+(3, 'minh2025', NULL, 'minh2025@gmail.com', 17),
+(4, 'pổ', NULL, 'driver@gmail.com', 19),
+(5, 'driver10', NULL, 'driver10@gmail.com', 23),
+(6, 'driver10', NULL, 'driver100@gmail.com', 24);
 
 -- --------------------------------------------------------
 
@@ -153,22 +154,31 @@ INSERT INTO `live_tracking` (`tracking_id`, `bus_id`, `driver_id`, `latitude`, `
 
 CREATE TABLE `notifications` (
   `notification_id` int(11) NOT NULL,
-  `recipient_type` enum('parent','driver') NOT NULL,
-  `recipient_id` int(11) DEFAULT NULL,
+  `recipient_type` enum('student','driver') NOT NULL,
+  `recipient_user_id` int(11) DEFAULT NULL,
   `message` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  `type` varchar(50) DEFAULT NULL,
   `sender_id` int(11) DEFAULT NULL,
-  `is_read` int(11) DEFAULT NULL
+  `is_read` int(11) DEFAULT 0,
+  `schedule_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `notifications`
 --
 
-INSERT INTO `notifications` (`notification_id`, `recipient_type`, `recipient_id`, `message`, `timestamp`, `type`, `sender_id`, `is_read`) VALUES
-(1, 'parent', 11, 'Xe đã đón học sinh Nguyễn Minh thành công', '2025-10-12 23:48:10', 'pickup', 13, 0),
-(2, 'driver', 9, 'Bạn có chuyến mới vào ngày 14/10/2025', '2025-10-12 23:48:10', 'schedule', 13, 1);
+INSERT INTO `notifications` (`notification_id`, `recipient_type`, `recipient_user_id`, `message`, `timestamp`, `sender_id`, `is_read`, `schedule_id`) VALUES
+(2, 'driver', 9, 'Bạn có chuyến mới vào ngày 14/10/2025', '2025-10-12 23:48:10', 13, 1, 2),
+(3, 'student', 12, 'Đón học sinh 01', '2025-10-22 09:09:50', 9, 1, 1),
+(4, 'student', 14, 'Đón học sinh 02', '2025-10-22 09:11:11', 9, 0, 1),
+(5, 'student', 12, 'Đón học sinh 03', '2025-10-22 09:12:44', 9, 1, 1),
+(6, 'student', 12, 'Đón học sinh 04', '2025-10-22 09:13:17', 9, 1, 1),
+(7, 'student', 16, 'Đón học sinh 05', '2025-10-22 09:29:25', 9, 0, 1),
+(8, 'student', 21, 'Đón học sinh 05', '2025-10-22 09:30:19', 9, 1, 1),
+(9, 'student', 11, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1),
+(10, 'student', 14, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1),
+(11, 'student', 15, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1),
+(12, 'student', 16, 'chuyến đi 01 có mặt đầy đủ', '2025-10-22 09:53:08', 9, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -214,7 +224,13 @@ INSERT INTO `routes` (`route_id`, `name`, `description`) VALUES
 (3, 'Q9 - trường', NULL),
 (4, 'Q10 - trường', 'đường gồ ghề'),
 (5, 'Q5 - Trường', 'Tuyến xe từ Quận 5 đến trường'),
-(6, 'Q6 - Trường', 'Tuyến xe từ Quận 6 đến trường');
+(6, 'Q6 - Trường', 'Tuyến xe từ Quận 6 đến trường'),
+(7, 'Q12 - Truong', 'Duong nhieu den do'),
+(8, 'Q12 - Truong', 'Duong nhieu den do'),
+(9, 'Q11 - Truong', 'Duong nhieu den do'),
+(10, 'Q11 - Truong', 'Duong nhieu den do'),
+(11, 'Q10 - Truong', 'Duong nhieu den do'),
+(12, 'Q12 - Truong', 'Duong nhieu den do');
 
 -- --------------------------------------------------------
 
@@ -251,7 +267,7 @@ CREATE TABLE `schedule_students` (
   `id` int(11) NOT NULL,
   `schedule_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
-  `pickup_status` enum('waiting','picked_up','absent') DEFAULT 'waiting',
+  `pickup_status` enum('waiting','picked_up','absent','on_leave') DEFAULT 'waiting',
   `dropoff_status` enum('waiting','dropped_off') DEFAULT 'waiting'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -260,8 +276,8 @@ CREATE TABLE `schedule_students` (
 --
 
 INSERT INTO `schedule_students` (`id`, `schedule_id`, `student_id`, `pickup_status`, `dropoff_status`) VALUES
-(1, 1, 2, 'waiting', 'dropped_off'),
-(2, 2, 3, 'picked_up', 'waiting'),
+(1, 1, 2, 'absent', 'waiting'),
+(2, 2, 3, 'picked_up', 'dropped_off'),
 (3, 1, 4, 'picked_up', 'waiting'),
 (4, 1, 5, 'picked_up', 'waiting'),
 (5, 1, 6, 'picked_up', 'waiting'),
@@ -304,7 +320,15 @@ INSERT INTO `stop_points` (`stop_id`, `route_id`, `stop_name`, `stop_order`, `lo
 (11, 5, 'Trạm A', 1, '106.660172', '10.762622'),
 (12, 5, 'Trạm B', 2, '106.662', '10.765'),
 (13, 6, 'Trạm A', 1, '106.660172', '10.762622'),
-(14, 6, 'Trạm B', 2, '106.662', '10.765');
+(14, 6, 'Trạm B', 2, '106.662', '10.765'),
+(15, 7, 'Trạm A', 1, '106.660172', '10.762622'),
+(16, 7, 'Trạm B', 2, '106.662', '10.765'),
+(17, 10, 'Trạm A', 1, '106.660172', '10.762622'),
+(18, 10, 'Trạm B', 2, '106.662', '10.765'),
+(19, 11, 'Trạm A', 1, '106.660172', '10.762622'),
+(20, 11, 'Trạm B', 2, '106.662', '10.765'),
+(21, 12, 'Trạm A', 1, '106.660172', '10.762622'),
+(22, 12, 'Trạm B', 2, '106.662', '10.765');
 
 -- --------------------------------------------------------
 
@@ -315,8 +339,8 @@ INSERT INTO `stop_points` (`stop_id`, `route_id`, `stop_name`, `stop_order`, `lo
 CREATE TABLE `students` (
   `student_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `pickup_location` varchar(255) DEFAULT NULL,
-  `dropoff_location` varchar(255) DEFAULT NULL,
+  `pickup_location` int(100) DEFAULT NULL,
+  `dropoff_location` int(100) DEFAULT NULL,
   `className` varchar(50) DEFAULT NULL,
   `userid` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -326,37 +350,15 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`student_id`, `name`, `pickup_location`, `dropoff_location`, `className`, `userid`) VALUES
-(1, 'minh22', '1', '2', '1A', 8),
-(2, 'Nguyễn Minh', '1', '2', '5A', 11),
-(3, 'Trần Thu Hà', '1', '2', '4B', 12),
-(4, 'Nguyễn Văn A', '1', '2', '2A', 14),
-(5, 'Nguyễn Văn B', '3', '2', '1B', 15),
-(6, 'Nguyễn Văn c', '3', '4', '1C', 16),
-(7, 'pổ', '2', '1', '1A', 21),
-(8, 'pổ', '2', '1', '1A', 22),
-(9, 'student10', '2', '1', '3A', 25);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `student_route_assignments`
---
-
-CREATE TABLE `student_route_assignments` (
-  `assignment_id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `route_id` int(11) NOT NULL,
-  `pickup_stop_id` int(11) NOT NULL,
-  `dropoff_stop_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `student_route_assignments`
---
-
-INSERT INTO `student_route_assignments` (`assignment_id`, `student_id`, `route_id`, `pickup_stop_id`, `dropoff_stop_id`) VALUES
-(1, 2, 5, 1, 2),
-(2, 3, 6, 3, 4);
+(1, 'minh22', 1, 2, '1A', 8),
+(2, 'Nguyễn Minh', 1, 2, '5A', 11),
+(3, 'Trần Thu Hà', 1, 2, '4B', 12),
+(4, 'Nguyễn Văn A', 1, 2, '2A', 14),
+(5, 'Nguyễn Văn B', 3, 2, '1B', 15),
+(6, 'Nguyễn Văn c', 3, 4, '1C', 16),
+(7, 'pổ', 2, 1, '1A', 21),
+(8, 'pổ', 2, 1, '1A', 22),
+(9, 'student10', 2, 1, '3A', 25);
 
 -- --------------------------------------------------------
 
@@ -475,7 +477,10 @@ ALTER TABLE `live_tracking`
 -- Chỉ mục cho bảng `notifications`
 --
 ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`notification_id`);
+  ADD PRIMARY KEY (`notification_id`),
+  ADD KEY `fk_notifications_schedules` (`schedule_id`),
+  ADD KEY `fk_notifications_sender` (`sender_id`),
+  ADD KEY `fk_notifications_recipient_user` (`recipient_user_id`);
 
 --
 -- Chỉ mục cho bảng `reports`
@@ -525,16 +530,6 @@ ALTER TABLE `students`
   ADD KEY `fk_dropoff_stop` (`dropoff_location`);
 
 --
--- Chỉ mục cho bảng `student_route_assignments`
---
-ALTER TABLE `student_route_assignments`
-  ADD PRIMARY KEY (`assignment_id`),
-  ADD KEY `student_id` (`student_id`),
-  ADD KEY `route_id` (`route_id`),
-  ADD KEY `pickup_stop_id` (`pickup_stop_id`),
-  ADD KEY `dropoff_stop_id` (`dropoff_stop_id`);
-
---
 -- Chỉ mục cho bảng `users`
 --
 ALTER TABLE `users`
@@ -562,7 +557,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT cho bảng `attendance_logs`
 --
 ALTER TABLE `attendance_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `drivers`
@@ -586,7 +581,7 @@ ALTER TABLE `live_tracking`
 -- AUTO_INCREMENT cho bảng `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `reports`
@@ -598,7 +593,7 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT cho bảng `routes`
 --
 ALTER TABLE `routes`
-  MODIFY `route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `route_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `schedules`
@@ -616,19 +611,13 @@ ALTER TABLE `schedule_students`
 -- AUTO_INCREMENT cho bảng `stop_points`
 --
 ALTER TABLE `stop_points`
-  MODIFY `stop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `stop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT cho bảng `students`
 --
 ALTER TABLE `students`
   MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- AUTO_INCREMENT cho bảng `student_route_assignments`
---
-ALTER TABLE `student_route_assignments`
-  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -681,6 +670,14 @@ ALTER TABLE `live_tracking`
   ADD CONSTRAINT `live_tracking_ibfk_1` FOREIGN KEY (`bus_id`) REFERENCES `vehicles` (`bus_id`);
 
 --
+-- Các ràng buộc cho bảng `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notifications_recipient_user` FOREIGN KEY (`recipient_user_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_notifications_schedules` FOREIGN KEY (`schedule_id`) REFERENCES `schedules` (`schedule_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_notifications_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`userid`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
 -- Các ràng buộc cho bảng `reports`
 --
 ALTER TABLE `reports`
@@ -715,18 +712,9 @@ ALTER TABLE `stop_points`
 -- Các ràng buộc cho bảng `students`
 --
 ALTER TABLE `students`
-  ADD CONSTRAINT `fk_dropoff_stop` FOREIGN KEY (`dropoff_location`) REFERENCES `stops` (`stop_id`),
-  ADD CONSTRAINT `fk_pickup_stop` FOREIGN KEY (`pickup_location`) REFERENCES `stops` (`stop_id`),
+  ADD CONSTRAINT `fk_dropoff_stop` FOREIGN KEY (`dropoff_location`) REFERENCES `stop_points` (`stop_id`),
+  ADD CONSTRAINT `fk_pickup_stop` FOREIGN KEY (`pickup_location`) REFERENCES `stop_points` (`stop_id`),
   ADD CONSTRAINT `fk_students_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE;
-
---
--- Các ràng buộc cho bảng `student_route_assignments`
---
-ALTER TABLE `student_route_assignments`
-  ADD CONSTRAINT `student_route_assignments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`),
-  ADD CONSTRAINT `student_route_assignments_ibfk_2` FOREIGN KEY (`route_id`) REFERENCES `routes` (`route_id`),
-  ADD CONSTRAINT `student_route_assignments_ibfk_3` FOREIGN KEY (`pickup_stop_id`) REFERENCES `stop_points` (`stop_id`),
-  ADD CONSTRAINT `student_route_assignments_ibfk_4` FOREIGN KEY (`dropoff_stop_id`) REFERENCES `stop_points` (`stop_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
