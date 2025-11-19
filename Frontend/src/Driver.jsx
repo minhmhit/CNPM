@@ -4,7 +4,7 @@ import logo from "./pics/logo.png";
 import "./App.css";
 import "./Driver.css";
 import accountIcon from "./pics/account-icon.png";
-import axios from "axios";
+import axios from "./util/axios.customize";
 import React, { useEffect, useState } from "react";
 import { FiAlignCenter } from "react-icons/fi";
 
@@ -12,15 +12,10 @@ const API_BASE = "http://localhost:5000/api/v1";
 
 async function fetchDriver() {
   try {
-    const token = localStorage.getItem("accessToken"); // lấy token từ localStorage
-    console.log(token)
-    const url = `${API_BASE}/driver/profile`;
+    const userId = localStorage.getItem("userId"); // lấy token từ localStorage
+    const url = `/driver/profile/${userId}`;
 
-    const res = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${token}` // gửi token cho backend
-      }
-    });
+    const res = await axios.get(url);
     localStorage.setItem("driver_id", res.data.data.driver_id);
     return res.data.data;   // dữ liệu từ backend
   } catch (err) {
