@@ -50,6 +50,18 @@ const createSchedule = async (scheduleData) => {
           end_time,
         ]);
         const data = { schedule_id: result.insertId, ...scheduleData };
+        //tạo mới session với status 'scheduled'
+        if (result){
+         const formatDate = date.toISOString().slice(0, 10);
+         const startTimestamp = new Date(`${formatDate}T${start_time}`);
+         const endTimestamp = new Date(`${formatDate}T${end_time}`);
+          const sqlSession = `
+            INSERT INTO driver_sessions (driver_id, bus_id, schedule_id, start_time, end_time, status)
+            VALUES (?, ?, ?, ?, ?, 'active')
+          `;
+          await pool.query(sqlSession, [driver_id, bus_id, result.insertId, startTimestamp, endTimestamp]);
+          
+        }
         return data;
     } catch (error) {
         throw error;

@@ -16,16 +16,15 @@ const {
 } = require("../Controllers/schedule.controller");
 const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
 router.use(authMiddleware);
-router.use(isAdmin);
-router.post('/create', createSchedule);
-router.put('/edit/:schedule_id', updateSchedule);
-router.delete('/delete/:schedule_id', deleteSchedule);
+router.post('/create', isAdmin, createSchedule);
+router.put("/edit/:schedule_id", isAdmin, updateSchedule);
+router.delete("/delete/:schedule_id", isAdmin, deleteSchedule);
 router.get('/driver/:driver_id', getDriverSchedule);
 router.get('/bus/:bus_id', getBusSchedule);
 //add student to schedule
-router.post('/addStudent', addStudentToSchedule);
-router.post('/addMultipleStudents', addMultipleStudentsToSchedule);
-router.delete('/removeStudent', removeStudentFromSchedule);
+router.post("/addStudent", isAdmin, addStudentToSchedule);
+router.post('/addMultipleStudents', isAdmin, addMultipleStudentsToSchedule);
+router.delete('/removeStudent', isAdmin, removeStudentFromSchedule);
 //lấy danh sách học sinh theo lịch trình
 router.get('/students/:schedule_id', getStudentsBySchedule);
 router.put('/pickup', updatePickupStatus);
