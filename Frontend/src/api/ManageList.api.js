@@ -4,7 +4,7 @@ export const getAllUsers = async () => {
   try {
     let url = `/admin/getAllUsers`;
     const res = await axios.get(url);
-    const users = res.data.data || res.data; // Lọc theo danh mục
+    const users = res.data.data || res.data;
     return users;
 
   } catch (error) {
@@ -51,6 +51,30 @@ export const getAllRoutes = async () => {
     return res;
   } catch (error) {
     console.error("Error fetching routes:", error);
+    return [];
+  }
+};
+
+export const getAllStudents = async () => {
+  try {
+    let url = `/admin/getAllStudents`;
+    const res = await axios.get(url);
+    const students = res.data.data || res.data;
+    return students;
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    return [];
+  }
+};
+
+export const getAllDrivers = async () => {
+  try {
+    let url = `/admin/getAllDrivers`;
+    const res = await axios.get(url);
+    const drivers = res.data.data || res.data;
+    return drivers;
+  } catch (error) {
+    console.error("Error fetching drivers:", error);
     return [];
   }
 };

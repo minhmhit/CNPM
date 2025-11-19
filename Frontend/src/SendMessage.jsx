@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import { getAllUsers } from "./api/ManageList.api";
 import { getAllSchedules } from "./api/ManageSchedule.api";
 import { sendMessage } from "./api/SendMessage.api";
+import { FiSave, FiPlus, FiTrash2, FiSend } from "react-icons/fi";
+import { MdCancel } from "react-icons/md";
 
 export default function SendMessage({ onBack }) {
   const [recipientType, setRecipientType] = useState("driver");
@@ -77,7 +79,7 @@ export default function SendMessage({ onBack }) {
       console.error("Lỗi khi gửi tin:", err);
       toast.error(
         err.response?.data?.message ||
-          "Không thể gửi tin nhắn. Vui lòng thử lại!"
+        "Không thể gửi tin nhắn. Vui lòng thử lại!"
       );
     } finally {
       setLoading(false);
@@ -88,7 +90,6 @@ export default function SendMessage({ onBack }) {
     <div className="send-message-container">
       <h3>Gửi thông báo</h3>
       <form className="send-message-form" onSubmit={handleSend}>
-        
         {/* KHỐI ID */}
         <div className="id-group">
           <div className="id-field">
@@ -141,16 +142,25 @@ export default function SendMessage({ onBack }) {
           <button
             type="button"
             onClick={onBack}
-            className="cancel-btn"
+            className="sm-cancel-btn"
             disabled={loading}
           >
+            <MdCancel size={18} style={{ marginRight: 6 }} />
             Hủy
           </button>
 
           <button type="submit" className="send-btn" disabled={loading}>
-            {loading ? "Đang gửi..." : "Gửi"}
+            {loading ? (
+              "Đang gửi..."
+            ) : (
+              <>
+                <FiSend size={18} style={{ marginRight: 6 }} />
+                Gửi
+              </>
+            )}
           </button>
         </div>
+
       </form>
     </div>
   );
