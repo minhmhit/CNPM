@@ -339,7 +339,7 @@ export default function ManageSchedule() {
                     </div>
                     {totalStudentPages > 1 && (
                       <div className="student-pagination">
-                        <button 
+                        <button
                           type="button"
                           disabled={currentStudentPage === 1}
                           onClick={() => setCurrentStudentPage(p => p - 1)}
@@ -350,7 +350,7 @@ export default function ManageSchedule() {
                         <span className="pagination-info">
                           Trang {currentStudentPage}/{totalStudentPages} ({students.length} học sinh)
                         </span>
-                        <button 
+                        <button
                           type="button"
                           disabled={currentStudentPage === totalStudentPages}
                           onClick={() => setCurrentStudentPage(p => p + 1)}
