@@ -7,9 +7,10 @@ import {
   deleteSchedule,
   createSchedule,
   updateSchedule,
+  addStudentToSchedule
 } from "./api/ManageSchedule.api";
-import { getAllBuses, getAllUsers, getAllRoutes } from "./api/ManageList.api";
-import { FiSave, FiPlus, FiTrash2, FiSend, FiArrowLeft, FiEye, FiSmile } from "react-icons/fi";
+import { getAllBuses, getAllRoutes, getAllDrivers, getAllStudents } from "./api/ManageList.api";
+import { FiSave, FiPlus, FiTrash2, FiSend, FiEye } from "react-icons/fi";
 import { MdCancel } from "react-icons/md";
 
 export default function ManageSchedule() {
@@ -23,6 +24,8 @@ export default function ManageSchedule() {
   const [drivers, setDrivers] = useState([]);
   const [buses, setBuses] = useState([]);
   const [routes, setRoutes] = useState([]);
+  const [selectedDriver, setSelectedDriver] = useState("");
+  const [students, setStudents] = useState([]);
   const [newSchedule, setNewSchedule] = useState({
     driver_id: "",
     bus_id: "",
@@ -32,9 +35,10 @@ export default function ManageSchedule() {
     end_time: "",
   });
 
-  // PHÂN TRANG
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const [currentStudentPage, setCurrentStudentPage] = useState(1);
+  const studentsPerPage = 3;
 
   useEffect(() => {
     fetchSchedules();
@@ -47,14 +51,10 @@ export default function ManageSchedule() {
     setLoading(true);
     try {
       const res = await getAllSchedules();
-
-      const formatted = (res?.data || [])
-        .map((item) => ({
-          ...item,
-          date: item.date ? item.date.slice(0, 10) : "",
-        }))
-        .filter((item) => item.status !== "canceled");
-
+      const formatted = (res?.data || []).map((item) => ({
+        ...item,
+        date: item.date ? item.date.slice(0, 10) : "",
+      }));
       setSchedules(formatted);
       setOriginalSchedules(formatted);
       setCurrentPage(1);
@@ -68,9 +68,8 @@ export default function ManageSchedule() {
 
   const fetchDrivers = async () => {
     try {
-      const users = await getAllUsers();
-      const driverList = users.filter(u => u.role === "driver");
-      setDrivers(driverList);
+      const res = await getAllDrivers();
+      setDrivers(res || []);
     } catch (err) {
       console.error(err);
       toast.error("Không thể tải danh sách tài xế!");
@@ -80,8 +79,7 @@ export default function ManageSchedule() {
   const fetchBuses = async () => {
     try {
       const res = await getAllBuses();
-      const busList = res?.data || [];
-      setBuses(busList);
+      setBuses(res?.data || []);
     } catch (err) {
       console.error(err);
       toast.error("Không thể tải danh sách xe!");
@@ -91,58 +89,29 @@ export default function ManageSchedule() {
   const fetchRoutes = async () => {
     try {
       const res = await getAllRoutes();
-      const routeList = res?.data || [];
-      setRoutes(routeList);
+      setRoutes(res?.data || []);
     } catch (err) {
       console.error(err);
       toast.error("Không thể tải danh sách tuyến!");
     }
   };
 
-  const fetchSchedulesByDate = (date) => {
-    if (!date) {
-      setSchedules(originalSchedules);
-      setCurrentPage(1);
-      return;
-    }
-    const filtered = originalSchedules.filter((s) => s.date === date);
-    setSchedules(filtered);
-    setCurrentPage(1);
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc muốn hủy lịch trình này?")) return;
-
+  const fetchStudents = async () => {
     try {
-      const res = await deleteSchedule(id);
-
-      if (res === null || res?.status === 204 || res?.success === true) {
-        toast.success("Đã hủy lịch trình!");
-        fetchSchedules();
-        return;
-      }
-      toast.error("Hủy lịch trình thất bại!");
+      const data = await getAllStudents();
+      setStudents(data || []);
+      return data || [];
     } catch (err) {
       console.error(err);
-      toast.error("Không thể hủy lịch trình!");
+      toast.error("Không thể tải danh sách học sinh!");
+      return [];
     }
   };
 
-  const handleAddClick = () => {
-    setShowAddForm(true);
-    setEditingSchedule(null);
-  };
-
-  const handleAddSchedule = async (e) => {
-    e.preventDefault();
+  const handleAddClick = async () => {
     try {
-      const res = await createSchedule(newSchedule);
-      if (!res) {
-        toast.error("Không thể thêm lịch trình!");
-        return;
-      }
-      toast.success("Thêm lịch trình thành công!");
-      setShowAddForm(false);
+      const studentList = await getAllStudents();
+      setStudents(studentList || []);
       setNewSchedule({
         driver_id: "",
         bus_id: "",
@@ -150,13 +119,59 @@ export default function ManageSchedule() {
         date: "",
         start_time: "",
         end_time: "",
+        student_ids: [],
       });
+      setCurrentStudentPage(1);
+      setShowAddForm(true);
+      setEditingSchedule(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Không thể tải danh sách học sinh!");
+    }
+  };
+
+
+
+  const handleAddSchedule = async (e) => {
+    e.preventDefault();
+    if (!selectedDriver) {
+      toast.error("Vui lòng chọn tài xế!");
+      return;
+    }
+
+    try {
+      const scheduleToAdd = {
+        ...newSchedule,
+        driver_id: Number(selectedDriver),
+      };
+
+      const res = await createSchedule(scheduleToAdd);
+
+      if (!res || !res.schedule_id) {
+        toast.error("Không thể thêm lịch trình!");
+        return;
+      }
+
+      // Nếu muốn thêm học sinh ngay sau khi schedule được tạo
+      if (newSchedule.student_ids && newSchedule.student_ids.length > 0) {
+        for (const studentId of newSchedule.student_ids) {
+          const addRes = await addStudentToSchedule(res.schedule_id, studentId);
+          if (!addRes) {
+            toast.warning(`Thêm học sinh ${studentId} thất bại`);
+          }
+        }
+      }
+
+      toast.success("Thêm lịch trình và học sinh thành công!");
+      setShowAddForm(false);
+      setSelectedDriver("");
       fetchSchedules();
     } catch (err) {
       console.error(err);
       toast.error("Không thể thêm lịch trình!");
     }
   };
+
 
   const handleEdit = (schedule) => {
     setEditingSchedule(schedule);
@@ -180,30 +195,52 @@ export default function ManageSchedule() {
     }
   };
 
+  const handleAddStudent = (studentId) => {
+    setNewSchedule((prev) => ({
+      ...prev,
+      student_ids: prev.student_ids.includes(studentId)
+        ? prev.student_ids
+        : [...prev.student_ids, studentId],
+    }));
+    toast.success("Đã chọn học sinh!");
+  };
+
+
   const handleToggleDetail = (id) => {
     setShowingDetailId((prev) => (prev === id ? null : id));
   };
 
-  // PHÂN TRANG
+  const fetchSchedulesByDate = (date) => {
+    if (!date) {
+      setSchedules(originalSchedules);
+      setCurrentPage(1);
+      return;
+    }
+    const filtered = originalSchedules.filter((s) => s.date === date);
+    setSchedules(filtered);
+    setCurrentPage(1);
+  };
+
   const totalPages = Math.ceil(schedules.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const currentItems = schedules.slice(startIdx, startIdx + itemsPerPage);
+
+  const totalStudentPages = Math.ceil(students.length / studentsPerPage);
+  const studentStartIdx = (currentStudentPage - 1) * studentsPerPage;
+  const paginatedStudents = students.slice(studentStartIdx, studentStartIdx + studentsPerPage);
 
   if (loading) return <p>Đang tải dữ liệu...</p>;
 
   return (
     <div className="manage-schedule">
       <ToastContainer position="top-center" autoClose={3000} />
-
       <h2>Quản lý lịch trình xe buýt</h2>
 
-      {/* Nút thêm */}
       {!showAddForm && !editingSchedule && (
         <div className="schedule-toolbar">
           <button className="btn-add-schedule" onClick={handleAddClick}>
             <FiPlus size={18} /> Thêm lịch trình
           </button>
-
           <button
             className="btn-show-all"
             onClick={() => {
@@ -213,7 +250,6 @@ export default function ManageSchedule() {
           >
             <FiSend size={18} /> Hiện tất cả
           </button>
-
           <div className="date-filter">
             <label>Chọn ngày:</label>
             <input
@@ -228,186 +264,117 @@ export default function ManageSchedule() {
         </div>
       )}
 
-
-      {/* FORM ADD */}
       {showAddForm && (
         <form className="schedule-form enhanced-form" onSubmit={handleAddSchedule}>
           <h3>Thêm lịch trình</h3>
-          <label>Tài xế:</label>
-          <select
-            required
-            value={newSchedule.driver_id}
-            onChange={(e) => setNewSchedule({ ...newSchedule, driver_id: e.target.value })}
-          >
-            <option value="">-- Chọn tài xế --</option>
-            {drivers.length > 0 ? drivers.map(driver => (
-              <option key={driver.userid} value={driver.userid}>
-                {driver.username}
-              </option>
-            )) : <option value="">Chưa có tài xế</option>}
-          </select>
 
-          <label>Xe:</label>
-          <select
-            required
-            value={newSchedule.bus_id}
-            onChange={(e) => setNewSchedule({ ...newSchedule, bus_id: e.target.value })}
-          >
-            <option value="">-- Chọn xe --</option>
-            {buses.length > 0 ? buses.map(bus => (
-              <option key={bus.bus_id} value={bus.bus_id}>
-                {bus.model || bus.bus_id}
-              </option>
-            )) : <option value="">Chưa có xe</option>}
-          </select>
+          <div className="form-layout">
+            {/* --- Phần trái: Thông tin tài xế/xe/tuyến/Ngày/Thời gian --- */}
+            <div className="form-left">
+              <label>Tài xế:</label>
+              <select required value={selectedDriver} onChange={(e) => setSelectedDriver(e.target.value)}>
+                <option value="">-- Chọn tài xế --</option>
+                {drivers.map((driver) => (
+                  <option key={driver.driver_id} value={driver.driver_id}>{driver.name}</option>
+                ))}
+              </select>
 
-          <label>Tuyến:</label>
-          <select
-            required
-            value={newSchedule.route_id}
-            onChange={(e) => setNewSchedule({ ...newSchedule, route_id: e.target.value })}
-          >
-            <option value="">-- Chọn tuyến --</option>
-            {routes.length > 0 ? routes.map(route => (
-              <option key={route.route_id} value={route.route_id}>
-                {route.name}
-              </option>
-            )) : <option value="">Chưa có tuyến</option>}
-          </select>
+              <label>Xe:</label>
+              <select required value={newSchedule.bus_id} onChange={(e) => setNewSchedule({ ...newSchedule, bus_id: e.target.value })}>
+                <option value="">-- Chọn xe --</option>
+                {buses.length > 0 ? buses.map(bus => (
+                  <option key={bus.bus_id} value={bus.bus_id}>{bus.model || bus.bus_id}</option>
+                )) : <option value="">Chưa có xe</option>}
+              </select>
 
-          <label>Ngày:</label>
-          <input
-            type="date"
-            required
-            value={newSchedule.date}
-            onChange={(e) => setNewSchedule({ ...newSchedule, date: e.target.value })}
-          />
+              <label>Tuyến:</label>
+              <select required value={newSchedule.route_id} onChange={(e) => setNewSchedule({ ...newSchedule, route_id: e.target.value })}>
+                <option value="">-- Chọn tuyến --</option>
+                {routes.length > 0 ? routes.map(route => (
+                  <option key={route.route_id} value={route.route_id}>{route.name}</option>
+                )) : <option value="">Chưa có tuyến</option>}
+              </select>
 
-          <div className="time-group">
-            <div>
-              <label>Bắt đầu:</label>
-              <input
-                type="time"
-                required
-                value={newSchedule.start_time}
-                onChange={(e) => setNewSchedule({ ...newSchedule, start_time: e.target.value })}
-              />
+              <label>Ngày:</label>
+              <input type="date" required value={newSchedule.date} onChange={(e) => setNewSchedule({ ...newSchedule, date: e.target.value })} />
+
+              <div className="time-group">
+                <div>
+                  <label>Bắt đầu:</label>
+                  <input type="time" required value={newSchedule.start_time} onChange={(e) => setNewSchedule({ ...newSchedule, start_time: e.target.value })} />
+                </div>
+                <div>
+                  <label>Kết thúc:</label>
+                  <input type="time" required value={newSchedule.end_time} onChange={(e) => setNewSchedule({ ...newSchedule, end_time: e.target.value })} />
+                </div>
+              </div>
             </div>
-            <div>
-              <label>Kết thúc:</label>
-              <input
-                type="time"
-                required
-                value={newSchedule.end_time}
-                onChange={(e) => setNewSchedule({ ...newSchedule, end_time: e.target.value })}
-              />
-            </div>
-          </div>
 
-          <div className="form-actions">
-            <button className="as-save-btn" type="submit">
-              <FiSave size={18} style={{ marginRight: 6 }} />
-              Lưu
-            </button>
-
-            <button className="as-cancel-btn" type="button" onClick={() => setShowAddForm(false)}>
-              <MdCancel size={20} style={{ marginRight: 6 }} />
-              Hủy
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* FORM EDIT */}
-      {editingSchedule && (
-        <form className="schedule-form enhanced-form" onSubmit={handleUpdate}>
-          <h3>Chỉnh sửa lịch trình #{editingSchedule.schedule_id}</h3>
-          <label>Tài xế:</label>
-          <select
-            required
-            value={editingSchedule.driver_id}
-            onChange={(e) => setEditingSchedule({ ...editingSchedule, driver_id: e.target.value })}
-          >
-            <option value="">-- Chọn tài xế --</option>
-            {drivers.map(driver => (
-              <option key={driver.userid} value={driver.userid}>
-                {driver.username}
-              </option>
-            ))}
-          </select>
-
-          <label>Xe:</label>
-          <select
-            required
-            value={editingSchedule.bus_id}
-            onChange={(e) => setEditingSchedule({ ...editingSchedule, bus_id: e.target.value })}
-          >
-            <option value="">-- Chọn xe --</option>
-            {buses.map(bus => (
-              <option key={bus.bus_id} value={bus.bus_id}>
-                {bus.model || bus.bus_id}
-              </option>
-            ))}
-          </select>
-
-          <label>Tuyến:</label>
-          <select
-            required
-            value={editingSchedule.route_id}
-            onChange={(e) => setEditingSchedule({ ...editingSchedule, route_id: e.target.value })}
-          >
-            <option value="">-- Chọn tuyến --</option>
-            {routes.map(route => (
-              <option key={route.route_id} value={route.route_id}>
-                {route.name}
-              </option>
-            ))}
-          </select>
-
-          <label>Ngày:</label>
-          <input
-            type="date"
-            required
-            value={editingSchedule.date || ""}
-            onChange={(e) => setEditingSchedule({ ...editingSchedule, date: e.target.value })}
-          />
-
-          <div className="time-group">
-            <div>
-              <label>Bắt đầu:</label>
-              <input
-                type="time"
-                required
-                value={editingSchedule.start_time}
-                onChange={(e) => setEditingSchedule({ ...editingSchedule, start_time: e.target.value })}
-              />
-            </div>
-            <div>
-              <label>Kết thúc:</label>
-              <input
-                type="time"
-                required
-                value={editingSchedule.end_time}
-                onChange={(e) => setEditingSchedule({ ...editingSchedule, end_time: e.target.value })}
-              />
+            {/* --- Phần phải: Danh sách học sinh --- */}
+            <div className="form-right">
+              <div className="student-list">
+                <h4>Thêm học sinh vào lịch trình</h4>
+                {students.length > 0 ? (
+                  <>
+                    <div className="student-list-container">
+                      <ul>
+                        {paginatedStudents.map((student) => (
+                          <li key={student.student_id} className="student-item">
+                            <div className="student-info">
+                              <span className="student-name">{student.name}</span>
+                              {newSchedule.student_ids?.includes(student.student_id) && (
+                                <span className="student-selected">Đã chọn</span>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              className={`add-student-btn ${newSchedule.student_ids?.includes(student.student_id) ? 'selected' : ''}`}
+                              onClick={() => handleAddStudent(student.student_id)}
+                            >
+                              {newSchedule.student_ids?.includes(student.student_id) ? 'Đã chọn' : 'Thêm'}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    {totalStudentPages > 1 && (
+                      <div className="student-pagination">
+                        <button 
+                          type="button"
+                          disabled={currentStudentPage === 1}
+                          onClick={() => setCurrentStudentPage(p => p - 1)}
+                          className="pagination-btn"
+                        >
+                          ←
+                        </button>
+                        <span className="pagination-info">
+                          Trang {currentStudentPage}/{totalStudentPages} ({students.length} học sinh)
+                        </span>
+                        <button 
+                          type="button"
+                          disabled={currentStudentPage === totalStudentPages}
+                          onClick={() => setCurrentStudentPage(p => p + 1)}
+                          className="pagination-btn"
+                        >
+                          →
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="no-students">Chưa có học sinh!</p>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="form-actions">
-            <button className="as-save-btn" type="submit">
-              <FiSave size={18} style={{ marginRight: 6 }} />
-              Cập nhật
-            </button>
-
-            <button className="as-cancel-btn" type="button" onClick={() => setEditingSchedule(null)}>
-              <MdCancel size={20} style={{ marginRight: 6 }} />
-              Hủy
-            </button>
+            <button className="as-save-btn" type="submit"><FiSave size={18} style={{ marginRight: 6 }} />Lưu lịch trình</button>
+            <button className="as-cancel-btn" type="button" onClick={() => setShowAddForm(false)}><MdCancel size={20} style={{ marginRight: 6 }} />Hủy</button>
           </div>
         </form>
       )}
 
-      {/* TABLE */}
       {!showAddForm && !editingSchedule && (
         <>
           <table>
@@ -421,60 +388,41 @@ export default function ManageSchedule() {
                 <th>Chi tiết</th>
               </tr>
             </thead>
-
             <tbody>
-              {currentItems.length > 0 ? (
-                currentItems.map((item) => (
-                  <React.Fragment key={item.schedule_id}>
-                    <tr>
-                      <td>{item.schedule_id}</td>
-                      <td>{item.bus_name}</td>
-                      <td>{item.driver_name}</td>
-                      <td>{item.route_name}</td>
-
-                      <td>
-                        <button className="edit-btn" onClick={() => handleEdit(item)}>
-                          <FiSave size={16} style={{ marginRight: 4 }} /> Sửa
-                        </button>
-
-                        <button className="delete-btn" onClick={() => handleDelete(item.schedule_id)}>
-                          <FiTrash2 size={16} style={{ marginRight: 4 }} /> Hủy
-                        </button>
-                      </td>
-
-                      <td>
-                        <button className="detail-btn" onClick={() => handleToggleDetail(item.schedule_id)}>
-                          <FiEye size={16} style={{ marginRight: 6 }} />
-                          {showingDetailId === item.schedule_id ? "Ẩn" : "Chi tiết"}
-                        </button>
+              {currentItems.length > 0 ? currentItems.map((item) => (
+                <React.Fragment key={item.schedule_id}>
+                  <tr>
+                    <td>{item.schedule_id}</td>
+                    <td>{item.bus_name}</td>
+                    <td>{item.driver_name}</td>
+                    <td>{item.route_name}</td>
+                    <td>
+                      <button className="edit-btn" onClick={() => handleEdit(item)}><FiSave size={16} style={{ marginRight: 4 }} />Sửa</button>
+                      <button className="delete-btn" onClick={() => handleDelete(item.schedule_id)}><FiTrash2 size={16} style={{ marginRight: 4 }} />Hủy</button>
+                    </td>
+                    <td>
+                      <button className="detail-btn" onClick={() => handleToggleDetail(item.schedule_id)}><FiEye size={16} style={{ marginRight: 6 }} />{showingDetailId === item.schedule_id ? "Ẩn" : "Chi tiết"}</button>
+                    </td>
+                  </tr>
+                  {showingDetailId === item.schedule_id && (
+                    <tr className="detail-row">
+                      <td colSpan="6">
+                        <div className="detail-content">
+                          <p><strong>Ngày:</strong> {item.date}</p>
+                          <p><strong>Bắt đầu:</strong> {item.start_time}</p>
+                          <p><strong>Kết thúc:</strong> {item.end_time}</p>
+                          <p><strong>Trạng thái:</strong> {item.status}</p>
+                        </div>
                       </td>
                     </tr>
-
-                    {showingDetailId === item.schedule_id && (
-                      <tr className="detail-row">
-                        <td colSpan="6">
-                          <div className="detail-content">
-                            <p><strong>Ngày:</strong> {item.date}</p>
-                            <p><strong>Bắt đầu:</strong> {item.start_time}</p>
-                            <p><strong>Kết thúc:</strong> {item.end_time}</p>
-                            <p><strong>Trạng thái:</strong> Active</p>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    Không có lịch trình!
-                  </td>
-                </tr>
+                  )}
+                </React.Fragment>
+              )) : (
+                <tr><td colSpan="6" style={{ textAlign: "center" }}>Không có lịch trình!</td></tr>
               )}
             </tbody>
           </table>
 
-          {/* PHÂN TRANG */}
           <div className="pagination">
             <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>-</button>
             <span>Trang {currentPage}/{totalPages || 1}</span>
