@@ -16,7 +16,7 @@ export default function RouteMapPicker({ onComplete, initialData }) {
     const { lat, lng } = e.latlng;
 
     if (mode === 'start') {
-      setStartPoint({ latitude: lat, longitude: lng, stop_name: 'Điểm đầu' });
+      setStartPoint({ latitude: 10.7805, longitude: 106.64, stop_name: 'Điểm đầu' });
       setMode('stop');
     } else if (mode === 'end') {
       setEndPoint({ latitude: lat, longitude: lng, stop_name: 'Điểm cuối' });

@@ -8,7 +8,7 @@ import Parents from "./Parents.jsx";
 import Session from "./Session.jsx";
 // import Report from "./Report.jsx";
 import Alert from "./Alert.jsx";
-import StopPoint from "./Stoppoint.jsx";
+// import StopPoint from "./Stoppoint.jsx";
 import ParentLayout from "./parent/Layout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
@@ -50,7 +50,7 @@ export default function App() {
       <Route path="/driver/alert" element={<Alert />} />
       <Route path="/parent/*" element={<ParentLayout />} />
 
-      <Route path="/stoppoint" element={<StopPoint />} />
+      {/* <Route path="/stoppoint" element={<StopPoint />} /> */}
       {/* <Route path="/tracking/:scheduleId" element={<LiveTracking />} /> */}
     
     </Routes>
