@@ -71,6 +71,7 @@ export const getAllDrivers = async () => {
   try {
     let url = `/admin/getAllDrivers`;
     const res = await axios.get(url);
+    // console.log("Response from getAllDrivers:", res.data);
     const drivers = res.data.data || res.data;
     return drivers;
   } catch (error) {

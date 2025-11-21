@@ -5,6 +5,7 @@ import "./Admin.css";
 import { FiPlusCircle, FiSave, FiTrash2, FiArrowLeft, FiSend } from "react-icons/fi";
 import { MdCancel } from "react-icons/md";
 import { getAllDrivers, getAllStudents } from "./api/ManageList.api";
+import RouteMapPicker from "./RouteMapPicker";
 
 export default function ManageList({ onBack }) {
     const [category, setCategory] = useState("routes");
@@ -17,6 +18,7 @@ export default function ManageList({ onBack }) {
 
     const [newItem, setNewItem] = useState({});
     const [showForm, setShowForm] = useState(false);
+    const [showMapPicker, setShowMapPicker] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
 
@@ -213,6 +215,41 @@ export default function ManageList({ onBack }) {
                             }
                             placeholder="Nhập mô tả"
                         />
+                        <label>Điểm đầu:</label>
+                        <input
+                            type="text"
+                            readOnly
+                            value={newItem.start_point ? `${newItem.start_point.latitude.toFixed(4)}, ${newItem.start_point.longitude.toFixed(4)}` : ""}
+                            placeholder="Chọn từ bản đồ"
+                            className="route-readonly-input"
+                        />
+                        <label>Điểm cuối:</label>
+                        <input
+                            type="text"
+                            readOnly
+                            value={newItem.end_point ? `${newItem.end_point.latitude.toFixed(4)}, ${newItem.end_point.longitude.toFixed(4)}` : ""}
+                            placeholder="Chọn từ bản đồ"
+                            className="route-readonly-input"
+                        />
+                        <label>Điểm dừng ({newItem.stop_points?.length || 0}):</label>
+                        <div className="stop-points-container">
+                          {newItem.stop_points && newItem.stop_points.length > 0 ? (
+                            newItem.stop_points.map((point, idx) => (
+                              <div key={idx} className="stop-point-item">
+                                Điểm {idx + 1}: {point.latitude.toFixed(4)}, {point.longitude.toFixed(4)}
+                              </div>
+                            ))
+                          ) : (
+                            <p className="stop-point-empty-message">Chưa có điểm dừng</p>
+                          )}
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setShowMapPicker(true)}
+                            className="map-picker-btn"
+                        >
+                            Chọn điểm trên bản đồ
+                        </button>
                     </>
                 );
             case "buses":
@@ -493,15 +530,15 @@ export default function ManageList({ onBack }) {
                         </h3>
                         <form onSubmit={handleAdd}>
                             {renderInputFields()}
-                            <div className="form-buttons">
-                                <button type="submit" className="add-btn">
+                            <div className="ml-form-buttons">
+                                <button type="submit" className="ml-add-btn">
                                     <FiSave size={18} style={{ marginRight: 6 }} />
                                     Lưu
                                 </button>
 
                                 <button
                                     type="button"
-                                    className="cancel-form-btn"
+                                    className="ml-cancel-form-btn"
                                     onClick={() => setShowForm(false)}
                                 >
                                     <MdCancel size={18} style={{ marginRight: 6 }} />
@@ -537,9 +574,8 @@ export default function ManageList({ onBack }) {
                         ) : null}
 
                         <button
-                            className="cancel-form-btn"
+                            className="cancel-form-btn detail-close-btn"
                             onClick={() => setShowDetail(false)}
-                            style={{ marginTop: 10 }}
                         >
                             Đóng
                         </button>
@@ -547,7 +583,32 @@ export default function ManageList({ onBack }) {
                 </div>
             )}
 
-            <button onClick={onBack} className="cancel-btn" style={{ marginTop: 15 }}>
+            {showMapPicker && (
+                <div className="map-picker-modal-overlay">
+                    <div className="map-picker-modal-container">
+                        <button
+                            onClick={() => setShowMapPicker(false)}
+                            className="map-picker-close-btn"
+                        >
+                            ✕ Đóng
+                        </button>
+                        <RouteMapPicker
+                            onComplete={(data) => {
+                                setNewItem({
+                                    ...newItem,
+                                    start_point: data.startPoint,
+                                    end_point: data.endPoint,
+                                    stop_points: data.stopPoints
+                                });
+                                setShowMapPicker(false);
+                            }}
+                            initialData={newItem}
+                        />
+                    </div>
+                </div>
+            )}
+
+            <button onClick={onBack} className="cancel-btn back-btn-margin">
                 <FiArrowLeft size={18} style={{ marginRight: 6 }} />
                 Quay lại
             </button>
