@@ -187,7 +187,10 @@ const getAllRoutes = async () => {
     const [routes] = await pool.query(sql);
     for (let route of routes) {
       const stopSql =
-        "SELECT stop_name, stop_order FROM stop_points WHERE route_id = ? ORDER BY stop_order";
+        `SELECT sp.stop_id, sp.stop_name, sp.stop_order,sp.longitude, sp.latitude 
+        FROM stop_points sp 
+        WHERE route_id = ? 
+        ORDER BY stop_order`;
       const [stops] = await pool.query(stopSql, [route.route_id]);
       route.stop_points = stops;
     }
@@ -232,7 +235,7 @@ const addStopPoints = async (route_id, stop_points) => {
 const getStopPointsByScheduleId = async (schedule_id) => {
   try {
     const sql = `
-      SELECT sp.stop_id, sp.stop_name, sp.stop_order, r.name AS route_name
+      SELECT sp.stop_id, sp.stop_name, sp.stop_order,sp.longitude, sp.latitude, r.name AS route_name
       FROM stop_points sp
       JOIN schedules s ON sp.route_id = s.route_id
       JOIN routes r ON sp.route_id = r.route_id
